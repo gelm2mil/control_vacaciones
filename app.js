@@ -1,8 +1,37 @@
 // ========================================
+// SISTEMA CONTROL VACACIONES PMT
+// VERSION FUNCIONAL COMPLETA
+// ========================================
+
+// ========================================
 // VARIABLES
 // ========================================
 
 let agentes = [];
+
+// ========================================
+// FERIADOS GUATEMALA + CHIMALTENANGO
+// ========================================
+
+const feriados = [
+
+    "2026-01-01",
+    "2026-01-02",
+    "2026-01-03",
+
+    "2026-05-01",
+
+    "2026-07-26",
+
+    "2026-09-15",
+
+    "2026-10-20",
+
+    "2026-11-01",
+
+    "2026-12-25"
+
+];
 
 // ========================================
 // RELOJ
@@ -37,6 +66,61 @@ setInterval(actualizarFechaHora, 1000);
 actualizarFechaHora();
 
 // ========================================
+// CONVERTIR FECHA EXCEL
+// ========================================
+
+function excelFechaAJS(numeroExcel) {
+
+    const fecha =
+    new Date(
+        (numeroExcel - 25569)
+        * 86400
+        * 1000
+    );
+
+    return fecha;
+
+}
+
+// ========================================
+// FORMATEAR FECHA
+// ========================================
+
+function formatearFecha(fecha) {
+
+    return fecha.toLocaleDateString(
+        'es-GT'
+    );
+
+}
+
+// ========================================
+// VALIDAR FERIADO
+// ========================================
+
+function esFeriado(fecha) {
+
+    const yyyy =
+    fecha.getFullYear();
+
+    const mm =
+    String(
+        fecha.getMonth() + 1
+    ).padStart(2, '0');
+
+    const dd =
+    String(
+        fecha.getDate()
+    ).padStart(2, '0');
+
+    const formato =
+    `${yyyy}-${mm}-${dd}`;
+
+    return feriados.includes(formato);
+
+}
+
+// ========================================
 // CARGAR EXCEL
 // ========================================
 
@@ -53,16 +137,17 @@ async function cargarExcel() {
         await response.arrayBuffer();
 
         const workbook =
-        XLSX.read(data, {
-            type: "array"
-        });
+        XLSX.read(
+            data,
+            {
+                type: "array"
+            }
+        );
 
         const hoja =
         workbook.Sheets[
             workbook.SheetNames[0]
         ];
-
-        // LEER COMO MATRIZ
 
         const filas =
         XLSX.utils.sheet_to_json(
@@ -72,8 +157,6 @@ async function cargarExcel() {
             }
         );
 
-        console.log(filas);
-
         procesarFilas(filas);
 
     }
@@ -81,7 +164,7 @@ async function cargarExcel() {
     catch(error) {
 
         console.error(
-            "ERROR EXCEL:",
+            "ERROR:",
             error
         );
 
@@ -99,8 +182,6 @@ function procesarFilas(filas) {
 
     filas.forEach(fila => {
 
-        // VALIDAR FILA
-
         if(
             fila.length >= 6
         ) {
@@ -111,35 +192,45 @@ function procesarFilas(filas) {
             const cargo =
             fila[2];
 
-            const ingreso =
+            const ingresoExcel =
             fila[3];
 
-            const inicia =
+            const inicioExcel =
             fila[5];
 
-            // VALIDAR NOMBRE
-
             if(
+
                 nombre &&
                 cargo &&
-                inicia &&
+                inicioExcel &&
                 nombre !== "NOMBRE DE AGENTE"
+
             ) {
 
+                const ingreso =
+                excelFechaAJS(
+                    ingresoExcel
+                );
+
+                const inicio =
+                excelFechaAJS(
+                    inicioExcel
+                );
+
                 const dias =
-                calcularDias(
+                calcularDiasVacaciones(
                     ingreso
                 );
 
                 const regreso =
                 calcularFechaRegreso(
-                    inicia,
+                    inicio,
                     dias
                 );
 
                 const estado =
                 calcularEstado(
-                    inicia,
+                    inicio,
                     regreso
                 );
 
@@ -148,7 +239,7 @@ function procesarFilas(filas) {
                     nombre,
                     cargo,
                     ingreso,
-                    inicia,
+                    inicio,
                     dias,
                     regreso,
                     estado
@@ -161,8 +252,6 @@ function procesarFilas(filas) {
 
     });
 
-    console.log(agentes);
-
     renderTabla(agentes);
 
     actualizarDashboard();
@@ -173,17 +262,15 @@ function procesarFilas(filas) {
 // CALCULAR DIAS
 // ========================================
 
-function calcularDias(ingreso) {
-
-    if(!ingreso) return 20;
+function calcularDiasVacaciones(
+    fechaIngreso
+) {
 
     const hoy =
     new Date();
 
-    const fechaIngreso =
-    new Date(ingreso);
+    let anios =
 
-    const anios =
     hoy.getFullYear()
     -
     fechaIngreso.getFullYear();
@@ -219,11 +306,15 @@ function calcularFechaRegreso(
         const dia =
         fecha.getDay();
 
-        // NO SABADOS NI DOMINGOS
+        // DOMINGO = 0
+        // SABADO = 6
 
         if(
+
             dia !== 0 &&
-            dia !== 6
+            dia !== 6 &&
+            !esFeriado(fecha)
+
         ) {
 
             contador++;
@@ -232,14 +323,12 @@ function calcularFechaRegreso(
 
     }
 
-    return fecha.toLocaleDateString(
-        'es-GT'
-    );
+    return fecha;
 
 }
 
 // ========================================
-// ESTADO
+// CALCULAR ESTADO
 // ========================================
 
 function calcularEstado(
@@ -250,17 +339,19 @@ function calcularEstado(
     const hoy =
     new Date();
 
-    const fechaInicio =
-    new Date(inicio);
+    // QUITAR HORAS
 
-    const fechaRegreso =
-    new Date(regreso);
+    hoy.setHours(0,0,0,0);
+
+    inicio.setHours(0,0,0,0);
+
+    regreso.setHours(0,0,0,0);
 
     // VACACIONES
 
     if(
-        hoy >= fechaInicio &&
-        hoy <= fechaRegreso
+        hoy >= inicio &&
+        hoy <= regreso
     ) {
 
         return "VACACIONES";
@@ -270,7 +361,7 @@ function calcularEstado(
     // PROXIMOS
 
     const diferencia =
-    fechaInicio - hoy;
+    inicio - hoy;
 
     const dias =
     diferencia /
@@ -337,19 +428,36 @@ function renderTabla(datos) {
 
         <tr>
 
-            <td>${agente.nombre}</td>
+            <td>
+                ${agente.nombre}
+            </td>
 
-            <td>${agente.cargo}</td>
+            <td>
+                ${agente.cargo}
+            </td>
 
-            <td>${agente.inicia}</td>
+            <td>
+                ${formatearFecha(
+                    agente.inicio
+                )}
+            </td>
 
-            <td>${agente.regreso}</td>
+            <td>
+                ${formatearFecha(
+                    agente.regreso
+                )}
+            </td>
 
-            <td>${agente.dias}</td>
+            <td>
+                ${agente.dias}
+            </td>
 
             <td>
 
-                <span class="estado ${clase}">
+                <span class="
+                estado
+                ${clase}
+                ">
 
                     ${agente.estado}
 
@@ -380,24 +488,30 @@ function actualizarDashboard() {
         "enServicio"
     ).innerHTML =
     agentes.filter(
+
         a => a.estado ===
         "SERVICIO"
+
     ).length;
 
     document.getElementById(
         "deVacaciones"
     ).innerHTML =
     agentes.filter(
+
         a => a.estado ===
         "VACACIONES"
+
     ).length;
 
     document.getElementById(
         "proximos"
     ).innerHTML =
     agentes.filter(
+
         a => a.estado ===
         "PROXIMO"
+
     ).length;
 
 }
@@ -416,6 +530,7 @@ document.getElementById(
 function buscar() {
 
     const texto =
+
     document.getElementById(
         "searchInput"
     )
@@ -423,6 +538,7 @@ function buscar() {
     .toLowerCase();
 
     const resultado =
+
     agentes.filter(agente =>
 
         agente.nombre
@@ -442,7 +558,7 @@ function buscar() {
 }
 
 // ========================================
-// INICIAR
+// INICIAR SISTEMA
 // ========================================
 
 cargarExcel();
