@@ -1,103 +1,553 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUNICIPALIDAD DE CHIMALTENANGO — MULTAS 2025</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
+<title>Sistema de Control de Vacaciones PMT</title>
 
-    <!-- XLSX para exportar Excel -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+    radial-gradient(circle at top,#1a0033 0%, #02020a 45%, #000 100%);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.main-container{
+    width:95%;
+    max-width:1200px;
+    margin:30px auto;
+    background:rgba(0,0,0,0.88);
+    border:2px solid #00ffee55;
+    border-radius:25px;
+    padding:25px;
+    box-shadow:
+    0 0 25px #00ffee66,
+    0 0 60px #00ffee22;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.logo-box{
+    width:120px;
+    height:120px;
+    border-radius:20px;
+    padding:10px;
+    background:#000;
+    border:2px solid #00ffee;
+    box-shadow:
+    0 0 15px #00ffee,
+    0 0 35px #00ffee55;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.logo-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* =========================================
+   TITULOS NEON
+========================================= */
+
+.title-section{
+    flex:1;
+    text-align:center;
+}
+
+.main-title{
+    font-size:40px;
+    font-weight:bold;
+    color:#00ffee;
+    text-shadow:
+    0 0 5px #00ffee,
+    0 0 10px #00ffee,
+    0 0 20px #00ffee,
+    0 0 40px #00ffee;
+    animation: glow 2s infinite alternate;
+}
+
+.subtitle{
+    margin-top:10px;
+    font-size:22px;
+    color:#ffd700;
+    text-shadow:
+    0 0 5px #ffd700,
+    0 0 15px #ffd700;
+}
+
+.subcity{
+    margin-top:6px;
+    font-size:18px;
+    color:#ffffff;
+    text-shadow:
+    0 0 5px #00ffee;
+}
+
+@keyframes glow{
+    from{
+        text-shadow:
+        0 0 5px #00ffee,
+        0 0 10px #00ffee,
+        0 0 20px #00ffee;
+    }
+
+    to{
+        text-shadow:
+        0 0 10px #00ffee,
+        0 0 20px #00ffee,
+        0 0 40px #00ffee,
+        0 0 80px #00ffee;
+    }
+}
+
+/* =========================================
+   BUSCADOR
+========================================= */
+
+.search-section{
+    margin-top:40px;
+    text-align:center;
+}
+
+.search-title{
+    font-size:24px;
+    margin-bottom:20px;
+    color:#00ffee;
+    text-shadow:0 0 10px #00ffee;
+}
+
+.search-box{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.search-box input{
+    width:450px;
+    max-width:90%;
+    padding:15px;
+    border-radius:50px;
+    border:2px solid #00ffee;
+    background:#021218;
+    color:white;
+    font-size:18px;
+    outline:none;
+    box-shadow:
+    0 0 10px #00ffee66;
+}
+
+.search-box button{
+    padding:15px 35px;
+    border:none;
+    border-radius:50px;
+    font-size:18px;
+    cursor:pointer;
+    font-weight:bold;
+    background:linear-gradient(45deg,#00ffee,#0055ff);
+    color:black;
+    box-shadow:
+    0 0 15px #00ffee;
+    transition:0.3s;
+}
+
+.search-box button:hover{
+    transform:scale(1.05);
+    box-shadow:
+    0 0 25px #00ffee;
+}
+
+/* =========================================
+   RESULTADOS
+========================================= */
+
+.result-section{
+    margin-top:40px;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#001f2d;
+    color:#00ffee;
+    padding:15px;
+    border:1px solid #00ffee55;
+    text-shadow:0 0 5px #00ffee;
+}
+
+td{
+    padding:14px;
+    text-align:center;
+    border:1px solid #00ffee22;
+    background:#071018;
+}
+
+/* =========================================
+   ESTADOS
+========================================= */
+
+.estado{
+    padding:8px 14px;
+    border-radius:30px;
+    font-weight:bold;
+}
+
+.servicio{
+    background:#00aa44;
+    box-shadow:0 0 10px #00ff66;
+}
+
+.vacaciones{
+    background:#cc0000;
+    box-shadow:0 0 10px red;
+}
+
+.proximo{
+    background:#00aaff;
+    box-shadow:0 0 10px #00ccff;
+}
+
+/* =========================================
+   BOTONES
+========================================= */
+
+.buttons{
+    margin-top:30px;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.buttons button{
+    padding:15px 25px;
+    border:none;
+    border-radius:50px;
+    background:#021218;
+    color:#00ffee;
+    border:2px solid #00ffee;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    box-shadow:0 0 15px #00ffee55;
+    transition:0.3s;
+}
+
+.buttons button:hover{
+    transform:scale(1.05);
+    background:#00ffee;
+    color:black;
+}
+
+/* =========================================
+   SEMAFORO
+========================================= */
+
+.system-status{
+    margin-top:45px;
+    text-align:center;
+}
+
+.system-status h3{
+    margin-bottom:15px;
+    color:#ffffff;
+}
+
+.traffic-light{
+    display:inline-flex;
+    gap:15px;
+    padding:12px 25px;
+    border-radius:40px;
+    background:#021218;
+    border:2px solid #00ffee;
+    box-shadow:
+    0 0 20px #00ffee55;
+}
+
+.light{
+    width:22px;
+    height:22px;
+    border-radius:50%;
+}
+
+.red{
+    background:red;
+    box-shadow:0 0 10px red;
+}
+
+.yellow{
+    background:gold;
+    box-shadow:0 0 10px gold;
+}
+
+.green{
+    background:#00ff66;
+    box-shadow:0 0 10px #00ff66;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer{
+    margin-top:35px;
+    text-align:center;
+    color:#00ffee;
+    text-shadow:0 0 5px #00ffee;
+    line-height:1.8;
+    font-size:16px;
+}
+
+#clock{
+    font-weight:bold;
+    color:white;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:768px){
+
+    .main-title{
+        font-size:28px;
+    }
+
+    .subtitle{
+        font-size:18px;
+    }
+
+    .logo-box{
+        width:90px;
+        height:90px;
+    }
+
+    .header{
+        justify-content:center;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-<div class="contenedor">
+<div class="main-container">
 
-    <!-- ========== HEADER ========== -->
-    <div class="header-top">
+    <!-- HEADER -->
+    <div class="header">
 
-        <!-- ICONO MUNICIPALIDAD -->
         <div class="logo-box">
-            <img src="icons/logo.png" alt="MUNI">
+            <img src="icons/pmt.png" alt="PMT">
         </div>
 
-        <!-- TITULOS -->
-        <div class="titulos">
-            <div class="titulos-linea1">MUNICIPALIDAD DE - CHIMALTENANGO</div>
-            <div class="titulos-linea2">CHIMALTENANGO</div>
-            <div class="titulos-linea3">Sistema CONSULTA DE MULTAS - 2025 ? == BY GELM == ?</div>
-            <div class="titulos-linea4">puedes verificar si tienes multas pendientes de pago</div>
+        <div class="title-section">
+            <div class="main-title">
+                SISTEMA DE CONTROL DE VACACIONES PMT
+            </div>
+
+            <div class="subtitle">
+                POLICÍA MUNICIPAL DE TRÁNSITO
+            </div>
+
+            <div class="subcity">
+                CHIMALTENANGO - 2026
+            </div>
         </div>
 
-        <!-- ICONO GELM (DESCARGA EXCEL VERSION PRO) -->
-        <div class="logo-box" style="cursor:pointer;" onclick="exportarExcelPRO()">
+        <div class="logo-box">
             <img src="icons/icon-512.png" alt="GELM">
         </div>
 
     </div>
 
-    <!-- ESTADO DE CARGA -->
-    <div id="estado">Cargando archivo JSON...</div>
+    <!-- BUSCADOR -->
+    <div class="search-section">
 
-    <!-- ========== BUSCADOR ========== -->
-    <div class="buscador">
-        <input id="busquedaInput" type="text"
-               placeholder="Placa, DPI, No. licencia, documento o No. calcomanía...">
-        <button onclick="buscar()">Buscar</button>
+        <div class="search-title">
+            Buscador Inteligente de Vacacionistas
+        </div>
+
+        <div class="search-box">
+            <input type="text" placeholder="Buscar agente, DPI, cargo...">
+
+            <button>
+                Buscar
+            </button>
+        </div>
+
     </div>
 
-    <!-- NOTA -->
-    <p class="nota">
-        Puedes escribir con o sin espacios / guiones. Ej:<br>
-        <b>1856 12258 0413</b> ó <b>1856122580413</b> &nbsp; | &nbsp;
-        <b>1056-12250413</b> ó <b>105612250413</b> &nbsp; | &nbsp;
-        <b>40</b> (No. calcomanía)
-    </p>
+    <!-- TABLA -->
+    <div class="result-section">
 
-    <!-- ========== RESULTADOS ========== -->
-    <div id="resultado">
-        <div id="resultado-principal"></div>
-        <div id="similares-contenedor"></div>
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Agente</th>
+                    <th>Cargo</th>
+                    <th>Inicio</th>
+                    <th>Regreso</th>
+                    <th>Días</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Luis Rolando Marroquin</td>
+                    <td>VIA PUBLICA</td>
+                    <td>21/09/2026</td>
+                    <td>27/10/2026</td>
+                    <td>25</td>
+                    <td>
+                        <span class="estado proximo">
+                            PRÓXIMO
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Gladys Marisela Garcia</td>
+                    <td>AGENTE PMT</td>
+                    <td>19/01/2026</td>
+                    <td>24/02/2026</td>
+                    <td>25</td>
+                    <td>
+                        <span class="estado vacaciones">
+                            VACACIONES
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Pamela Arevalo</td>
+                    <td>AGENTE PMT</td>
+                    <td>04/06/2026</td>
+                    <td>02/07/2026</td>
+                    <td>20</td>
+                    <td>
+                        <span class="estado servicio">
+                            EN SERVICIO
+                        </span>
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
     </div>
 
-    <!-- BOTÓN CONTACTO -->
-    <div class="contacto-wrapper">
-        <button class="btn-contacto" onclick="window.location.href='mailto:nerox2mil@proton.me'">
-            <span class="icono">✦</span>
-            <span>Más información / Contactar a GELM</span>
+    <!-- BOTONES -->
+    <div class="buttons">
+
+        <button>
+            GENERAR SOLICITUD
         </button>
+
+        <button>
+            IMPRIMIR PDF
+        </button>
+
+        <button>
+            VER HISTORIAL
+        </button>
+
+    </div>
+
+    <!-- SEMAFORO -->
+    <div class="system-status">
+
+        <h3>Estado del sistema</h3>
+
+        <div class="traffic-light">
+
+            <div class="light red"></div>
+            <div class="light yellow"></div>
+            <div class="light green"></div>
+
+        </div>
+
     </div>
 
     <!-- FOOTER -->
-    <div class="footer-info">
-        <div>2014 - 2025 | <strong>BY GELM</strong> | Delegación de Transportes PMT - Chimaltenango<br>
-        att: ---[GELM]---</div>
-        <div id="fechaHora"></div>
-    </div>
+    <footer>
+
+        <div>
+            2014 - 2025 | BY GELM | Delegación de Transportes PMT — Chimaltenango
+        </div>
+
+        <div>
+            Sistema y registro controlado por GELM
+        </div>
+
+        <div id="clock"></div>
+
+    </footer>
 
 </div>
 
-<!-- APP.JS -->
-<script src="app.js"></script>
-
 <script>
-// ================== RELOJ ===================
-setInterval(() => {
-    const f = new Date();
-    document.getElementById("fechaHora").textContent =
-        f.toLocaleDateString("es-ES", { weekday:"long", year:"numeric", month:"long", day:"numeric" }) +
-        " — " + f.toLocaleTimeString("es-ES");
-}, 1000);
-</script>
 
-<!-- SERVICE WORKER -->
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
+function updateClock(){
+
+    const now = new Date();
+
+    const options = {
+        weekday:'long',
+        year:'numeric',
+        month:'long',
+        day:'numeric',
+        hour:'numeric',
+        minute:'2-digit',
+        second:'2-digit'
+    };
+
+    document.getElementById("clock").innerHTML =
+    now.toLocaleDateString('es-GT', options);
+
 }
+
+setInterval(updateClock,1000);
+
+updateClock();
+
 </script>
 
 </body>
