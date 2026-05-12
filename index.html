@@ -1,554 +1,249 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sistema de Control de Vacaciones PMT</title>
+    <meta charset="UTF-8">
 
-<style>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+    <title>
+        Sistema de Control de Vacaciones PMT
+    </title>
 
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:
-    radial-gradient(circle at top,#1a0033 0%, #02020a 45%, #000 100%);
-    color:white;
-    min-height:100vh;
-    overflow-x:hidden;
-}
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
 
-/* =========================================
-   CONTENEDOR PRINCIPAL
-========================================= */
-
-.main-container{
-    width:95%;
-    max-width:1200px;
-    margin:30px auto;
-    background:rgba(0,0,0,0.88);
-    border:2px solid #00ffee55;
-    border-radius:25px;
-    padding:25px;
-    box-shadow:
-    0 0 25px #00ffee66,
-    0 0 60px #00ffee22;
-}
-
-/* =========================================
-   HEADER
-========================================= */
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.logo-box{
-    width:120px;
-    height:120px;
-    border-radius:20px;
-    padding:10px;
-    background:#000;
-    border:2px solid #00ffee;
-    box-shadow:
-    0 0 15px #00ffee,
-    0 0 35px #00ffee55;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.logo-box img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-}
-
-/* =========================================
-   TITULOS NEON
-========================================= */
-
-.title-section{
-    flex:1;
-    text-align:center;
-}
-
-.main-title{
-    font-size:40px;
-    font-weight:bold;
-    color:#00ffee;
-    text-shadow:
-    0 0 5px #00ffee,
-    0 0 10px #00ffee,
-    0 0 20px #00ffee,
-    0 0 40px #00ffee;
-    animation: glow 2s infinite alternate;
-}
-
-.subtitle{
-    margin-top:10px;
-    font-size:22px;
-    color:#ffd700;
-    text-shadow:
-    0 0 5px #ffd700,
-    0 0 15px #ffd700;
-}
-
-.subcity{
-    margin-top:6px;
-    font-size:18px;
-    color:#ffffff;
-    text-shadow:
-    0 0 5px #00ffee;
-}
-
-@keyframes glow{
-    from{
-        text-shadow:
-        0 0 5px #00ffee,
-        0 0 10px #00ffee,
-        0 0 20px #00ffee;
-    }
-
-    to{
-        text-shadow:
-        0 0 10px #00ffee,
-        0 0 20px #00ffee,
-        0 0 40px #00ffee,
-        0 0 80px #00ffee;
-    }
-}
-
-/* =========================================
-   BUSCADOR
-========================================= */
-
-.search-section{
-    margin-top:40px;
-    text-align:center;
-}
-
-.search-title{
-    font-size:24px;
-    margin-bottom:20px;
-    color:#00ffee;
-    text-shadow:0 0 10px #00ffee;
-}
-
-.search-box{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:15px;
-}
-
-.search-box input{
-    width:450px;
-    max-width:90%;
-    padding:15px;
-    border-radius:50px;
-    border:2px solid #00ffee;
-    background:#021218;
-    color:white;
-    font-size:18px;
-    outline:none;
-    box-shadow:
-    0 0 10px #00ffee66;
-}
-
-.search-box button{
-    padding:15px 35px;
-    border:none;
-    border-radius:50px;
-    font-size:18px;
-    cursor:pointer;
-    font-weight:bold;
-    background:linear-gradient(45deg,#00ffee,#0055ff);
-    color:black;
-    box-shadow:
-    0 0 15px #00ffee;
-    transition:0.3s;
-}
-
-.search-box button:hover{
-    transform:scale(1.05);
-    box-shadow:
-    0 0 25px #00ffee;
-}
-
-/* =========================================
-   RESULTADOS
-========================================= */
-
-.result-section{
-    margin-top:40px;
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-}
-
-th{
-    background:#001f2d;
-    color:#00ffee;
-    padding:15px;
-    border:1px solid #00ffee55;
-    text-shadow:0 0 5px #00ffee;
-}
-
-td{
-    padding:14px;
-    text-align:center;
-    border:1px solid #00ffee22;
-    background:#071018;
-}
-
-/* =========================================
-   ESTADOS
-========================================= */
-
-.estado{
-    padding:8px 14px;
-    border-radius:30px;
-    font-weight:bold;
-}
-
-.servicio{
-    background:#00aa44;
-    box-shadow:0 0 10px #00ff66;
-}
-
-.vacaciones{
-    background:#cc0000;
-    box-shadow:0 0 10px red;
-}
-
-.proximo{
-    background:#00aaff;
-    box-shadow:0 0 10px #00ccff;
-}
-
-/* =========================================
-   BOTONES
-========================================= */
-
-.buttons{
-    margin-top:30px;
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.buttons button{
-    padding:15px 25px;
-    border:none;
-    border-radius:50px;
-    background:#021218;
-    color:#00ffee;
-    border:2px solid #00ffee;
-    cursor:pointer;
-    font-size:16px;
-    font-weight:bold;
-    box-shadow:0 0 15px #00ffee55;
-    transition:0.3s;
-}
-
-.buttons button:hover{
-    transform:scale(1.05);
-    background:#00ffee;
-    color:black;
-}
-
-/* =========================================
-   SEMAFORO
-========================================= */
-
-.system-status{
-    margin-top:45px;
-    text-align:center;
-}
-
-.system-status h3{
-    margin-bottom:15px;
-    color:#ffffff;
-}
-
-.traffic-light{
-    display:inline-flex;
-    gap:15px;
-    padding:12px 25px;
-    border-radius:40px;
-    background:#021218;
-    border:2px solid #00ffee;
-    box-shadow:
-    0 0 20px #00ffee55;
-}
-
-.light{
-    width:22px;
-    height:22px;
-    border-radius:50%;
-}
-
-.red{
-    background:red;
-    box-shadow:0 0 10px red;
-}
-
-.yellow{
-    background:gold;
-    box-shadow:0 0 10px gold;
-}
-
-.green{
-    background:#00ff66;
-    box-shadow:0 0 10px #00ff66;
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-footer{
-    margin-top:35px;
-    text-align:center;
-    color:#00ffee;
-    text-shadow:0 0 5px #00ffee;
-    line-height:1.8;
-    font-size:16px;
-}
-
-#clock{
-    font-weight:bold;
-    color:white;
-}
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-
-@media(max-width:768px){
-
-    .main-title{
-        font-size:28px;
-    }
-
-    .subtitle{
-        font-size:18px;
-    }
-
-    .logo-box{
-        width:90px;
-        height:90px;
-    }
-
-    .header{
-        justify-content:center;
-    }
-}
-
-</style>
 </head>
 
 <body>
 
-<div class="main-container">
+    <!-- =========================================
+         CONTENEDOR PRINCIPAL
+    ========================================== -->
 
-    <!-- HEADER -->
-    <div class="header">
+    <div class="main-container">
 
-        <div class="logo-box">
-            <img src="icons/pmt.png" alt="PMT">
-        </div>
+        <!-- =====================================
+             HEADER
+        ====================================== -->
 
-        <div class="title-section">
-            <div class="main-title">
-                SISTEMA DE CONTROL DE VACACIONES PMT
+        <header class="header">
+
+            <!-- LOGO PMT -->
+
+            <div class="logo-box">
+
+                <img src="icons/pmt.png"
+                     alt="PMT">
+
             </div>
 
-            <div class="subtitle">
-                POLICÍA MUNICIPAL DE TRÁNSITO
+            <!-- TITULOS -->
+
+            <div class="title-section">
+
+                <h1 class="main-title">
+                    SISTEMA DE CONTROL DE VACACIONES PMT
+                </h1>
+
+                <h2 class="subtitle">
+                    POLICÍA MUNICIPAL DE TRÁNSITO
+                </h2>
+
+                <h3 class="subcity">
+                    CHIMALTENANGO - 2026
+                </h3>
+
             </div>
 
-            <div class="subcity">
-                CHIMALTENANGO - 2026
+            <!-- LOGO GELM -->
+
+            <div class="logo-box">
+
+                <img src="icons/icon-512.png"
+                     alt="GELM">
+
             </div>
-        </div>
 
-        <div class="logo-box">
-            <img src="icons/icon-512.png" alt="GELM">
-        </div>
+        </header>
 
-    </div>
+        <!-- =====================================
+             BUSCADOR
+        ====================================== -->
 
-    <!-- BUSCADOR -->
-    <div class="search-section">
+        <section class="search-section">
 
-        <div class="search-title">
-            Buscador Inteligente de Vacacionistas
-        </div>
+            <h2 class="search-title">
+                Buscador Inteligente de Vacacionistas
+            </h2>
 
-        <div class="search-box">
-            <input type="text" placeholder="Buscar agente, DPI, cargo...">
+            <div class="search-box">
 
-            <button>
-                Buscar
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Buscar agente, DPI, cargo...">
+
+                <button id="searchButton">
+                    Buscar
+                </button>
+
+            </div>
+
+            <div class="search-help">
+
+                Puedes buscar:
+                nombres,
+                cargos,
+                DPI,
+                grupos,
+                períodos vacacionales.
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+             PANEL RESUMEN
+        ====================================== -->
+
+        <section class="dashboard">
+
+            <div class="card total">
+                <h3>Total Agentes</h3>
+                <p id="totalAgentes">0</p>
+            </div>
+
+            <div class="card servicio">
+                <h3>En Servicio</h3>
+                <p id="enServicio">0</p>
+            </div>
+
+            <div class="card vacaciones">
+                <h3>De Vacaciones</h3>
+                <p id="deVacaciones">0</p>
+            </div>
+
+            <div class="card proximo">
+                <h3>Próximos</h3>
+                <p id="proximos">0</p>
+            </div>
+
+        </section>
+
+        <!-- =====================================
+             TABLA
+        ====================================== -->
+
+        <section class="table-section">
+
+            <table id="tablaVacaciones">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Agente</th>
+                        <th>Cargo</th>
+                        <th>Inicio</th>
+                        <th>Regreso</th>
+                        <th>Días</th>
+                        <th>Estado</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tableBody">
+
+                    <!-- DATOS DINÁMICOS -->
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- =====================================
+             BOTONES
+        ====================================== -->
+
+        <section class="buttons-section">
+
+            <button class="action-btn">
+                GENERAR SOLICITUD
             </button>
-        </div>
+
+            <button class="action-btn">
+                IMPRIMIR PDF
+            </button>
+
+            <button class="action-btn">
+                VER HISTORIAL
+            </button>
+
+        </section>
+
+        <!-- =====================================
+             SEMAFORO
+        ====================================== -->
+
+        <section class="system-status">
+
+            <h3>
+                Estado del sistema
+            </h3>
+
+            <div class="traffic-light">
+
+                <div class="light red"></div>
+
+                <div class="light yellow"></div>
+
+                <div class="light green"></div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+             FOOTER
+        ====================================== -->
+
+        <footer>
+
+            <div class="footer-text">
+
+                2014 - 2025 |
+                BY GELM |
+                Delegación de Transportes PMT —
+                Chimaltenango
+
+            </div>
+
+            <div class="footer-sub">
+
+                Sistema y registro controlado por GELM
+
+            </div>
+
+            <div id="clock">
+
+                Cargando fecha...
+
+            </div>
+
+        </footer>
 
     </div>
 
-    <!-- TABLA -->
-    <div class="result-section">
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
 
-        <table>
-
-            <thead>
-                <tr>
-                    <th>Agente</th>
-                    <th>Cargo</th>
-                    <th>Inicio</th>
-                    <th>Regreso</th>
-                    <th>Días</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td>Luis Rolando Marroquin</td>
-                    <td>VIA PUBLICA</td>
-                    <td>21/09/2026</td>
-                    <td>27/10/2026</td>
-                    <td>25</td>
-                    <td>
-                        <span class="estado proximo">
-                            PRÓXIMO
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>Gladys Marisela Garcia</td>
-                    <td>AGENTE PMT</td>
-                    <td>19/01/2026</td>
-                    <td>24/02/2026</td>
-                    <td>25</td>
-                    <td>
-                        <span class="estado vacaciones">
-                            VACACIONES
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>Pamela Arevalo</td>
-                    <td>AGENTE PMT</td>
-                    <td>04/06/2026</td>
-                    <td>02/07/2026</td>
-                    <td>20</td>
-                    <td>
-                        <span class="estado servicio">
-                            EN SERVICIO
-                        </span>
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <!-- BOTONES -->
-    <div class="buttons">
-
-        <button>
-            GENERAR SOLICITUD
-        </button>
-
-        <button>
-            IMPRIMIR PDF
-        </button>
-
-        <button>
-            VER HISTORIAL
-        </button>
-
-    </div>
-
-    <!-- SEMAFORO -->
-    <div class="system-status">
-
-        <h3>Estado del sistema</h3>
-
-        <div class="traffic-light">
-
-            <div class="light red"></div>
-            <div class="light yellow"></div>
-            <div class="light green"></div>
-
-        </div>
-
-    </div>
-
-    <!-- FOOTER -->
-    <footer>
-
-        <div>
-            2014 - 2025 | BY GELM | Delegación de Transportes PMT — Chimaltenango
-        </div>
-
-        <div>
-            Sistema y registro controlado por GELM
-        </div>
-
-        <div id="clock"></div>
-
-    </footer>
-
-</div>
-
-<script>
-
-function updateClock(){
-
-    const now = new Date();
-
-    const options = {
-        weekday:'long',
-        year:'numeric',
-        month:'long',
-        day:'numeric',
-        hour:'numeric',
-        minute:'2-digit',
-        second:'2-digit'
-    };
-
-    document.getElementById("clock").innerHTML =
-    now.toLocaleDateString('es-GT', options);
-
-}
-
-setInterval(updateClock,1000);
-
-updateClock();
-
-</script>
+    <script src="app.js"></script>
 
 </body>
+
 </html>
