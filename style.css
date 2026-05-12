@@ -1,0 +1,767 @@
+/* =========================================
+   RESET
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+body{
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+    radial-gradient(circle at top,
+    #2d0b45 0%,
+    #090014 35%,
+    #000000 100%);
+
+    color:white;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+}
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.main-container{
+
+    width:95%;
+
+    max-width:1400px;
+
+    margin:25px auto;
+
+    background:rgba(0,0,0,0.88);
+
+    border:2px solid #00ffee55;
+
+    border-radius:30px;
+
+    padding:30px;
+
+    box-shadow:
+    0 0 25px #00ffee55,
+    0 0 60px #00ffee22;
+
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+/* =========================================
+   LOGOS
+========================================= */
+
+.logo-box{
+
+    width:130px;
+
+    height:130px;
+
+    border-radius:25px;
+
+    background:#020202;
+
+    border:2px solid #00ffee;
+
+    padding:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    box-shadow:
+    0 0 20px #00ffee,
+    0 0 50px #00ffee33;
+
+}
+
+.logo-box img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+}
+
+/* =========================================
+   TITULOS
+========================================= */
+
+.title-section{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+/* =========================================
+   TITULO PRINCIPAL
+========================================= */
+
+.main-title{
+
+    font-size:42px;
+
+    color:#00ffee;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    text-shadow:
+    0 0 5px #00ffee,
+    0 0 10px #00ffee,
+    0 0 20px #00ffee,
+    0 0 40px #00ffee,
+    0 0 80px #00ffee;
+
+    animation: neonGlow 2s infinite alternate;
+
+}
+
+/* =========================================
+   SUBTITULO
+========================================= */
+
+.subtitle{
+
+    margin-top:10px;
+
+    font-size:24px;
+
+    color:#ffd700;
+
+    text-shadow:
+    0 0 5px #ffd700,
+    0 0 15px #ffd700;
+
+}
+
+/* =========================================
+   CHIMALTENANGO
+========================================= */
+
+.subcity{
+
+    margin-top:8px;
+
+    font-size:20px;
+
+    color:white;
+
+    text-shadow:
+    0 0 5px #00ffee,
+    0 0 15px #00ffee;
+
+}
+
+/* =========================================
+   EFECTO NEON
+========================================= */
+
+@keyframes neonGlow{
+
+    from{
+
+        text-shadow:
+        0 0 5px #00ffee,
+        0 0 10px #00ffee,
+        0 0 20px #00ffee;
+
+    }
+
+    to{
+
+        text-shadow:
+        0 0 10px #00ffee,
+        0 0 20px #00ffee,
+        0 0 40px #00ffee,
+        0 0 80px #00ffee;
+
+    }
+
+}
+
+/* =========================================
+   BUSCADOR
+========================================= */
+
+.search-section{
+
+    margin-top:45px;
+
+    text-align:center;
+
+}
+
+.search-title{
+
+    font-size:26px;
+
+    color:#00ffee;
+
+    margin-bottom:20px;
+
+    text-shadow:
+    0 0 10px #00ffee;
+
+}
+
+.search-box{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+/* =========================================
+   INPUT
+========================================= */
+
+.search-box input{
+
+    width:500px;
+
+    max-width:95%;
+
+    padding:16px;
+
+    border-radius:50px;
+
+    border:2px solid #00ffee;
+
+    background:#04141d;
+
+    color:white;
+
+    font-size:18px;
+
+    outline:none;
+
+    box-shadow:
+    0 0 15px #00ffee55;
+
+}
+
+/* =========================================
+   BOTON BUSCAR
+========================================= */
+
+.search-box button{
+
+    padding:16px 35px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:
+    linear-gradient(45deg,
+    #00ffee,
+    #0055ff);
+
+    color:black;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 20px #00ffee;
+
+    transition:0.3s;
+
+}
+
+.search-box button:hover{
+
+    transform:scale(1.06);
+
+    box-shadow:
+    0 0 35px #00ffee;
+
+}
+
+/* =========================================
+   TEXTO AYUDA
+========================================= */
+
+.search-help{
+
+    margin-top:15px;
+
+    color:#cccccc;
+
+    font-size:15px;
+
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard{
+
+    margin-top:45px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+/* =========================================
+   TARJETAS
+========================================= */
+
+.card{
+
+    padding:25px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    border:2px solid #00ffee55;
+
+    background:#061018;
+
+    box-shadow:
+    0 0 20px #00ffee22;
+
+}
+
+.card h3{
+
+    margin-bottom:15px;
+
+    font-size:22px;
+
+}
+
+.card p{
+
+    font-size:35px;
+
+    font-weight:bold;
+
+}
+
+/* =========================================
+   COLORES TARJETAS
+========================================= */
+
+.total{
+
+    color:#00ffee;
+
+}
+
+.servicio{
+
+    color:#00ff66;
+
+}
+
+.vacaciones{
+
+    color:#ff3333;
+
+}
+
+.proximo{
+
+    color:#00bbff;
+
+}
+
+/* =========================================
+   TABLA
+========================================= */
+
+.table-section{
+
+    margin-top:45px;
+
+    overflow-x:auto;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:900px;
+
+}
+
+thead{
+
+    background:#00141f;
+
+}
+
+th{
+
+    padding:18px;
+
+    color:#00ffee;
+
+    border:1px solid #00ffee44;
+
+    font-size:17px;
+
+    text-shadow:
+    0 0 5px #00ffee;
+
+}
+
+td{
+
+    padding:16px;
+
+    text-align:center;
+
+    border:1px solid #00ffee22;
+
+    background:#09131b;
+
+}
+
+/* =========================================
+   ESTADOS
+========================================= */
+
+.estado{
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+    display:inline-block;
+
+}
+
+.estado.servicio{
+
+    background:#00aa44;
+
+    color:white;
+
+    box-shadow:
+    0 0 15px #00ff66;
+
+}
+
+.estado.vacaciones{
+
+    background:#cc0000;
+
+    color:white;
+
+    box-shadow:
+    0 0 15px red;
+
+}
+
+.estado.proximo{
+
+    background:#00aaff;
+
+    color:white;
+
+    box-shadow:
+    0 0 15px #00ccff;
+
+}
+
+/* =========================================
+   BOTONES
+========================================= */
+
+.buttons-section{
+
+    margin-top:40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+.action-btn{
+
+    padding:16px 28px;
+
+    border-radius:50px;
+
+    border:2px solid #00ffee;
+
+    background:#04141d;
+
+    color:#00ffee;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:
+    0 0 15px #00ffee55;
+
+}
+
+.action-btn:hover{
+
+    background:#00ffee;
+
+    color:black;
+
+    transform:scale(1.05);
+
+}
+
+/* =========================================
+   SEMAFORO
+========================================= */
+
+.system-status{
+
+    margin-top:50px;
+
+    text-align:center;
+
+}
+
+.system-status h3{
+
+    margin-bottom:15px;
+
+    color:white;
+
+}
+
+.traffic-light{
+
+    display:inline-flex;
+
+    gap:15px;
+
+    padding:12px 25px;
+
+    border-radius:40px;
+
+    background:#04141d;
+
+    border:2px solid #00ffee;
+
+    box-shadow:
+    0 0 20px #00ffee55;
+
+}
+
+/* =========================================
+   LUCES
+========================================= */
+
+.light{
+
+    width:22px;
+
+    height:22px;
+
+    border-radius:50%;
+
+}
+
+.red{
+
+    background:red;
+
+    box-shadow:
+    0 0 12px red;
+
+}
+
+.yellow{
+
+    background:gold;
+
+    box-shadow:
+    0 0 12px gold;
+
+}
+
+.green{
+
+    background:#00ff66;
+
+    box-shadow:
+    0 0 12px #00ff66;
+
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer{
+
+    margin-top:40px;
+
+    text-align:center;
+
+    line-height:1.9;
+
+}
+
+.footer-text{
+
+    color:#00ffee;
+
+    font-size:16px;
+
+    text-shadow:
+    0 0 5px #00ffee;
+
+}
+
+.footer-sub{
+
+    color:#ffffff;
+
+    font-size:15px;
+
+    text-shadow:
+    0 0 5px #00ffee;
+
+}
+
+#clock{
+
+    color:#ffffff;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 5px #00ffee;
+
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:900px){
+
+    .header{
+
+        justify-content:center;
+
+    }
+
+    .main-title{
+
+        font-size:28px;
+
+    }
+
+    .subtitle{
+
+        font-size:18px;
+
+    }
+
+    .subcity{
+
+        font-size:16px;
+
+    }
+
+    .logo-box{
+
+        width:90px;
+
+        height:90px;
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .main-title{
+
+        font-size:22px;
+
+    }
+
+    .search-box input{
+
+        width:100%;
+
+    }
+
+    .search-box{
+
+        flex-direction:column;
+
+    }
+
+}
