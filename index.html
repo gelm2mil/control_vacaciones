@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="app.js"></script>
+
 <head>
 
     <meta charset="UTF-8">
@@ -84,7 +83,7 @@
 
                 <input type="text"
                        id="searchInput"
-                       placeholder="Buscar agente, DPI, cargo...">
+                       placeholder="Buscar agente, cargo...">
 
                 <button id="searchButton">
                     Buscar
@@ -97,7 +96,6 @@
                 Puedes buscar:
                 nombres,
                 cargos,
-                DPI,
                 grupos,
                 períodos vacacionales.
 
@@ -106,29 +104,41 @@
         </section>
 
         <!-- =====================================
-             PANEL RESUMEN
+             DASHBOARD
         ====================================== -->
 
         <section class="dashboard">
 
             <div class="card total">
+
                 <h3>Total Agentes</h3>
+
                 <p id="totalAgentes">0</p>
+
             </div>
 
             <div class="card servicio">
+
                 <h3>En Servicio</h3>
+
                 <p id="enServicio">0</p>
+
             </div>
 
             <div class="card vacaciones">
+
                 <h3>De Vacaciones</h3>
+
                 <p id="deVacaciones">0</p>
+
             </div>
 
             <div class="card proximo">
+
                 <h3>Próximos</h3>
+
                 <p id="proximos">0</p>
+
             </div>
 
         </section>
@@ -240,7 +250,13 @@
     </div>
 
     <!-- =========================================
-         JAVASCRIPT
+         LIBRERIA XLSX
+    ========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- =========================================
+         APP JS
     ========================================== -->
 
     <script src="app.js"></script>
