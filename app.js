@@ -1,11 +1,11 @@
 // ========================================
-// VARIABLES GLOBALES
+// VARIABLES
 // ========================================
 
 let agentes = [];
 
 // ========================================
-// RELOJ GELM
+// RELOJ
 // ========================================
 
 function actualizarFechaHora() {
@@ -24,12 +24,11 @@ function actualizarFechaHora() {
 
     };
 
-    const fecha = ahora.toLocaleDateString(
+    document.getElementById("clock").innerHTML =
+    ahora.toLocaleDateString(
         'es-GT',
         opciones
     );
-
-    document.getElementById("clock").innerHTML = fecha;
 
 }
 
@@ -45,42 +44,44 @@ async function cargarExcel() {
 
     try {
 
-        const response = await fetch(
+        const response =
+        await fetch(
             "VACACIONES 2026.xlsx"
         );
 
-        const data = await response.arrayBuffer();
+        const data =
+        await response.arrayBuffer();
 
-        const workbook = XLSX.read(
-            data,
-            {
-                type: "array"
-            }
-        );
+        const workbook =
+        XLSX.read(data, {
+            type: "array"
+        });
 
         const hoja =
         workbook.Sheets[
             workbook.SheetNames[0]
         ];
 
-        const json =
+        // LEER COMO MATRIZ
+
+        const filas =
         XLSX.utils.sheet_to_json(
             hoja,
             {
-                defval: ""
+                header: 1
             }
         );
 
-        console.log(json);
+        console.log(filas);
 
-        procesarDatos(json);
+        procesarFilas(filas);
 
     }
 
     catch(error) {
 
         console.error(
-            "Error cargando Excel:",
+            "ERROR EXCEL:",
             error
         );
 
@@ -89,72 +90,78 @@ async function cargarExcel() {
 }
 
 // ========================================
-// PROCESAR DATOS
+// PROCESAR FILAS
 // ========================================
 
-function procesarDatos(datosExcel) {
+function procesarFilas(filas) {
 
     agentes = [];
 
-    datosExcel.forEach(fila => {
+    filas.forEach(fila => {
 
-        const nombre =
-        fila["NOMBRE DE AGENTE"];
-
-        const cargo =
-        fila["CARGO"];
-
-        const ingreso =
-        fila["AÑO DE INGRESO"];
-
-        const inicia =
-        fila["INICIA"];
-
-        // VALIDAR REGISTRO
+        // VALIDAR FILA
 
         if(
-            nombre &&
-            cargo &&
-            inicia
+            fila.length >= 6
         ) {
 
-            const anios =
-            calcularAnios(
-                ingreso
-            );
+            const nombre =
+            fila[1];
 
-            const dias =
-            anios >= 5
-            ? 25
-            : 20;
+            const cargo =
+            fila[2];
 
-            const regreso =
-            calcularFechaRegreso(
-                inicia,
-                dias
-            );
+            const ingreso =
+            fila[3];
 
-            const estado =
-            calcularEstado(
-                inicia,
-                regreso
-            );
+            const inicia =
+            fila[5];
 
-            agentes.push({
+            // VALIDAR NOMBRE
 
-                nombre,
-                cargo,
-                ingreso,
-                inicia,
-                dias,
-                regreso,
-                estado
+            if(
+                nombre &&
+                cargo &&
+                inicia &&
+                nombre !== "NOMBRE DE AGENTE"
+            ) {
 
-            });
+                const dias =
+                calcularDias(
+                    ingreso
+                );
+
+                const regreso =
+                calcularFechaRegreso(
+                    inicia,
+                    dias
+                );
+
+                const estado =
+                calcularEstado(
+                    inicia,
+                    regreso
+                );
+
+                agentes.push({
+
+                    nombre,
+                    cargo,
+                    ingreso,
+                    inicia,
+                    dias,
+                    regreso,
+                    estado
+
+                });
+
+            }
 
         }
 
     });
+
+    console.log(agentes);
 
     renderTabla(agentes);
 
@@ -163,29 +170,32 @@ function procesarDatos(datosExcel) {
 }
 
 // ========================================
-// CALCULAR AÑOS
+// CALCULAR DIAS
 // ========================================
 
-function calcularAnios(fechaIngreso) {
+function calcularDias(ingreso) {
 
-    if(!fechaIngreso) return 0;
+    if(!ingreso) return 20;
 
-    const hoy = new Date();
+    const hoy =
+    new Date();
 
-    const ingreso =
-    new Date(fechaIngreso);
+    const fechaIngreso =
+    new Date(ingreso);
 
-    let anios =
+    const anios =
     hoy.getFullYear()
     -
-    ingreso.getFullYear();
+    fechaIngreso.getFullYear();
 
-    return anios;
+    return anios >= 5
+    ? 25
+    : 20;
 
 }
 
 // ========================================
-// CALCULAR REGRESO
+// FECHA REGRESO
 // ========================================
 
 function calcularFechaRegreso(
@@ -209,7 +219,7 @@ function calcularFechaRegreso(
         const dia =
         fecha.getDay();
 
-        // NO SABADO NI DOMINGO
+        // NO SABADOS NI DOMINGOS
 
         if(
             dia !== 0 &&
@@ -257,7 +267,7 @@ function calcularEstado(
 
     }
 
-    // PROXIMO
+    // PROXIMOS
 
     const diferencia =
     fechaInicio - hoy;
@@ -280,7 +290,7 @@ function calcularEstado(
 }
 
 // ========================================
-// RENDER TABLA
+// TABLA
 // ========================================
 
 function renderTabla(datos) {
@@ -294,15 +304,14 @@ function renderTabla(datos) {
 
     datos.forEach(agente => {
 
-        let claseEstado = "";
+        let clase = "";
 
         if(
             agente.estado ===
             "SERVICIO"
         ) {
 
-            claseEstado =
-            "servicio";
+            clase = "servicio";
 
         }
 
@@ -311,8 +320,7 @@ function renderTabla(datos) {
             "VACACIONES"
         ) {
 
-            claseEstado =
-            "vacaciones";
+            clase = "vacaciones";
 
         }
 
@@ -321,8 +329,7 @@ function renderTabla(datos) {
             "PROXIMO"
         ) {
 
-            claseEstado =
-            "proximo";
+            clase = "proximo";
 
         }
 
@@ -330,32 +337,19 @@ function renderTabla(datos) {
 
         <tr>
 
-            <td>
-                ${agente.nombre}
-            </td>
+            <td>${agente.nombre}</td>
 
-            <td>
-                ${agente.cargo}
-            </td>
+            <td>${agente.cargo}</td>
 
-            <td>
-                ${agente.inicia}
-            </td>
+            <td>${agente.inicia}</td>
 
-            <td>
-                ${agente.regreso}
-            </td>
+            <td>${agente.regreso}</td>
 
-            <td>
-                ${agente.dias}
-            </td>
+            <td>${agente.dias}</td>
 
             <td>
 
-                <span class="
-                estado
-                ${claseEstado}
-                ">
+                <span class="estado ${clase}">
 
                     ${agente.estado}
 
@@ -428,7 +422,7 @@ function buscar() {
     .value
     .toLowerCase();
 
-    const filtrados =
+    const resultado =
     agentes.filter(agente =>
 
         agente.nombre
@@ -443,12 +437,12 @@ function buscar() {
 
     );
 
-    renderTabla(filtrados);
+    renderTabla(resultado);
 
 }
 
 // ========================================
-// INICIAR SISTEMA
+// INICIAR
 // ========================================
 
 cargarExcel();
