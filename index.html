@@ -3,54 +3,67 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sistema de Control PMT</title>
+<title>SISTEMA PMT GELM</title>
 
-    <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 
-    <!-- XLSX -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
 
 <body>
 
-    <div class="main-container">
+<div class="main-container">
 
-        <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-        <header class="header">
+    <header class="header">
 
-            <div class="logo-box">
-                <img src="icons/pmt.png" class="logo">
-            </div>
+        <div class="logo-box">
 
-            <div class="title-box">
+            <img src="icons/pmt.png" class="logo">
 
-                <h1>
-                    SISTEMA DE CONTROL DE VACACIONES PMT
-                </h1>
+        </div>
 
-                <h2>
-                    POLICÍA MUNICIPAL DE TRÁNSITO
-                </h2>
+        <div class="title-box">
 
-                <h3>
-                    CHIMALTENANGO - 2026
-                </h3>
+            <h1>
+                SISTEMA DE CONTROL DE VACACIONES PMT
+            </h1>
 
-            </div>
+            <h2>
+                POLICÍA MUNICIPAL DE TRÁNSITO
+            </h2>
 
-            <div class="logo-box">
-                <img src="icons/icon-512.png" class="logo">
-            </div>
+            <h3>
+                CHIMALTENANGO - 2026
+            </h3>
 
-        </header>
+        </div>
 
-        <!-- BUSCADOR -->
+        <div class="logo-box">
+
+            <img src="icons/icon-512.png" class="logo">
+
+        </div>
+
+    </header>
+
+    <!-- =========================
+         CONTENIDO
+    ========================== -->
+
+    <div class="content-area">
+
+        <!-- =========================
+             BUSCADOR
+        ========================== -->
 
         <section class="search-section">
 
@@ -78,13 +91,17 @@
 
         </section>
 
-        <!-- DASHBOARD -->
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
 
         <section class="dashboard">
 
             <div class="card">
 
-                <h3>Total Agentes</h3>
+                <h3>
+                    Total Agentes
+                </h3>
 
                 <span id="totalAgentes">
                     0
@@ -94,7 +111,9 @@
 
             <div class="card">
 
-                <h3>En Servicio</h3>
+                <h3>
+                    En Servicio
+                </h3>
 
                 <span id="enServicio">
                     0
@@ -104,7 +123,9 @@
 
             <div class="card">
 
-                <h3>Vacaciones</h3>
+                <h3>
+                    Vacaciones
+                </h3>
 
                 <span id="deVacaciones">
                     0
@@ -114,7 +135,9 @@
 
             <div class="card">
 
-                <h3>IGSS / Permiso</h3>
+                <h3>
+                    IGSS / Permiso
+                </h3>
 
                 <span id="proximos">
                     0
@@ -124,11 +147,13 @@
 
         </section>
 
-        <!-- TABLA -->
+        <!-- =========================
+             TABLA
+        ========================== -->
 
-        <section class="tabla-section">
+        <div class="table-container">
 
-            <table>
+            <table id="tablaPersonal">
 
                 <thead>
 
@@ -148,33 +173,37 @@
 
                 </thead>
 
-                <tbody>
+                <tbody id="tablaBody">
 
                 </tbody>
 
             </table>
 
-        </section>
+        </div>
 
-        <!-- BOTONES -->
+        <!-- =========================
+             BOTONES
+        ========================== -->
 
-        <section class="botones">
+        <div class="botones-panel">
 
-            <button>
+            <button onclick="generarSolicitud()">
                 GENERAR SOLICITUD
             </button>
 
-            <button>
+            <button onclick="window.print()">
                 IMPRIMIR PDF
             </button>
 
-            <button>
+            <button onclick="verHistorial()">
                 VER HISTORIAL
             </button>
 
-        </section>
+        </div>
 
-        <!-- ESTADO -->
+        <!-- =========================
+             ESTADO DEL SISTEMA
+        ========================== -->
 
         <section class="estado-sistema">
 
@@ -194,28 +223,31 @@
 
         </section>
 
-        <!-- FOOTER -->
+        <!-- =========================
+             FOOTER
+        ========================== -->
 
-        <footer>
+        <footer class="footer-gelm">
 
             <p>
-                2014 - 2025 | BY GELM |
-                Delegación de Transportes PMT — Chimaltenango
+                © 2025–2026 — Sistema GELM
             </p>
 
             <p>
-                Sistema y registro controlado por GELM
+                Desarrollo, diseño y propiedad intelectual reservada — BY GELM
             </p>
-
-            <div id="fecha"></div>
 
         </footer>
 
     </div>
 
-    <!-- APP -->
+</div>
 
-    <script src="app.js"></script>
+<!-- =========================
+     SCRIPT
+========================== -->
+
+<script src="app.js"></script>
 
 </body>
 
