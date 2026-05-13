@@ -765,3 +765,182 @@ footer{
     }
 
 }
+/* =====================================================
+   CONTENEDOR PRINCIPAL TIPO MONITOR
+===================================================== */
+
+.main-container{
+
+    width: 92%;
+    max-width: 1650px;
+
+    height: 92vh;
+
+    margin: 20px auto;
+
+    background:
+    linear-gradient(
+    180deg,
+    #02111f,
+    #040015
+    );
+
+    border-radius: 28px;
+
+    border: 2px solid #00ffff55;
+
+    box-shadow:
+    0 0 20px #00ffff66,
+    0 0 60px #8a2be288;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+/* =====================================================
+   ÁREA INTERNA CON SCROLL
+===================================================== */
+
+.content-area{
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px;
+
+}
+
+/* =====================================================
+   SCROLL PERSONALIZADO
+===================================================== */
+
+.content-area::-webkit-scrollbar{
+
+    width: 10px;
+
+}
+
+.content-area::-webkit-scrollbar-track{
+
+    background: #020617;
+
+}
+
+.content-area::-webkit-scrollbar-thumb{
+
+    background: #00ffff88;
+
+    border-radius: 20px;
+
+}
+
+/* =====================================================
+   TABLA CONTROLADA
+===================================================== */
+
+.table-container{
+
+    max-height: 550px;
+
+    overflow-y: auto;
+
+    overflow-x: auto;
+
+    border-radius: 20px;
+
+    border: 1px solid #00ffff33;
+
+    background: rgba(0,0,0,0.35);
+
+}
+
+/* =====================================================
+   TABLA
+===================================================== */
+
+table{
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1000px;
+
+}
+
+thead{
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+}
+
+th{
+
+    background: #031d2f;
+
+    color: #00ffff;
+
+    padding: 16px;
+
+    font-size: 16px;
+
+    border-bottom: 1px solid #00ffff44;
+
+}
+
+td{
+
+    padding: 14px;
+
+    text-align: center;
+
+    border-bottom: 1px solid #00ffff11;
+
+    color: white;
+
+}
+
+/* =====================================================
+   EFECTO HOVER
+===================================================== */
+
+tbody tr:hover{
+
+    background: rgba(0,255,255,0.08);
+
+}
+
+/* =====================================================
+   HEADER FIJO Y ELEGANTE
+===================================================== */
+
+.header{
+
+    padding: 20px;
+
+    border-bottom: 1px solid #00ffff22;
+
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer{
+
+    padding: 12px;
+
+    text-align: center;
+
+    border-top: 1px solid #00ffff22;
+
+}
