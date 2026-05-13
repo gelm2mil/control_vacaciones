@@ -5,170 +5,150 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Sistema de Control de Vacaciones PMT
-    </title>
+    <title>Sistema de Control PMT</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
 
 <body>
 
-    <!-- =========================================
-         CONTENEDOR PRINCIPAL
-    ========================================== -->
-
     <div class="main-container">
 
-        <!-- =====================================
-             HEADER
-        ====================================== -->
+        <!-- HEADER -->
 
         <header class="header">
 
-            <!-- LOGO PMT -->
-
             <div class="logo-box">
-
-                <img src="icons/pmt.png"
-                     alt="PMT">
-
+                <img src="icons/pmt.png" class="logo">
             </div>
 
-            <!-- TITULOS -->
+            <div class="title-box">
 
-            <div class="title-section">
-
-                <h1 class="main-title">
+                <h1>
                     SISTEMA DE CONTROL DE VACACIONES PMT
                 </h1>
 
-                <h2 class="subtitle">
+                <h2>
                     POLICÍA MUNICIPAL DE TRÁNSITO
                 </h2>
 
-                <h3 class="subcity">
+                <h3>
                     CHIMALTENANGO - 2026
                 </h3>
 
             </div>
 
-            <!-- LOGO GELM -->
-
             <div class="logo-box">
-
-                <img src="icons/icon-512.png"
-                     alt="GELM">
-
+                <img src="icons/icon-512.png" class="logo">
             </div>
 
         </header>
 
-        <!-- =====================================
-             BUSCADOR
-        ====================================== -->
+        <!-- BUSCADOR -->
 
         <section class="search-section">
 
-            <h2 class="search-title">
+            <h2>
                 Buscador Inteligente de Vacacionistas
             </h2>
 
             <div class="search-box">
 
-                <input type="text"
-                       id="searchInput"
-                       placeholder="Buscar agente, cargo...">
+                <input
+                    type="text"
+                    id="busqueda"
+                    placeholder="Buscar agente, cargo..."
+                >
 
-                <button id="searchButton">
+                <button id="buscarBtn">
                     Buscar
                 </button>
 
             </div>
 
-            <div class="search-help">
-
-                Puedes buscar:
-                nombres,
-                cargos,
-                grupos,
-                períodos vacacionales.
-
-            </div>
+            <p>
+                Puedes buscar: nombres, cargos, estados, grupos.
+            </p>
 
         </section>
 
-        <!-- =====================================
-             DASHBOARD
-        ====================================== -->
+        <!-- DASHBOARD -->
 
         <section class="dashboard">
 
-            <div class="card total">
+            <div class="card">
 
                 <h3>Total Agentes</h3>
 
-                <p id="totalAgentes">0</p>
+                <span id="totalAgentes">
+                    0
+                </span>
 
             </div>
 
-            <div class="card servicio">
+            <div class="card">
 
                 <h3>En Servicio</h3>
 
-                <p id="enServicio">0</p>
+                <span id="enServicio">
+                    0
+                </span>
 
             </div>
 
-            <div class="card vacaciones">
+            <div class="card">
 
-                <h3>De Vacaciones</h3>
+                <h3>Vacaciones</h3>
 
-                <p id="deVacaciones">0</p>
+                <span id="deVacaciones">
+                    0
+                </span>
 
             </div>
 
-            <div class="card proximo">
+            <div class="card">
 
-                <h3>Próximos</h3>
+                <h3>IGSS / Permiso</h3>
 
-                <p id="proximos">0</p>
+                <span id="proximos">
+                    0
+                </span>
 
             </div>
 
         </section>
 
-        <!-- =====================================
-             TABLA
-        ====================================== -->
+        <!-- TABLA -->
 
-        <section class="table-section">
+        <section class="tabla-section">
 
-            <table id="tablaVacaciones">
+            <table>
 
                 <thead>
 
                     <tr>
 
-                        <th>Agente</th>
+                        <th>Nombre</th>
+
                         <th>Cargo</th>
-                        <th>Inicio</th>
-                        <th>Regreso</th>
-                        <th>Días</th>
+
+                        <th>Grupo</th>
+
+                        <th>Turno</th>
+
                         <th>Estado</th>
 
                     </tr>
 
                 </thead>
 
-                <tbody id="tableBody">
-
-                    <!-- DATOS DINÁMICOS -->
+                <tbody>
 
                 </tbody>
 
@@ -176,88 +156,64 @@
 
         </section>
 
-        <!-- =====================================
-             BOTONES
-        ====================================== -->
+        <!-- BOTONES -->
 
-        <section class="buttons-section">
+        <section class="botones">
 
-            <button class="action-btn">
+            <button>
                 GENERAR SOLICITUD
             </button>
 
-            <button class="action-btn">
+            <button>
                 IMPRIMIR PDF
             </button>
 
-            <button class="action-btn">
+            <button>
                 VER HISTORIAL
             </button>
 
         </section>
 
-        <!-- =====================================
-             SEMAFORO
-        ====================================== -->
+        <!-- ESTADO -->
 
-        <section class="system-status">
+        <section class="estado-sistema">
 
             <h3>
                 Estado del sistema
             </h3>
 
-            <div class="traffic-light">
+            <div class="luces">
 
-                <div class="light red"></div>
+                <span class="rojo"></span>
 
-                <div class="light yellow"></div>
+                <span class="amarillo"></span>
 
-                <div class="light green"></div>
+                <span class="verde"></span>
 
             </div>
 
         </section>
 
-        <!-- =====================================
-             FOOTER
-        ====================================== -->
+        <!-- FOOTER -->
 
         <footer>
 
-            <div class="footer-text">
+            <p>
+                2014 - 2025 | BY GELM |
+                Delegación de Transportes PMT — Chimaltenango
+            </p>
 
-                2014 - 2025 |
-                BY GELM |
-                Delegación de Transportes PMT —
-                Chimaltenango
-
-            </div>
-
-            <div class="footer-sub">
-
+            <p>
                 Sistema y registro controlado por GELM
+            </p>
 
-            </div>
-
-            <div id="clock">
-
-                Cargando fecha...
-
-            </div>
+            <div id="fecha"></div>
 
         </footer>
 
     </div>
 
-    <!-- =========================================
-         LIBRERIA XLSX
-    ========================================== -->
-
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
-    <!-- =========================================
-         APP JS
-    ========================================== -->
+    <!-- APP -->
 
     <script src="app.js"></script>
 
