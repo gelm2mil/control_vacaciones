@@ -1,99 +1,71 @@
-const EXCEL_FILE = "personal_pmt.xlsx";
+// =====================================================
+// SISTEMA GELM PMT
+// CONTROL DE PERSONAL POR GRUPOS
+// APP.JS COMPLETO
+// =====================================================
 
 let personal = [];
 
-async function cargarExcel() {
+// =====================================================
+// CARGAR EXCEL
+// =====================================================
 
-    try {
+fetch("personal_pmt.xlsx")
+.then(response => response.arrayBuffer())
 
-        const response = await fetch(EXCEL_FILE);
+.then(data => {
 
-        const arrayBuffer = await response.arrayBuffer();
-
-        const workbook = XLSX.read(arrayBuffer, {
-            type: "array"
-        });
-
-        const hoja = workbook.Sheets["PERSONAL_MAESTRO"];
-
-        personal = XLSX.utils.sheet_to_json(hoja);
-
-        mostrarDatos(personal);
-
-        actualizarResumen(personal);
-
-        console.log("Excel cargado correctamente");
-
-    } catch (error) {
-
-        console.error("Error cargando Excel:", error);
-
-    }
-
-}
-
-function mostrarDatos(datos) {
-
-    const tabla = document.querySelector("tbody");
-
-    tabla.innerHTML = "";
-
-    datos.forEach(persona => {
-
-        let colorEstado = "lime";
-
-        if (persona.ESTADO === "VACACIONES") {
-            colorEstado = "red";
-        }
-
-        if (persona.ESTADO === "IGSS") {
-            colorEstado = "orange";
-        }
-
-        if (persona.ESTADO === "PERMISO") {
-            colorEstado = "cyan";
-        }
-
-        tabla.innerHTML += `
-            <tr>
-
-                <td>${persona.NOMBRE}</td>
-
-                <td>${persona.CARGO}</td>
-
-                <td>${persona.GRUPO}</td>
-
-                <td>${persona.TURNO}</td>
-
-                <td>
-
-                    <span style="
-                        background:${colorEstado};
-                        color:white;
-                        padding:8px 15px;
-                        border-radius:20px;
-                        font-weight:bold;
-                    ">
-                        ${persona.ESTADO}
-                    </span>
-
-                </td>
-
-            </tr>
-        `;
+    const workbook = XLSX.read(data, {
+        type: "array"
     });
 
+    const hoja = workbook.Sheets["PERSONAL_MAESTRO"];
+
+    personal = XLSX.utils.sheet_to_json(hoja);
+
+    cargarSistema(personal);
+
+})
+
+.catch(error => {
+
+    console.error("ERROR EXCEL:", error);
+
+});
+
+// =====================================================
+// CARGAR SISTEMA
+// =====================================================
+
+function cargarSistema(datos){
+
+    actualizarDashboard(datos);
+
+    cargarGrupoA(datos);
+
+    cargarGrupoB(datos);
+
 }
 
-function actualizarResumen(datos) {
+// =====================================================
+// DASHBOARD
+// =====================================================
+
+function actualizarDashboard(datos){
 
     const total = datos.length;
 
-    const activos = datos.filter(p => p.ESTADO === "ACTIVO").length;
+    const vacaciones = datos.filter(p =>
+        p.ESTADO?.toUpperCase() === "VACACIONES"
+    ).length;
 
-    const vacaciones = datos.filter(p => p.ESTADO === "VACACIONES").length;
+    const igss = datos.filter(p =>
+        p.ESTADO?.toUpperCase() === "IGSS"
+    ).length;
 
-    const igss = datos.filter(p => p.ESTADO === "IGSS").length;
+    const activos = datos.filter(p =>
+        p.ESTADO?.toUpperCase() === "ACTIVO"
+    ).length;
 
     document.getElementById("totalAgentes").textContent = total;
 
@@ -105,33 +77,141 @@ function actualizarResumen(datos) {
 
 }
 
-function buscarPersonal() {
+// =====================================================
+// GRUPO A
+// =====================================================
 
-    const texto = document
-        .getElementById("busqueda")
-        .value
-        .toLowerCase();
+function cargarGrupoA(datos){
 
-    const filtrados = personal.filter(p =>
-
-        p.NOMBRE.toLowerCase().includes(texto) ||
-
-        p.CARGO.toLowerCase().includes(texto) ||
-
-        p.ESTADO.toLowerCase().includes(texto)
-
+    const grupoA = datos.filter(p =>
+        p.GRUPO === "A"
     );
 
-    mostrarDatos(filtrados);
+    const tbody = document.getElementById("grupoA-body");
+
+    tbody.innerHTML = "";
+
+    grupoA.forEach(persona => {
+
+        tbody.innerHTML += `
+
+        <tr>
+
+            <td>${persona.NOMBRE || ""}</td>
+
+            <td>${persona.CARGO || ""}</td>
+
+            <td>
+                <span class="${claseEstado(persona.ESTADO)}">
+                    ${persona.ESTADO || ""}
+                </span>
+            </td>
+
+        </tr>
+
+        `;
+
+    });
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// =====================================================
+// GRUPO B
+// =====================================================
 
-    cargarExcel();
+function cargarGrupoB(datos){
 
-    document
-        .getElementById("buscarBtn")
-        .addEventListener("click", buscarPersonal);
+    const grupoB = datos.filter(p =>
+        p.GRUPO === "B"
+    );
 
-});
+    const tbody = document.getElementById("grupoB-body");
+
+    tbody.innerHTML = "";
+
+    grupoB.forEach(persona => {
+
+        tbody.innerHTML += `
+
+        <tr>
+
+            <td>${persona.NOMBRE || ""}</td>
+
+            <td>${persona.CARGO || ""}</td>
+
+            <td>
+                <span class="${claseEstado(persona.ESTADO)}">
+                    ${persona.ESTADO || ""}
+                </span>
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+// =====================================================
+// CLASES ESTADO
+// =====================================================
+
+function claseEstado(estado){
+
+    if(!estado) return "activo";
+
+    estado = estado.toUpperCase();
+
+    if(estado === "VACACIONES") return "vacaciones";
+
+    if(estado === "IGSS") return "igss";
+
+    return "activo";
+
+}
+
+// =====================================================
+// BUSCADOR
+// =====================================================
+
+document.getElementById("buscarBtn")
+.addEventListener("click", buscarPersonal);
+
+function buscarPersonal(){
+
+    const texto = document.getElementById("busqueda")
+    .value
+    .toLowerCase();
+
+    const filtrados = personal.filter(p =>
+
+        (p.NOMBRE || "").toLowerCase().includes(texto) ||
+
+        (p.CARGO || "").toLowerCase().includes(texto) ||
+
+        (p.GRUPO || "").toLowerCase().includes(texto)
+
+    );
+
+    cargarGrupoA(filtrados);
+
+    cargarGrupoB(filtrados);
+
+}
+
+// =====================================================
+// BOTONES
+// =====================================================
+
+function generarSolicitud(){
+
+    alert("MÓDULO EN DESARROLLO");
+
+}
+
+function verHistorial(){
+
+    alert("HISTORIAL EN DESARROLLO");
+
+}
