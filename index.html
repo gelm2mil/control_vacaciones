@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>SISTEMA PMT GELM</title>
@@ -26,9 +25,7 @@
     <header class="header">
 
         <div class="logo-box">
-
             <img src="icons/pmt.png" class="logo">
-
         </div>
 
         <div class="title-box">
@@ -48,9 +45,7 @@
         </div>
 
         <div class="logo-box">
-
             <img src="icons/icon-512.png" class="logo">
-
         </div>
 
     </header>
@@ -92,92 +87,146 @@
         </section>
 
         <!-- =========================
-             DASHBOARD
+             DASHBOARD GENERAL
         ========================== -->
 
         <section class="dashboard">
 
             <div class="card">
-
-                <h3>
-                    Total Agentes
-                </h3>
-
-                <span id="totalAgentes">
-                    0
-                </span>
-
+                <h3>Total Agentes</h3>
+                <span id="totalAgentes">0</span>
             </div>
 
             <div class="card">
-
-                <h3>
-                    En Servicio
-                </h3>
-
-                <span id="enServicio">
-                    0
-                </span>
-
+                <h3>En Servicio</h3>
+                <span id="enServicio">0</span>
             </div>
 
             <div class="card">
-
-                <h3>
-                    Vacaciones
-                </h3>
-
-                <span id="deVacaciones">
-                    0
-                </span>
-
+                <h3>Vacaciones</h3>
+                <span id="deVacaciones">0</span>
             </div>
 
             <div class="card">
-
-                <h3>
-                    IGSS / Permiso
-                </h3>
-
-                <span id="proximos">
-                    0
-                </span>
-
+                <h3>IGSS / Permiso</h3>
+                <span id="proximos">0</span>
             </div>
 
         </section>
 
         <!-- =========================
-             TABLA
+             GRUPOS
         ========================== -->
 
-        <div class="table-container">
+        <div class="contenedor-grupos">
 
-            <table id="tablaPersonal">
+            <!-- =========================
+                 GRUPO A
+            ========================== -->
 
-                <thead>
+            <div class="grupo-box">
 
-                    <tr>
+                <h2>
+                    GRUPO A — TURNO MAÑANA
+                </h2>
 
-                        <th>Nombre</th>
+                <div class="grupo-stats">
 
-                        <th>Cargo</th>
+                    <div class="mini-card">
+                        <span id="activosA">0</span>
+                        <p>Activos</p>
+                    </div>
 
-                        <th>Grupo</th>
+                    <div class="mini-card">
+                        <span id="vacacionesA">0</span>
+                        <p>Vacaciones</p>
+                    </div>
 
-                        <th>Turno</th>
+                    <div class="mini-card">
+                        <span id="igssA">0</span>
+                        <p>IGSS</p>
+                    </div>
 
-                        <th>Estado</th>
+                </div>
 
-                    </tr>
+                <div class="table-container">
 
-                </thead>
+                    <table>
 
-                <tbody id="tablaBody">
+                        <thead>
 
-                </tbody>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cargo</th>
+                                <th>Turno</th>
+                                <th>Estado</th>
+                            </tr>
 
-            </table>
+                        </thead>
+
+                        <tbody id="tablaGrupoA">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- =========================
+                 GRUPO B
+            ========================== -->
+
+            <div class="grupo-box">
+
+                <h2>
+                    GRUPO B — TURNO TARDE
+                </h2>
+
+                <div class="grupo-stats">
+
+                    <div class="mini-card">
+                        <span id="activosB">0</span>
+                        <p>Activos</p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span id="vacacionesB">0</span>
+                        <p>Vacaciones</p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span id="igssB">0</span>
+                        <p>IGSS</p>
+                    </div>
+
+                </div>
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cargo</th>
+                                <th>Turno</th>
+                                <th>Estado</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tablaGrupoB">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -214,9 +263,7 @@
             <div class="luces">
 
                 <span class="rojo"></span>
-
                 <span class="amarillo"></span>
-
                 <span class="verde"></span>
 
             </div>
