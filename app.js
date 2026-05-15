@@ -11,6 +11,7 @@ let personal = [];
 // =====================================================
 
 fetch("personal_pmt.xlsx")
+
 .then(response => response.arrayBuffer())
 
 .then(data => {
@@ -41,9 +42,7 @@ function cargarSistema(datos){
 
     actualizarDashboard(datos);
 
-    cargarGrupoA(datos);
-
-    cargarGrupoB(datos);
+    renderizarGrupos(datos);
 
 }
 
@@ -56,15 +55,15 @@ function actualizarDashboard(datos){
     const total = datos.length;
 
     const vacaciones = datos.filter(p =>
-        p.ESTADO?.toUpperCase() === "VACACIONES"
+        (p.ESTADO || "").toUpperCase() === "VACACIONES"
     ).length;
 
     const igss = datos.filter(p =>
-        p.ESTADO?.toUpperCase() === "IGSS"
+        (p.ESTADO || "").toUpperCase() === "IGSS"
     ).length;
 
     const activos = datos.filter(p =>
-        p.ESTADO?.toUpperCase() === "ACTIVO"
+        (p.ESTADO || "").toUpperCase() === "ACTIVO"
     ).length;
 
     document.getElementById("totalAgentes").textContent = total;
@@ -78,22 +77,34 @@ function actualizarDashboard(datos){
 }
 
 // =====================================================
-// GRUPO A
+// RENDERIZAR GRUPOS
 // =====================================================
 
-function cargarGrupoA(datos){
+function renderizarGrupos(datos){
 
-    const grupoA = datos.filter(p =>
-        p.GRUPO === "A"
-    );
+    const tablaA = document.getElementById("tablaGrupoA");
 
-    const tbody = document.getElementById("grupoA-body");
+    const tablaB = document.getElementById("tablaGrupoB");
 
-    tbody.innerHTML = "";
+    tablaA.innerHTML = "";
 
-    grupoA.forEach(persona => {
+    tablaB.innerHTML = "";
 
-        tbody.innerHTML += `
+    let activosA = 0;
+    let vacacionesA = 0;
+    let igssA = 0;
+
+    let activosB = 0;
+    let vacacionesB = 0;
+    let igssB = 0;
+
+    datos.forEach(persona => {
+
+        const grupo = (persona.GRUPO || "").toUpperCase();
+
+        const estado = (persona.ESTADO || "ACTIVO").toUpperCase();
+
+        const fila = `
 
         <tr>
 
@@ -101,9 +112,11 @@ function cargarGrupoA(datos){
 
             <td>${persona.CARGO || ""}</td>
 
+            <td>${persona.TURNO || ""}</td>
+
             <td>
-                <span class="${claseEstado(persona.ESTADO)}">
-                    ${persona.ESTADO || ""}
+                <span class="estado ${claseEstado(estado)}">
+                    ${estado}
                 </span>
             </td>
 
@@ -111,57 +124,67 @@ function cargarGrupoA(datos){
 
         `;
 
+        // =========================
+        // GRUPO A
+        // =========================
+
+        if(grupo === "A"){
+
+            tablaA.innerHTML += fila;
+
+            if(estado === "ACTIVO") activosA++;
+
+            if(estado === "VACACIONES") vacacionesA++;
+
+            if(estado === "IGSS") igssA++;
+
+        }
+
+        // =========================
+        // GRUPO B
+        // =========================
+
+        if(grupo === "B"){
+
+            tablaB.innerHTML += fila;
+
+            if(estado === "ACTIVO") activosB++;
+
+            if(estado === "VACACIONES") vacacionesB++;
+
+            if(estado === "IGSS") igssB++;
+
+        }
+
     });
+
+    // =========================
+    // ESTADISTICAS A
+    // =========================
+
+    document.getElementById("activosA").textContent = activosA;
+
+    document.getElementById("vacacionesA").textContent = vacacionesA;
+
+    document.getElementById("igssA").textContent = igssA;
+
+    // =========================
+    // ESTADISTICAS B
+    // =========================
+
+    document.getElementById("activosB").textContent = activosB;
+
+    document.getElementById("vacacionesB").textContent = vacacionesB;
+
+    document.getElementById("igssB").textContent = igssB;
 
 }
 
 // =====================================================
-// GRUPO B
-// =====================================================
-
-function cargarGrupoB(datos){
-
-    const grupoB = datos.filter(p =>
-        p.GRUPO === "B"
-    );
-
-    const tbody = document.getElementById("grupoB-body");
-
-    tbody.innerHTML = "";
-
-    grupoB.forEach(persona => {
-
-        tbody.innerHTML += `
-
-        <tr>
-
-            <td>${persona.NOMBRE || ""}</td>
-
-            <td>${persona.CARGO || ""}</td>
-
-            <td>
-                <span class="${claseEstado(persona.ESTADO)}">
-                    ${persona.ESTADO || ""}
-                </span>
-            </td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-// =====================================================
-// CLASES ESTADO
+// ESTADOS
 // =====================================================
 
 function claseEstado(estado){
-
-    if(!estado) return "activo";
-
-    estado = estado.toUpperCase();
 
     if(estado === "VACACIONES") return "vacaciones";
 
@@ -175,28 +198,36 @@ function claseEstado(estado){
 // BUSCADOR
 // =====================================================
 
-document.getElementById("buscarBtn")
+document
+.getElementById("buscarBtn")
 .addEventListener("click", buscarPersonal);
 
 function buscarPersonal(){
 
-    const texto = document.getElementById("busqueda")
+    const texto = document
+    .getElementById("busqueda")
     .value
     .toLowerCase();
 
     const filtrados = personal.filter(p =>
 
-        (p.NOMBRE || "").toLowerCase().includes(texto) ||
+        (p.NOMBRE || "").toLowerCase().includes(texto)
 
-        (p.CARGO || "").toLowerCase().includes(texto) ||
+        ||
+
+        (p.CARGO || "").toLowerCase().includes(texto)
+
+        ||
 
         (p.GRUPO || "").toLowerCase().includes(texto)
 
+        ||
+
+        (p.ESTADO || "").toLowerCase().includes(texto)
+
     );
 
-    cargarGrupoA(filtrados);
-
-    cargarGrupoB(filtrados);
+    cargarSistema(filtrados);
 
 }
 
