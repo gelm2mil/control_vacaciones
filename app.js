@@ -1,28 +1,29 @@
 // =====================================================
 // SISTEMA GELM PMT
 // CONTROL DE PERSONAL POR GRUPOS
-// APP.JS COMPLETO
+// APP.JS COMPLETO ONLINE GOOGLE SHEETS
 // =====================================================
 
 let personal = [];
 
 // =====================================================
-// CARGAR EXCEL
+// CARGAR GOOGLE SHEETS
 // =====================================================
 
-fetch("personal_pmt.xlsx")
+fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?output=csv")
 
-.then(response => response.arrayBuffer())
+.then(response => response.text())
 
-.then(data => {
+.then(csv => {
 
-    const workbook = XLSX.read(data, {
-        type: "array"
+    const resultado = Papa.parse(csv, {
+
+        header: true,
+        skipEmptyLines: true
+
     });
 
-    const hoja = workbook.Sheets["PERSONAL_MAESTRO"];
-
-    personal = XLSX.utils.sheet_to_json(hoja);
+    personal = resultado.data;
 
     cargarSistema(personal);
 
@@ -30,7 +31,7 @@ fetch("personal_pmt.xlsx")
 
 .catch(error => {
 
-    console.error("ERROR EXCEL:", error);
+    console.error("ERROR GOOGLE SHEETS:", error);
 
 });
 
