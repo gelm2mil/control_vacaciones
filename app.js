@@ -1,7 +1,12 @@
 // =====================================================
-// SISTEMA GELM PMT
-// CONTROL DE PERSONAL POR GRUPOS
-// APP.JS COMPLETO ONLINE GOOGLE SHEETS
+// GOOGLE SHEETS CSV
+// =====================================================
+
+const sheetURL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?output=csv";
+
+// =====================================================
+// VARIABLES
 // =====================================================
 
 let personal = [];
@@ -10,40 +15,32 @@ let personal = [];
 // CARGAR GOOGLE SHEETS
 // =====================================================
 
-fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?output=csv")
+Papa.parse(sheetURL, {
 
-.then(response => response.text())
+    download: true,
+    header: true,
 
-.then(csv => {
+    complete: function(resultado){
 
-    const resultado = Papa.parse(csv, {
+        personal = resultado.data;
 
-        header: true,
-        skipEmptyLines: true
+        cargarSistema(personal);
 
-    });
-
-    personal = resultado.data;
-
-    cargarSistema(personal);
-
-})
-
-.catch(error => {
-
-    console.error("ERROR GOOGLE SHEETS:", error);
+    }
 
 });
 
 // =====================================================
-// CARGAR SISTEMA
+// SISTEMA
 // =====================================================
 
 function cargarSistema(datos){
 
     actualizarDashboard(datos);
 
-    renderizarGrupos(datos);
+    cargarGrupoA(datos);
+
+    cargarGrupoB(datos);
 
 }
 
@@ -55,16 +52,16 @@ function actualizarDashboard(datos){
 
     const total = datos.length;
 
+    const activos = datos.filter(p =>
+        (p.ESTADO || "").toUpperCase() === "ACTIVO"
+    ).length;
+
     const vacaciones = datos.filter(p =>
         (p.ESTADO || "").toUpperCase() === "VACACIONES"
     ).length;
 
     const igss = datos.filter(p =>
         (p.ESTADO || "").toUpperCase() === "IGSS"
-    ).length;
-
-    const activos = datos.filter(p =>
-        (p.ESTADO || "").toUpperCase() === "ACTIVO"
     ).length;
 
     document.getElementById("totalAgentes").textContent = total;
@@ -78,34 +75,31 @@ function actualizarDashboard(datos){
 }
 
 // =====================================================
-// RENDERIZAR GRUPOS
+// GRUPO A
 // =====================================================
 
-function renderizarGrupos(datos){
+function cargarGrupoA(datos){
 
-    const tablaA = document.getElementById("tablaGrupoA");
+    const grupo = datos.filter(p =>
+        (p.GRUPO || "").toUpperCase() === "A"
+    );
 
-    const tablaB = document.getElementById("tablaGrupoB");
+    document.getElementById("activosA").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "ACTIVO").length;
 
-    tablaA.innerHTML = "";
+    document.getElementById("vacacionesA").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "VACACIONES").length;
 
-    tablaB.innerHTML = "";
+    document.getElementById("igssA").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "IGSS").length;
 
-    let activosA = 0;
-    let vacacionesA = 0;
-    let igssA = 0;
+    const tabla = document.getElementById("tablaGrupoA");
 
-    let activosB = 0;
-    let vacacionesB = 0;
-    let igssB = 0;
+    tabla.innerHTML = "";
 
-    datos.forEach(persona => {
+    grupo.forEach(persona => {
 
-        const grupo = (persona.GRUPO || "").toUpperCase();
-
-        const estado = (persona.ESTADO || "ACTIVO").toUpperCase();
-
-        const fila = `
+        tabla.innerHTML += `
 
         <tr>
 
@@ -116,8 +110,8 @@ function renderizarGrupos(datos){
             <td>${persona.TURNO || ""}</td>
 
             <td>
-                <span class="estado ${claseEstado(estado)}">
-                    ${estado}
+                <span class="${claseEstado(persona.ESTADO)}">
+                    ${persona.ESTADO || ""}
                 </span>
             </td>
 
@@ -125,59 +119,56 @@ function renderizarGrupos(datos){
 
         `;
 
-        // =========================
-        // GRUPO A
-        // =========================
-
-        if(grupo === "A"){
-
-            tablaA.innerHTML += fila;
-
-            if(estado === "ACTIVO") activosA++;
-
-            if(estado === "VACACIONES") vacacionesA++;
-
-            if(estado === "IGSS") igssA++;
-
-        }
-
-        // =========================
-        // GRUPO B
-        // =========================
-
-        if(grupo === "B"){
-
-            tablaB.innerHTML += fila;
-
-            if(estado === "ACTIVO") activosB++;
-
-            if(estado === "VACACIONES") vacacionesB++;
-
-            if(estado === "IGSS") igssB++;
-
-        }
-
     });
 
-    // =========================
-    // ESTADISTICAS A
-    // =========================
+}
 
-    document.getElementById("activosA").textContent = activosA;
+// =====================================================
+// GRUPO B
+// =====================================================
 
-    document.getElementById("vacacionesA").textContent = vacacionesA;
+function cargarGrupoB(datos){
 
-    document.getElementById("igssA").textContent = igssA;
+    const grupo = datos.filter(p =>
+        (p.GRUPO || "").toUpperCase() === "B"
+    );
 
-    // =========================
-    // ESTADISTICAS B
-    // =========================
+    document.getElementById("activosB").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "ACTIVO").length;
 
-    document.getElementById("activosB").textContent = activosB;
+    document.getElementById("vacacionesB").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "VACACIONES").length;
 
-    document.getElementById("vacacionesB").textContent = vacacionesB;
+    document.getElementById("igssB").textContent =
+        grupo.filter(p => (p.ESTADO || "").toUpperCase() === "IGSS").length;
 
-    document.getElementById("igssB").textContent = igssB;
+    const tabla = document.getElementById("tablaGrupoB");
+
+    tabla.innerHTML = "";
+
+    grupo.forEach(persona => {
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${persona.NOMBRE || ""}</td>
+
+            <td>${persona.CARGO || ""}</td>
+
+            <td>${persona.TURNO || ""}</td>
+
+            <td>
+                <span class="${claseEstado(persona.ESTADO)}">
+                    ${persona.ESTADO || ""}
+                </span>
+            </td>
+
+        </tr>
+
+        `;
+
+    });
 
 }
 
@@ -187,9 +178,15 @@ function renderizarGrupos(datos){
 
 function claseEstado(estado){
 
-    if(estado === "VACACIONES") return "vacaciones";
+    estado = (estado || "").toUpperCase();
 
-    if(estado === "IGSS") return "igss";
+    if(estado === "VACACIONES"){
+        return "vacaciones";
+    }
+
+    if(estado === "IGSS"){
+        return "igss";
+    }
 
     return "activo";
 
@@ -199,8 +196,7 @@ function claseEstado(estado){
 // BUSCADOR
 // =====================================================
 
-document
-.getElementById("buscarBtn")
+document.getElementById("buscarBtn")
 .addEventListener("click", buscarPersonal);
 
 function buscarPersonal(){
@@ -212,23 +208,19 @@ function buscarPersonal(){
 
     const filtrados = personal.filter(p =>
 
-        (p.NOMBRE || "").toLowerCase().includes(texto)
+        (p.NOMBRE || "").toLowerCase().includes(texto) ||
 
-        ||
+        (p.CARGO || "").toLowerCase().includes(texto) ||
 
-        (p.CARGO || "").toLowerCase().includes(texto)
-
-        ||
-
-        (p.GRUPO || "").toLowerCase().includes(texto)
-
-        ||
+        (p.GRUPO || "").toLowerCase().includes(texto) ||
 
         (p.ESTADO || "").toLowerCase().includes(texto)
 
     );
 
-    cargarSistema(filtrados);
+    cargarGrupoA(filtrados);
+
+    cargarGrupoB(filtrados);
 
 }
 
