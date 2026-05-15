@@ -1,6 +1,6 @@
-/* =========================================
+/* =========================================================
    RESET
-========================================= */
+========================================================= */
 
 *{
     margin:0;
@@ -8,52 +8,62 @@
     box-sizing:border-box;
 }
 
-/* =========================================
+/* =========================================================
    BODY
-========================================= */
+========================================================= */
 
 body{
 
-    background:#12001f;
+    background:
+    linear-gradient(
+        135deg,
+        #050816,
+        #0b1023,
+        #14001f
+    );
 
     font-family:Arial, Helvetica, sans-serif;
 
     color:white;
 
-    padding:25px;
+    min-height:100vh;
+
+    padding:20px;
+
 }
 
-/* =========================================
+/* =========================================================
    CONTENEDOR PRINCIPAL
-========================================= */
+========================================================= */
 
 .main-container{
 
-    max-width:1600px;
+    max-width:1800px;
 
     margin:auto;
 
-    background:linear-gradient(
-        90deg,
-        #00142b,
-        #000814,
-        #00142b
+    background:
+    linear-gradient(
+        180deg,
+        rgba(0,15,35,.95),
+        rgba(0,5,20,.98)
     );
 
-    border-radius:35px;
+    border-radius:30px;
 
-    border:2px solid #00eaff;
+    border:2px solid #00e5ff55;
 
     box-shadow:
-        0 0 25px #00eaff,
-        0 0 60px #4b0082;
+    0 0 25px #00e5ff55,
+    0 0 60px #7b2cff44;
 
     overflow:hidden;
+
 }
 
-/* =========================================
+/* =========================================================
    HEADER
-========================================= */
+========================================================= */
 
 .header{
 
@@ -65,7 +75,8 @@ body{
 
     padding:30px 40px;
 
-    border-bottom:1px solid rgba(0,255,255,.2);
+    border-bottom:1px solid rgba(0,255,255,.15);
+
 }
 
 .logo-box{
@@ -76,7 +87,7 @@ body{
 
     border-radius:25px;
 
-    border:2px solid #00f7ff;
+    border:2px solid #00e5ff;
 
     display:flex;
 
@@ -84,78 +95,140 @@ body{
 
     align-items:center;
 
-    background:#000;
+    background:#000814;
 
-    box-shadow:0 0 25px #00f7ff;
+    box-shadow:
+    0 0 20px #00e5ff66;
+
 }
 
 .logo{
 
     width:75px;
+
 }
 
-.title-box{
+.header-center{
 
     text-align:center;
+
 }
 
-.title-box h1{
+.header-center h1{
 
-    font-size:65px;
+    font-size:58px;
 
     color:#00f7ff;
 
     text-shadow:
-        0 0 15px #00f7ff,
-        0 0 30px #00f7ff;
+    0 0 15px #00f7ff,
+    0 0 35px #00f7ff;
+
 }
 
-.title-box h2{
+.header-center h2{
 
     margin-top:10px;
 
-    color:#ffd900;
+    font-size:28px;
 
-    font-size:34px;
+    color:#ffd000;
+
 }
 
-.title-box h3{
+.header-center h3{
 
-    margin-top:10px;
+    margin-top:8px;
+
+    font-size:18px;
+
+    color:#d7d7d7;
+
+}
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.alertas-box{
+
+    margin:30px;
+
+    background:#18001f;
+
+    border:1px solid #ff006655;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    box-shadow:
+    0 0 20px #ff006622;
+
+}
+
+.alerta-title{
 
     font-size:24px;
+
+    font-weight:bold;
+
+    color:#ff4f8b;
+
+    margin-bottom:15px;
+
 }
 
-/* =========================================
-   CONTENIDO
-========================================= */
+.alertas-container{
 
-.content-area{
+    display:flex;
 
-    padding:35px;
+    flex-direction:column;
+
+    gap:12px;
+
 }
 
-/* =========================================
+.alerta-item{
+
+    padding:15px;
+
+    border-radius:15px;
+
+    background:rgba(255,0,90,.12);
+
+    border-left:5px solid #ff0055;
+
+    font-size:15px;
+
+}
+
+/* =========================================================
    BUSCADOR
-========================================= */
+========================================================= */
 
-.search-section{
+.buscador-section{
+
+    margin:30px;
 
     text-align:center;
+
 }
 
-.search-section h2{
+.buscador-title{
+
+    font-size:42px;
 
     color:#00f7ff;
 
-    font-size:48px;
+    text-shadow:
+    0 0 15px #00f7ff;
 
-    margin-bottom:25px;
-
-    text-shadow:0 0 15px #00f7ff;
 }
 
-.search-box{
+.buscador-box{
+
+    margin-top:25px;
 
     display:flex;
 
@@ -164,9 +237,10 @@ body{
     gap:15px;
 
     flex-wrap:wrap;
+
 }
 
-.search-box input{
+.buscador-box input{
 
     width:450px;
 
@@ -176,7 +250,7 @@ body{
 
     border:2px solid #00f7ff;
 
-    background:#001018;
+    background:#001526;
 
     color:white;
 
@@ -184,10 +258,12 @@ body{
 
     outline:none;
 
-    box-shadow:0 0 15px rgba(0,255,255,.4);
+    box-shadow:
+    0 0 15px rgba(0,255,255,.25);
+
 }
 
-.search-box button{
+.buscador-box button{
 
     padding:18px 35px;
 
@@ -195,12 +271,11 @@ body{
 
     border-radius:40px;
 
-    cursor:pointer;
-
-    background:linear-gradient(
+    background:
+    linear-gradient(
         90deg,
         #00e5ff,
-        #3d7eff
+        #0077ff
     );
 
     color:black;
@@ -209,35 +284,51 @@ body{
 
     font-size:18px;
 
+    cursor:pointer;
+
     box-shadow:
-        0 0 20px #00f7ff;
+    0 0 20px #00f7ff66;
+
+    transition:.3s;
+
 }
 
-.search-section p{
+.buscador-box button:hover{
 
-    margin-top:15px;
+    transform:scale(1.05);
 
-    color:#d9d9d9;
 }
 
-/* =========================================
+.buscador-info{
+
+    margin-top:12px;
+
+    color:#bdbdbd;
+
+}
+
+/* =========================================================
    DASHBOARD
-========================================= */
+========================================================= */
 
 .dashboard{
 
-    margin-top:45px;
+    margin:35px;
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:
+    repeat(auto-fit,minmax(240px,1fr));
 
     gap:20px;
+
 }
 
 .card{
 
-    background:#000f1d;
+    background:#00101f;
+
+    border:1px solid #00e5ff33;
 
     border-radius:25px;
 
@@ -245,145 +336,81 @@ body{
 
     text-align:center;
 
-    border:1px solid #00cfe8;
+    box-shadow:
+    0 0 15px rgba(0,255,255,.15);
 
-    box-shadow:0 0 12px rgba(0,255,255,.4);
 }
 
 .card h3{
 
-    font-size:22px;
+    font-size:20px;
 
-    margin-bottom:18px;
+    color:#d6d6d6;
+
+    margin-bottom:20px;
+
 }
 
 .card span{
 
-    font-size:65px;
-
-    color:#00f7ff;
+    font-size:62px;
 
     font-weight:bold;
 
-    text-shadow:0 0 15px #00f7ff;
+    color:#00f7ff;
+
+    text-shadow:
+    0 0 15px #00f7ff;
+
 }
 
-/* =========================================
-   CONTENEDOR GRUPOS
-========================================= */
+/* =========================================================
+   PANEL DIRECCION
+========================================================= */
 
-.contenedor-grupos{
+.direccion-panel{
 
-    display:grid;
+    margin:35px;
 
-    grid-template-columns:1fr 1fr;
-
-    gap:25px;
-
-    margin-top:40px;
-}
-
-/* =========================================
-   CAJAS GRUPOS
-========================================= */
-
-.grupo-box{
-
-    background:rgba(0,20,35,0.95);
-
-    border:2px solid #00e5ff;
+    background:#00111f;
 
     border-radius:25px;
 
-    padding:20px;
+    border:1px solid #00e5ff22;
 
-    box-shadow:0 0 20px #00e5ff66;
+    overflow:hidden;
+
 }
 
-.grupo-box h2{
+.panel-title{
 
-    text-align:center;
+    background:#00233d;
 
-    color:#00f7ff;
+    padding:18px;
 
-    margin-bottom:20px;
-
-    font-size:30px;
-
-    text-shadow:0 0 10px #00f7ff;
-}
-
-/* =========================================
-   MINI ESTADISTICAS
-========================================= */
-
-.grupo-stats{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    gap:10px;
-
-    margin-bottom:20px;
-}
-
-.mini-card{
-
-    flex:1;
-
-    text-align:center;
-
-    background:#001826;
-
-    border:1px solid #00e5ff;
-
-    border-radius:15px;
-
-    padding:15px;
-}
-
-.mini-card span{
-
-    font-size:32px;
+    font-size:24px;
 
     font-weight:bold;
 
     color:#00f7ff;
 
-    text-shadow:0 0 10px #00f7ff;
+    text-align:center;
+
+    border-bottom:1px solid #00e5ff22;
+
 }
 
-.mini-card p{
-
-    margin-top:5px;
-
-    color:white;
-
-    font-size:14px;
-}
-
-/* =========================================
+/* =========================================================
    TABLAS
-========================================= */
+========================================================= */
 
-.table-container{
+.tabla-container,
+.tabla-scroll{
 
-    background:#000814;
+    max-height:500px;
 
-    border-radius:20px;
+    overflow:auto;
 
-    overflow:hidden;
-
-    border:1px solid rgba(0,255,255,.3);
-
-    max-height:650px;
-
-    overflow-y:auto;
-
-    box-shadow:
-        inset 0 0 15px rgba(0,255,255,.15),
-        0 0 15px rgba(0,255,255,.2);
 }
 
 table{
@@ -391,17 +418,19 @@ table{
     width:100%;
 
     border-collapse:collapse;
+
 }
 
 table thead{
-
-    background:#01243b;
 
     position:sticky;
 
     top:0;
 
     z-index:2;
+
+    background:#011b2f;
+
 }
 
 table th{
@@ -410,9 +439,10 @@ table th{
 
     color:#00f7ff;
 
-    font-size:18px;
+    font-size:17px;
 
-    border-bottom:1px solid rgba(0,255,255,.3);
+    border-bottom:1px solid #00e5ff22;
+
 }
 
 table td{
@@ -421,21 +451,127 @@ table td{
 
     text-align:center;
 
-    border-bottom:1px solid rgba(0,255,255,.12);
+    border-bottom:1px solid rgba(255,255,255,.05);
 
     font-size:15px;
+
 }
 
 table tbody tr:hover{
 
-    background:rgba(0,255,255,.08);
+    background:rgba(0,255,255,.06);
+
 }
 
-/* =========================================
-   ESTADOS
-========================================= */
+/* =========================================================
+   GRUPOS
+========================================================= */
 
-.estado{
+.grupos-container{
+
+    margin:35px;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+.grupo-box{
+
+    background:#00111f;
+
+    border-radius:25px;
+
+    border:1px solid #00e5ff22;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 0 15px rgba(0,255,255,.1);
+
+}
+
+.grupo-title{
+
+    background:#00233d;
+
+    padding:18px;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:#00f7ff;
+
+    text-align:center;
+
+    border-bottom:1px solid #00e5ff22;
+
+}
+
+/* =========================================================
+   MINI DASHBOARD
+========================================================= */
+
+.grupo-dashboard{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+    padding:20px;
+
+}
+
+.mini-card{
+
+    background:#000d18;
+
+    border:1px solid #00e5ff22;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    text-align:center;
+
+}
+
+.mini-card span{
+
+    font-size:38px;
+
+    font-weight:bold;
+
+    color:#00f7ff;
+
+    text-shadow:
+    0 0 12px #00f7ff;
+
+}
+
+.mini-card p{
+
+    margin-top:10px;
+
+    font-size:14px;
+
+    color:#d7d7d7;
+
+}
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.activo,
+.vacaciones,
+.igss{
 
     padding:10px 18px;
 
@@ -445,25 +581,30 @@ table tbody tr:hover{
 
     display:inline-block;
 
-    min-width:110px;
+    min-width:120px;
+
 }
 
 .activo{
 
-    background:#00ff00;
+    background:#00ff66;
 
     color:black;
 
-    box-shadow:0 0 15px #00ff00;
+    box-shadow:
+    0 0 15px #00ff66;
+
 }
 
 .vacaciones{
 
-    background:red;
+    background:#ff003c;
 
     color:white;
 
-    box-shadow:0 0 15px red;
+    box-shadow:
+    0 0 15px #ff003c;
+
 }
 
 .igss{
@@ -472,16 +613,18 @@ table tbody tr:hover{
 
     color:black;
 
-    box-shadow:0 0 15px #ffd000;
+    box-shadow:
+    0 0 15px #ffd000;
+
 }
 
-/* =========================================
+/* =========================================================
    BOTONES
-========================================= */
+========================================================= */
 
 .botones-panel{
 
-    margin-top:40px;
+    margin:40px;
 
     display:flex;
 
@@ -490,55 +633,65 @@ table tbody tr:hover{
     gap:20px;
 
     flex-wrap:wrap;
+
 }
 
 .botones-panel button{
 
-    padding:16px 28px;
+    padding:16px 32px;
 
-    border-radius:35px;
+    border-radius:40px;
 
-    border:2px solid #00f7ff;
+    border:2px solid #00e5ff;
 
-    background:#000;
+    background:#000814;
 
     color:#00f7ff;
 
     font-weight:bold;
 
+    font-size:15px;
+
     cursor:pointer;
 
     transition:.3s;
 
-    box-shadow:0 0 15px rgba(0,255,255,.5);
+    box-shadow:
+    0 0 15px rgba(0,255,255,.25);
+
 }
 
 .botones-panel button:hover{
 
-    background:#00f7ff;
+    background:#00e5ff;
 
     color:black;
 
     transform:scale(1.05);
+
 }
 
-/* =========================================
+/* =========================================================
    ESTADO SISTEMA
-========================================= */
+========================================================= */
 
-.estado-sistema{
-
-    margin-top:45px;
+.estado-box{
 
     text-align:center;
+
+    margin-bottom:40px;
+
 }
 
-.estado-sistema h3{
+.estado-box h2{
 
-    font-size:36px;
+    font-size:30px;
+
+    color:#00f7ff;
+
 }
 
-.luces{
+.estado-luces{
 
     margin-top:20px;
 
@@ -546,103 +699,107 @@ table tbody tr:hover{
 
     justify-content:center;
 
-    gap:18px;
+    gap:20px;
+
 }
 
-.luces span{
+.luz{
 
-    width:30px;
+    width:28px;
 
-    height:30px;
+    height:28px;
 
     border-radius:50%;
 
-    display:block;
 }
 
 .rojo{
 
     background:red;
 
-    box-shadow:0 0 15px red;
+    box-shadow:
+    0 0 15px red;
+
 }
 
 .amarillo{
 
     background:yellow;
 
-    box-shadow:0 0 15px yellow;
+    box-shadow:
+    0 0 15px yellow;
+
 }
 
 .verde{
 
-    background:#00ff00;
+    background:#00ff66;
 
-    box-shadow:0 0 15px #00ff00;
+    box-shadow:
+    0 0 15px #00ff66;
+
 }
 
-/* =========================================
+/* =========================================================
    FOOTER
-========================================= */
+========================================================= */
 
-.footer-gelm{
+.footer{
 
-    margin-top:45px;
-
-    border-top:1px solid rgba(0,255,255,.2);
+    border-top:1px solid rgba(0,255,255,.1);
 
     padding:25px;
 
     text-align:center;
 
     color:#00f7ff;
+
+    font-size:14px;
+
 }
 
-.footer-gelm p{
+.footer p{
 
     margin-top:8px;
+
 }
 
-/* =========================================
-   SCROLL PERSONALIZADO
-========================================= */
+/* =========================================================
+   SCROLL
+========================================================= */
 
-.table-container::-webkit-scrollbar{
+::-webkit-scrollbar{
 
     width:10px;
+
+    height:10px;
+
 }
 
-.table-container::-webkit-scrollbar-track{
+::-webkit-scrollbar-thumb{
 
-    background:#001018;
-}
-
-.table-container::-webkit-scrollbar-thumb{
-
-    background:#00f7ff;
+    background:#00e5ff;
 
     border-radius:20px;
+
 }
 
-/* =========================================
+::-webkit-scrollbar-track{
+
+    background:#000814;
+
+}
+
+/* =========================================================
    RESPONSIVE
-========================================= */
+========================================================= */
 
 @media(max-width:1200px){
 
-    .contenedor-grupos{
+    .grupos-container{
 
         grid-template-columns:1fr;
-    }
 
-    .dashboard{
-
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .title-box h1{
-
-        font-size:42px;
     }
 
     .header{
@@ -650,7 +807,15 @@ table tbody tr:hover{
         flex-direction:column;
 
         gap:20px;
+
     }
+
+    .header-center h1{
+
+        font-size:42px;
+
+    }
+
 }
 
 @media(max-width:768px){
@@ -658,47 +823,51 @@ table tbody tr:hover{
     body{
 
         padding:10px;
+
     }
 
     .dashboard{
 
         grid-template-columns:1fr;
+
     }
 
-    .search-box{
+    .grupo-dashboard{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .buscador-box{
 
         flex-direction:column;
 
         align-items:center;
+
     }
 
-    .search-box input{
+    .buscador-box input{
 
         width:100%;
+
     }
 
-    .title-box h1{
+    .header-center h1{
 
         font-size:28px;
+
     }
 
-    .search-section h2{
+    .buscador-title{
 
-        font-size:30px;
-    }
+        font-size:28px;
 
-    .grupo-box h2{
-
-        font-size:22px;
-    }
-
-    .table-container{
-
-        overflow-x:auto;
     }
 
     table{
 
         min-width:700px;
+
     }
+
 }
