@@ -13,10 +13,14 @@
 ========================================= */
 
 body{
+
     background:#12001f;
+
     font-family:Arial, Helvetica, sans-serif;
+
     color:white;
-    padding:30px;
+
+    padding:25px;
 }
 
 /* =========================================
@@ -24,7 +28,9 @@ body{
 ========================================= */
 
 .main-container{
-    max-width:1400px;
+
+    max-width:1600px;
+
     margin:auto;
 
     background:linear-gradient(
@@ -50,17 +56,22 @@ body{
 ========================================= */
 
 .header{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
 
-    padding:25px 40px;
+    padding:30px 40px;
 
     border-bottom:1px solid rgba(0,255,255,.2);
 }
 
 .logo-box{
+
     width:120px;
+
     height:120px;
 
     border-radius:25px;
@@ -68,7 +79,9 @@ body{
     border:2px solid #00f7ff;
 
     display:flex;
+
     justify-content:center;
+
     align-items:center;
 
     background:#000;
@@ -77,15 +90,19 @@ body{
 }
 
 .logo{
+
     width:75px;
 }
 
 .title-box{
+
     text-align:center;
 }
 
 .title-box h1{
-    font-size:58px;
+
+    font-size:65px;
+
     color:#00f7ff;
 
     text-shadow:
@@ -94,14 +111,19 @@ body{
 }
 
 .title-box h2{
+
     margin-top:10px;
+
     color:#ffd900;
-    font-size:30px;
+
+    font-size:34px;
 }
 
 .title-box h3{
+
     margin-top:10px;
-    font-size:20px;
+
+    font-size:24px;
 }
 
 /* =========================================
@@ -109,6 +131,7 @@ body{
 ========================================= */
 
 .content-area{
+
     padding:35px;
 }
 
@@ -117,12 +140,15 @@ body{
 ========================================= */
 
 .search-section{
+
     text-align:center;
 }
 
 .search-section h2{
+
     color:#00f7ff;
-    font-size:42px;
+
+    font-size:48px;
 
     margin-bottom:25px;
 
@@ -130,12 +156,18 @@ body{
 }
 
 .search-box{
+
     display:flex;
+
     justify-content:center;
+
     gap:15px;
+
+    flex-wrap:wrap;
 }
 
 .search-box input{
+
     width:450px;
 
     padding:18px;
@@ -156,6 +188,7 @@ body{
 }
 
 .search-box button{
+
     padding:18px 35px;
 
     border:none;
@@ -181,7 +214,9 @@ body{
 }
 
 .search-section p{
+
     margin-top:15px;
+
     color:#d9d9d9;
 }
 
@@ -190,15 +225,18 @@ body{
 ========================================= */
 
 .dashboard{
+
     margin-top:45px;
 
     display:grid;
+
     grid-template-columns:repeat(4,1fr);
 
     gap:20px;
 }
 
 .card{
+
     background:#000f1d;
 
     border-radius:25px;
@@ -213,12 +251,15 @@ body{
 }
 
 .card h3{
-    font-size:20px;
+
+    font-size:22px;
+
     margin-bottom:18px;
 }
 
 .card span{
-    font-size:60px;
+
+    font-size:65px;
 
     color:#00f7ff;
 
@@ -228,62 +269,165 @@ body{
 }
 
 /* =========================================
-   TABLA CONTENEDOR
+   CONTENEDOR GRUPOS
+========================================= */
+
+.contenedor-grupos{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+    margin-top:40px;
+}
+
+/* =========================================
+   CAJAS GRUPOS
+========================================= */
+
+.grupo-box{
+
+    background:rgba(0,20,35,0.95);
+
+    border:2px solid #00e5ff;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    box-shadow:0 0 20px #00e5ff66;
+}
+
+.grupo-box h2{
+
+    text-align:center;
+
+    color:#00f7ff;
+
+    margin-bottom:20px;
+
+    font-size:30px;
+
+    text-shadow:0 0 10px #00f7ff;
+}
+
+/* =========================================
+   MINI ESTADISTICAS
+========================================= */
+
+.grupo-stats{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.mini-card{
+
+    flex:1;
+
+    text-align:center;
+
+    background:#001826;
+
+    border:1px solid #00e5ff;
+
+    border-radius:15px;
+
+    padding:15px;
+}
+
+.mini-card span{
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    color:#00f7ff;
+
+    text-shadow:0 0 10px #00f7ff;
+}
+
+.mini-card p{
+
+    margin-top:5px;
+
+    color:white;
+
+    font-size:14px;
+}
+
+/* =========================================
+   TABLAS
 ========================================= */
 
 .table-container{
 
-    margin-top:35px;
-
     background:#000814;
 
-    border-radius:25px;
+    border-radius:20px;
+
+    overflow:hidden;
 
     border:1px solid rgba(0,255,255,.3);
+
+    max-height:650px;
+
+    overflow-y:auto;
 
     box-shadow:
         inset 0 0 15px rgba(0,255,255,.15),
         0 0 15px rgba(0,255,255,.2);
-
-    overflow:hidden;
 }
 
-/* =========================================
-   TABLA
-========================================= */
+table{
 
-#tablaPersonal{
     width:100%;
+
     border-collapse:collapse;
 }
 
-#tablaPersonal thead{
+table thead{
+
     background:#01243b;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:2;
 }
 
-#tablaPersonal th{
+table th{
 
-    padding:20px;
+    padding:18px;
 
     color:#00f7ff;
 
-    font-size:20px;
+    font-size:18px;
 
     border-bottom:1px solid rgba(0,255,255,.3);
 }
 
-#tablaPersonal td{
+table td{
 
-    padding:18px;
+    padding:16px;
 
     text-align:center;
 
-    border-bottom:1px solid rgba(0,255,255,.15);
+    border-bottom:1px solid rgba(0,255,255,.12);
 
-    font-size:17px;
+    font-size:15px;
 }
 
-#tablaPersonal tbody tr:hover{
+table tbody tr:hover{
+
     background:rgba(0,255,255,.08);
 }
 
@@ -301,25 +445,31 @@ body{
 
     display:inline-block;
 
-    min-width:120px;
+    min-width:110px;
 }
 
 .activo{
+
     background:#00ff00;
+
     color:black;
 
     box-shadow:0 0 15px #00ff00;
 }
 
 .vacaciones{
+
     background:red;
+
     color:white;
 
     box-shadow:0 0 15px red;
 }
 
 .igss{
+
     background:#ffd000;
+
     color:black;
 
     box-shadow:0 0 15px #ffd000;
@@ -331,10 +481,12 @@ body{
 
 .botones-panel{
 
-    margin-top:35px;
+    margin-top:40px;
 
     display:flex;
+
     justify-content:center;
+
     gap:20px;
 
     flex-wrap:wrap;
@@ -376,13 +528,14 @@ body{
 
 .estado-sistema{
 
-    margin-top:40px;
+    margin-top:45px;
 
     text-align:center;
 }
 
 .estado-sistema h3{
-    font-size:32px;
+
+    font-size:36px;
 }
 
 .luces{
@@ -390,13 +543,16 @@ body{
     margin-top:20px;
 
     display:flex;
+
     justify-content:center;
+
     gap:18px;
 }
 
 .luces span{
 
     width:30px;
+
     height:30px;
 
     border-radius:50%;
@@ -405,17 +561,23 @@ body{
 }
 
 .rojo{
+
     background:red;
+
     box-shadow:0 0 15px red;
 }
 
 .amarillo{
+
     background:yellow;
+
     box-shadow:0 0 15px yellow;
 }
 
 .verde{
+
     background:#00ff00;
+
     box-shadow:0 0 15px #00ff00;
 }
 
@@ -437,25 +599,56 @@ body{
 }
 
 .footer-gelm p{
+
     margin-top:8px;
+}
+
+/* =========================================
+   SCROLL PERSONALIZADO
+========================================= */
+
+.table-container::-webkit-scrollbar{
+
+    width:10px;
+}
+
+.table-container::-webkit-scrollbar-track{
+
+    background:#001018;
+}
+
+.table-container::-webkit-scrollbar-thumb{
+
+    background:#00f7ff;
+
+    border-radius:20px;
 }
 
 /* =========================================
    RESPONSIVE
 ========================================= */
 
-@media(max-width:1100px){
+@media(max-width:1200px){
+
+    .contenedor-grupos{
+
+        grid-template-columns:1fr;
+    }
 
     .dashboard{
+
         grid-template-columns:repeat(2,1fr);
     }
 
     .title-box h1{
-        font-size:38px;
+
+        font-size:42px;
     }
 
     .header{
+
         flex-direction:column;
+
         gap:20px;
     }
 }
@@ -463,93 +656,49 @@ body{
 @media(max-width:768px){
 
     body{
+
         padding:10px;
     }
 
     .dashboard{
+
         grid-template-columns:1fr;
     }
 
     .search-box{
+
         flex-direction:column;
+
         align-items:center;
     }
 
     .search-box input{
+
         width:100%;
     }
 
     .title-box h1{
+
         font-size:28px;
     }
 
+    .search-section h2{
+
+        font-size:30px;
+    }
+
+    .grupo-box h2{
+
+        font-size:22px;
+    }
+
     .table-container{
+
         overflow-x:auto;
     }
 
-    #tablaPersonal{
-        min-width:900px;
+    table{
+
+        min-width:700px;
     }
-}
-.contenedor-grupos{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-    margin-top:30px;
-}
-
-.grupo-box{
-    background:rgba(0,20,35,0.95);
-    border:2px solid #00e5ff;
-    border-radius:25px;
-    padding:20px;
-    box-shadow:0 0 20px #00e5ff66;
-}
-
-.grupo-box h2{
-    text-align:center;
-    color:#00f7ff;
-    margin-bottom:20px;
-    text-shadow:0 0 10px #00f7ff;
-}
-
-.grupo-stats{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.mini-card{
-    flex:1;
-    text-align:center;
-    background:#001826;
-    border:1px solid #00e5ff;
-    border-radius:15px;
-    padding:15px;
-}
-
-.mini-card span{
-    font-size:28px;
-    font-weight:bold;
-    color:#00f7ff;
-}
-
-.mini-card p{
-    margin-top:5px;
-    color:white;
-    font-size:13px;
-}
-
-.tabla-scroll{
-    max-height:500px;
-    overflow-y:auto;
-}
-
-@media(max-width:1100px){
-
-    .contenedor-grupos{
-        grid-template-columns:1fr;
-    }
-
 }
