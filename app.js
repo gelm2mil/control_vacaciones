@@ -1,7 +1,7 @@
 // =====================================================
 // SISTEMA OPERATIVO PMT
 // GELM 2026
-// APP.JS PROFESIONAL
+// APP.JS PROFESIONAL FINAL
 // =====================================================
 
 // =====================================================
@@ -203,7 +203,7 @@ function cargarGrupoA(datos){
             </td>
 
             <td>
-                ${obtenerTurnoGrupo("A")}
+                ${obtenerConfiguracionGrupo("A").turno}
             </td>
 
             <td>
@@ -284,7 +284,7 @@ function cargarGrupoB(datos){
             </td>
 
             <td>
-                ${obtenerTurnoGrupo("B")}
+                ${obtenerConfiguracionGrupo("B").turno}
             </td>
 
             <td>
@@ -337,6 +337,12 @@ function generarAlertas(datos){
 
     );
 
+    const ausentes = datos.filter(p =>
+
+        estadoSeguro(p.ESTADO) === "AUSENTE"
+
+    );
+
     if(vacaciones.length > 0){
 
         container.innerHTML += `
@@ -367,47 +373,14 @@ function generarAlertas(datos){
 
     }
 
-    const grupoA = datos.filter(p =>
-
-        grupoSeguro(p.GRUPO) === "A"
-
-        &&
-
-        estadoSeguro(p.ESTADO) === "ACTIVO"
-
-    ).length;
-
-    const grupoB = datos.filter(p =>
-
-        grupoSeguro(p.GRUPO) === "B"
-
-        &&
-
-        estadoSeguro(p.ESTADO) === "ACTIVO"
-
-    ).length;
-
-    if(grupoA <= 10){
+    if(ausentes.length > 0){
 
         container.innerHTML += `
 
         <div class="alerta-item">
 
-            ⚠️ Grupo A con baja cobertura operativa.
-
-        </div>
-
-        `;
-
-    }
-
-    if(grupoB <= 10){
-
-        container.innerHTML += `
-
-        <div class="alerta-item">
-
-            ⚠️ Grupo B con baja cobertura operativa.
+            🚨 ${ausentes.length}
+            ausencia(s) operativas.
 
         </div>
 
@@ -477,7 +450,7 @@ function buscarPersonal(){
 }
 
 // =====================================================
-// ROTACION AUTOMATICA TURNOS
+// ROTACION AUTOMATICA TURNOS Y HORARIOS
 // =====================================================
 
 function obtenerNumeroSemana(fecha){
@@ -496,7 +469,7 @@ function obtenerNumeroSemana(fecha){
 
 }
 
-function obtenerTurnoGrupo(grupo){
+function obtenerConfiguracionGrupo(grupo){
 
     const hoy = new Date();
 
@@ -506,39 +479,77 @@ function obtenerTurnoGrupo(grupo){
     const semanaPar =
     semana % 2 === 0;
 
-    // =====================================
+    // =========================================
     // SEMANA PAR
-    // =====================================
+    // =========================================
 
     if(semanaPar){
 
         if(grupo === "A"){
-            return "TARDE";
+
+            return {
+
+                turno: "TARDE",
+
+                horario: "12:00 - 20:00"
+
+            };
+
         }
 
         if(grupo === "B"){
-            return "MAÑANA";
+
+            return {
+
+                turno: "MAÑANA",
+
+                horario: "06:00 - 14:00"
+
+            };
+
         }
 
     }
 
-    // =====================================
+    // =========================================
     // SEMANA IMPAR
-    // =====================================
+    // =========================================
 
     else{
 
         if(grupo === "A"){
-            return "MAÑANA";
+
+            return {
+
+                turno: "MAÑANA",
+
+                horario: "06:00 - 14:00"
+
+            };
+
         }
 
         if(grupo === "B"){
-            return "TARDE";
+
+            return {
+
+                turno: "TARDE",
+
+                horario: "12:00 - 20:00"
+
+            };
+
         }
 
     }
 
-    return "-";
+    return {
+
+        turno: "-",
+
+        horario: "-"
+
+    };
 
 }
 
@@ -548,19 +559,19 @@ function obtenerTurnoGrupo(grupo){
 
 function actualizarTitulosTurnos(){
 
-    const grupoATurno =
-    obtenerTurnoGrupo("A");
+    const grupoA =
+    obtenerConfiguracionGrupo("A");
 
-    const grupoBTurno =
-    obtenerTurnoGrupo("B");
+    const grupoB =
+    obtenerConfiguracionGrupo("B");
 
     document.querySelector(".grupo-box:nth-child(1) .grupo-title")
     .textContent =
-    `GRUPO A — TURNO ${grupoATurno}`;
+    `GRUPO A — ${grupoA.turno} — ${grupoA.horario}`;
 
     document.querySelector(".grupo-box:nth-child(2) .grupo-title")
     .textContent =
-    `GRUPO B — TURNO ${grupoBTurno}`;
+    `GRUPO B — ${grupoB.turno} — ${grupoB.horario}`;
 
 }
 
@@ -593,6 +604,10 @@ function claseEstado(estado){
     }
 
     if(estado === "IGSS"){
+        return "igss";
+    }
+
+    if(estado === "AUSENTE"){
         return "igss";
     }
 
