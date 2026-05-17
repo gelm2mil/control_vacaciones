@@ -45,6 +45,8 @@ Papa.parse(sheetURL, {
 
 function iniciarSistema(datos){
 
+    actualizarTitulosTurnos();
+
     dashboardEjecutivo(datos);
 
     cargarMandos(datos);
@@ -201,7 +203,7 @@ function cargarGrupoA(datos){
             </td>
 
             <td>
-                ${persona.TURNO || ""}
+                ${obtenerTurnoGrupo("A")}
             </td>
 
             <td>
@@ -282,7 +284,7 @@ function cargarGrupoB(datos){
             </td>
 
             <td>
-                ${persona.TURNO || ""}
+                ${obtenerTurnoGrupo("B")}
             </td>
 
             <td>
@@ -335,10 +337,6 @@ function generarAlertas(datos){
 
     );
 
-    // =========================================
-    // VACACIONES
-    // =========================================
-
     if(vacaciones.length > 0){
 
         container.innerHTML += `
@@ -354,10 +352,6 @@ function generarAlertas(datos){
 
     }
 
-    // =========================================
-    // IGSS
-    // =========================================
-
     if(igss.length > 0){
 
         container.innerHTML += `
@@ -372,10 +366,6 @@ function generarAlertas(datos){
         `;
 
     }
-
-    // =========================================
-    // BAJA COBERTURA
-    // =========================================
 
     const grupoA = datos.filter(p =>
 
@@ -424,10 +414,6 @@ function generarAlertas(datos){
         `;
 
     }
-
-    // =========================================
-    // SIN ALERTAS
-    // =========================================
 
     if(container.innerHTML === ""){
 
@@ -487,6 +473,94 @@ function buscarPersonal(){
     );
 
     iniciarSistema(filtrados);
+
+}
+
+// =====================================================
+// ROTACION AUTOMATICA TURNOS
+// =====================================================
+
+function obtenerNumeroSemana(fecha){
+
+    const inicioAno =
+    new Date(fecha.getFullYear(), 0, 1);
+
+    const dias =
+    Math.floor(
+        (fecha - inicioAno) / 86400000
+    );
+
+    return Math.ceil(
+        (dias + inicioAno.getDay() + 1) / 7
+    );
+
+}
+
+function obtenerTurnoGrupo(grupo){
+
+    const hoy = new Date();
+
+    const semana =
+    obtenerNumeroSemana(hoy);
+
+    const semanaPar =
+    semana % 2 === 0;
+
+    // =====================================
+    // SEMANA PAR
+    // =====================================
+
+    if(semanaPar){
+
+        if(grupo === "A"){
+            return "TARDE";
+        }
+
+        if(grupo === "B"){
+            return "MAÑANA";
+        }
+
+    }
+
+    // =====================================
+    // SEMANA IMPAR
+    // =====================================
+
+    else{
+
+        if(grupo === "A"){
+            return "MAÑANA";
+        }
+
+        if(grupo === "B"){
+            return "TARDE";
+        }
+
+    }
+
+    return "-";
+
+}
+
+// =====================================================
+// ACTUALIZAR TITULOS TURNOS
+// =====================================================
+
+function actualizarTitulosTurnos(){
+
+    const grupoATurno =
+    obtenerTurnoGrupo("A");
+
+    const grupoBTurno =
+    obtenerTurnoGrupo("B");
+
+    document.querySelector(".grupo-box:nth-child(1) .grupo-title")
+    .textContent =
+    `GRUPO A — TURNO ${grupoATurno}`;
+
+    document.querySelector(".grupo-box:nth-child(2) .grupo-title")
+    .textContent =
+    `GRUPO B — TURNO ${grupoBTurno}`;
 
 }
 
