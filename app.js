@@ -1,7 +1,7 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
 // VERSION PRO OPERATIVA FINAL
-// MULTI HOJA + BITACORA + ROTACION
+// CORREGIDA FULL
 // ============================================
 
 // ============================================
@@ -21,21 +21,17 @@ const VACACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=936650941&single=true&output=csv";
 
 // ============================================
-// VARIABLES GLOBALES
+// VARIABLES
 // ============================================
 
 let personalGlobal = [];
-
 let historialCambios = [];
-
 let bitacoraGlobal = [];
-
 let vacacionesGlobal = [];
-
 let resumenGlobal = [];
 
 // ============================================
-// INICIAR SISTEMA
+// INICIAR
 // ============================================
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -57,10 +53,6 @@ async function cargarSistema() {
             "#00e5ff"
         );
 
-        // ====================================
-        // CARGAR TODAS LAS HOJAS
-        // ====================================
-
         const [
             personalResponse,
             bitacoraResponse,
@@ -78,10 +70,6 @@ async function cargarSistema() {
             fetch(VACACIONES_URL)
 
         ]);
-
-        // ====================================
-        // CSV
-        // ====================================
 
         const personalCSV =
             await personalResponse.text();
@@ -109,14 +97,9 @@ async function cargarSistema() {
 
                 personalGlobal = results.data;
 
-                console.log(
-                    "PERSONAL:",
-                    personalGlobal
-                );
-
-                // ============================
+                // ================================
                 // BITACORA
-                // ============================
+                // ================================
 
                 Papa.parse(bitacoraCSV, {
 
@@ -129,18 +112,13 @@ async function cargarSistema() {
                         bitacoraGlobal =
                             bitacoraResults.data;
 
-                        console.log(
-                            "BITACORA:",
-                            bitacoraGlobal
-                        );
-
                     }
 
                 });
 
-                // ============================
+                // ================================
                 // RESUMEN
-                // ============================
+                // ================================
 
                 Papa.parse(resumenCSV, {
 
@@ -153,18 +131,13 @@ async function cargarSistema() {
                         resumenGlobal =
                             resumenResults.data;
 
-                        console.log(
-                            "RESUMEN:",
-                            resumenGlobal
-                        );
-
                     }
 
                 });
 
-                // ============================
+                // ================================
                 // VACACIONES
-                // ============================
+                // ================================
 
                 Papa.parse(vacacionesCSV, {
 
@@ -177,18 +150,9 @@ async function cargarSistema() {
                         vacacionesGlobal =
                             vacacionesResults.data;
 
-                        console.log(
-                            "VACACIONES:",
-                            vacacionesGlobal
-                        );
-
                     }
 
                 });
-
-                // ============================
-                // PROCESAR
-                // ============================
 
                 procesarDatos(personalGlobal);
 
@@ -240,6 +204,14 @@ function procesarDatos(data) {
 
     let mandos = [];
 
+    let grupoAActivos = 0;
+    let grupoAVacaciones = 0;
+    let grupoAIGSS = 0;
+
+    let grupoBActivos = 0;
+    let grupoBVacaciones = 0;
+    let grupoBIGSS = 0;
+
     data.forEach(persona => {
 
         if (!persona.NOMBRE) return;
@@ -267,9 +239,9 @@ function procesarDatos(data) {
         const horario =
             limpiar(persona.HORARIO);
 
-        // ============================
+        // ====================================
         // ROTACION AUTOMATICA
-        // ============================
+        // ====================================
 
         let turnoActual =
             obtenerTurnoAutomatico(
@@ -277,9 +249,9 @@ function procesarDatos(data) {
                 grupoActivoSemana
             );
 
-        // ============================
+        // ====================================
         // ESTADO
-        // ============================
+        // ====================================
 
         const fuera =
 
@@ -301,9 +273,49 @@ function procesarDatos(data) {
 
         }
 
-        // ============================
+        // ====================================
+        // CONTADORES GRUPOS
+        // ====================================
+
+        if (grupo === "A") {
+
+            if (vacaciones === "SI") {
+
+                grupoAVacaciones++;
+
+            } else if (igss === "SI") {
+
+                grupoAIGSS++;
+
+            } else {
+
+                grupoAActivos++;
+
+            }
+
+        }
+
+        if (grupo === "B") {
+
+            if (vacaciones === "SI") {
+
+                grupoBVacaciones++;
+
+            } else if (igss === "SI") {
+
+                grupoBIGSS++;
+
+            } else {
+
+                grupoBActivos++;
+
+            }
+
+        }
+
+        // ====================================
         // PANEL MANDOS
-        // ============================
+        // ====================================
 
         if (
 
@@ -344,9 +356,9 @@ function procesarDatos(data) {
 
         }
 
-        // ============================
+        // ====================================
         // REGISTRO
-        // ============================
+        // ====================================
 
         const registro = {
 
@@ -394,18 +406,46 @@ function procesarDatos(data) {
     );
 
     // ====================================
+    // DASHBOARD GRUPOS
+    // ====================================
+
+    document.getElementById(
+        "grupoAActivos"
+    ).textContent = grupoAActivos;
+
+    document.getElementById(
+        "grupoAVacaciones"
+    ).textContent = grupoAVacaciones;
+
+    document.getElementById(
+        "grupoAIGSS"
+    ).textContent = grupoAIGSS;
+
+    document.getElementById(
+        "grupoBActivos"
+    ).textContent = grupoBActivos;
+
+    document.getElementById(
+        "grupoBVacaciones"
+    ).textContent = grupoBVacaciones;
+
+    document.getElementById(
+        "grupoBIGSS"
+    ).textContent = grupoBIGSS;
+
+    // ====================================
     // TABLAS
     // ====================================
 
     renderMandos(mandos);
 
     renderGrupo(
-        "grupoAContainer",
+        "grupoA-body",
         grupoA
     );
 
     renderGrupo(
-        "grupoBContainer",
+        "grupoB-body",
         grupoB
     );
 
@@ -506,7 +546,7 @@ function actualizarDashboard(
 ) {
 
     document.getElementById(
-        "totalPMT"
+        "totalAgentes"
     ).textContent = total;
 
     document.getElementById(
@@ -531,7 +571,7 @@ function renderMandos(lista) {
 
     const tabla =
         document.getElementById(
-            "tablaMandos"
+            "mandos-body"
         );
 
     if (!tabla) return;
@@ -547,8 +587,6 @@ function renderMandos(lista) {
             <td>${item.nombre}</td>
 
             <td>${item.cargo}</td>
-
-            <td>${item.horario || "-"}</td>
 
             <td>
 
@@ -856,17 +894,17 @@ function limpiarTablas() {
 
     const grupoA =
         document.getElementById(
-            "grupoAContainer"
+            "grupoA-body"
         );
 
     const grupoB =
         document.getElementById(
-            "grupoBContainer"
+            "grupoB-body"
         );
 
     const mandos =
         document.getElementById(
-            "tablaMandos"
+            "mandos-body"
         );
 
     if (grupoA)
@@ -923,5 +961,33 @@ function mostrarAlerta(
     </div>
 
     `;
+
+}
+
+// ============================================
+// BOTONES
+// ============================================
+
+function generarSolicitud() {
+
+    alert(
+        "Módulo de solicitudes en desarrollo."
+    );
+
+}
+
+function imprimirPDF() {
+
+    window.print();
+
+}
+
+function verHistorial() {
+
+    console.table(historialCambios);
+
+    alert(
+        "Historial mostrado en consola."
+    );
 
 }
