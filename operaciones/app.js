@@ -1,409 +1,224 @@
-﻿// =====================================================
-// OPERACIONES PMT — GELM
-// VERSION OPERATIVA 2026
-// =====================================================
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvHRMaytHzcyv_RM0mk6LtIhacrGrXW2VYhHyrPxtgGSciiFWYIb-Yz8ff1yfUTzR0/exec";
 
-// =====================================================
-// BASE LOCAL
-// =====================================================
-
-const DB_NAME = "PMT_OPERACIONES_DB";
-const STORE_NAME = "MOVIMIENTOS";
+const DB = "OPERACIONES_PMT";
+const STORE = "MOVIMIENTOS";
 
 let db;
 let movimientos = [];
 
-// =====================================================
-// GOOGLE SHEETS
-// =====================================================
+const f = id => document.getElementById(id);
 
-const GOOGLE_SCRIPT_URL = "PEGAR_APPS_SCRIPT_AQUI";
+/* =========================
+   ABRIR BASE LOCAL
+========================= */
+function abrirDB() {
+    return new Promise((resolve) => {
 
-// =====================================================
-// ATAJOS
-// =====================================================
+        const request = indexedDB.open(DB, 1);
 
-const $ = id => document.getElementById(id);
-
-// =====================================================
-// ABRIR BASE
-// =====================================================
-
-function abrirDB(){
-
-    return new Promise((resolve,reject)=>{
-
-        const request = indexedDB.open(DB_NAME,1);
-
-        request.onupgradeneeded = e=>{
-
+        request.onupgradeneeded = (e) => {
             db = e.target.result;
 
-            if(!db.objectStoreNames.contains(STORE_NAME)){
-
-                db.createObjectStore(
-                    STORE_NAME,
-                    {
-                        keyPath:"id",
-                        autoIncrement:true
-                    }
-                );
-
+            if (!db.objectStoreNames.contains(STORE)) {
+                db.createObjectStore(STORE, {
+                    keyPath: "id",
+                    autoIncrement: true
+                });
             }
-
         };
 
-        request.onsuccess = e=>{
-
+        request.onsuccess = (e) => {
             db = e.target.result;
             resolve();
-
         };
 
-        request.onerror = e=>reject(e);
-
     });
-
 }
 
-// =====================================================
-// FECHA AUTOMATICA
-// =====================================================
+/* =========================
+   GUARDAR MOVIMIENTO
+========================= */
+async function guardarMovimiento() {
 
-function fechaActual(){
-
-    const hoy = new Date();
-
-    return hoy.toISOString().split("T")[0];
-
-}
-
-function horaActual(){
-
-    const hoy = new Date();
-
-    return hoy.toTimeString().slice(0,5);
-
-}
-
-// =====================================================
-// INICIAR
-// =====================================================
-
-window.onload = async()=>{
-
-    $("fecha").value = fechaActual();
-
-    $("hora").value = horaActual();
+    if (!f("fecha").value || !f("nombre").value) {
+        alert("Fecha y nombre requeridos");
+        return;
+    }
 
     await abrirDB();
 
-    renderHistorial();
-
-};
-
-// =====================================================
-// GUARDAR MOVIMIENTO
-// =====================================================
-
-async function guardarMovimiento(){
-
-    if(!$("nombre").value){
-
-        alert("Debe ingresar nombre");
-        return;
-
-    }
-
-    const registro = {
-
-        fecha:$("fecha").value,
-        hora:$("hora").value,
-        nombre:$("nombre").value,
-        grupo:$("grupo").value,
-        movimiento:$("movimiento").value,
-        estado:$("estado").value,
-        responsable:$("responsable").value,
-        encargado:$("encargado").value,
-        observacion:$("observacion").value,
-
-        creado:new Date().toLocaleString("es-GT"),
-
-        timestamp:new Date().toISOString()
-
+    const movimiento = {
+        fecha: f("fecha").value,
+        hora: f("hora").value,
+        nombre: f("nombre").value,
+        grupo: f("grupo").value,
+        movimiento: f("movimiento").value,
+        estado: f("estado").value,
+        responsable: f("responsable").value,
+        encargado: f("encargado").value,
+        observacion: f("observacion").value
     };
 
-    const tx = db.transaction(STORE_NAME,"readwrite");
+    const tx = db.transaction(STORE, "readwrite");
+    const store = tx.objectStore(STORE);
 
-    const store = tx.objectStore(STORE_NAME);
+    store.add(movimiento);
 
-    store.add(registro);
+    tx.oncomplete = () => {
 
-    tx.oncomplete = ()=>{
+        enviarGoogleSheets(movimiento);
 
-        enviarGoogleSheets(registro);
+        limpiar();
 
-        limpiarFormulario();
-
-        renderHistorial();
+        cargarMovimientos();
 
         alert("Movimiento guardado correctamente");
-
     };
-
 }
 
-// =====================================================
-// ENVIAR A GOOGLE SHEETS
-// =====================================================
+/* =========================
+   ENVIAR A GOOGLE SHEETS
+========================= */
+function enviarGoogleSheets(data) {
 
-function enviarGoogleSheets(data){
+    const formData = new URLSearchParams();
 
-    if(
-        GOOGLE_SCRIPT_URL ===
-        "PEGAR_APPS_SCRIPT_AQUI"
-    ) return;
-
-    const form = new URLSearchParams();
-
-    for(const key in data){
-
-        form.append(key,data[key]);
-
+    for (const key in data) {
+        formData.append(key, data[key]);
     }
 
-    fetch(
-        GOOGLE_SCRIPT_URL,
-        {
-            method:"POST",
-            mode:"no-cors",
-            body:form
-        }
-    ).catch(()=>{
-
-        console.log(
-            "No se pudo enviar a Google"
-        );
-
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+    })
+    .then(() => {
+        console.log("Backup enviado");
+    })
+    .catch((err) => {
+        console.error(err);
     });
-
 }
 
-// =====================================================
-// LIMPIAR
-// =====================================================
+/* =========================
+   CARGAR HISTORIAL
+========================= */
+async function cargarMovimientos() {
 
-function limpiarFormulario(){
+    await abrirDB();
 
-    $("nombre").value = "";
-
-    $("responsable").value = "";
-
-    $("encargado").value = "";
-
-    $("observacion").value = "";
-
-    $("hora").value = horaActual();
-
-}
-
-// =====================================================
-// RENDER HISTORIAL
-// =====================================================
-
-async function renderHistorial(){
-
-    const tx = db.transaction(
-        STORE_NAME,
-        "readonly"
-    );
-
-    const store = tx.objectStore(STORE_NAME);
+    const tx = db.transaction(STORE, "readonly");
+    const store = tx.objectStore(STORE);
 
     const request = store.getAll();
 
-    request.onsuccess = ()=>{
+    request.onsuccess = () => {
 
-        movimientos = request.result || [];
+        movimientos = request.result;
 
-        movimientos.sort((a,b)=>
-            new Date(b.timestamp)
-            -
-            new Date(a.timestamp)
+        renderMovimientos();
+    };
+}
+
+/* =========================
+   RENDER HISTORIAL
+========================= */
+function renderMovimientos() {
+
+    let contenedor = document.getElementById("historial");
+
+    if (!contenedor) return;
+
+    contenedor.innerHTML = "";
+
+    movimientos.reverse().forEach(m => {
+
+        contenedor.innerHTML += `
+        <div class="card-registro">
+
+            <div><strong>Fecha:</strong> ${m.fecha}</div>
+            <div><strong>Hora:</strong> ${m.hora}</div>
+            <div><strong>Nombre:</strong> ${m.nombre}</div>
+            <div><strong>Grupo:</strong> ${m.grupo}</div>
+            <div><strong>Movimiento:</strong> ${m.movimiento}</div>
+            <div><strong>Estado:</strong> ${m.estado}</div>
+            <div><strong>Responsable:</strong> ${m.responsable}</div>
+            <div><strong>Encargado:</strong> ${m.encargado}</div>
+            <div><strong>Observación:</strong> ${m.observacion}</div>
+
+        </div>
+        `;
+    });
+}
+
+/* =========================
+   LIMPIAR FORMULARIO
+========================= */
+function limpiar() {
+
+    f("nombre").value = "";
+    f("responsable").value = "";
+    f("encargado").value = "";
+    f("observacion").value = "";
+}
+
+/* =========================
+   BORRAR HISTORIAL
+========================= */
+async function borrarHistorial() {
+
+    if (!confirm("¿Borrar historial local?")) return;
+
+    await abrirDB();
+
+    const tx = db.transaction(STORE, "readwrite");
+
+    tx.objectStore(STORE).clear();
+
+    tx.oncomplete = () => {
+
+        cargarMovimientos();
+
+        alert("Historial eliminado");
+    };
+}
+
+/* =========================
+   EXPORTAR WORD
+========================= */
+function exportarWord() {
+
+    const { Document, Packer, Paragraph } = window.docx;
+
+    const contenido = movimientos.map(m => {
+
+        return new Paragraph(
+            `${m.fecha} ${m.hora} | ${m.nombre} | ${m.movimiento} | ${m.observacion}`
         );
-
-        const historial =
-        $("historial");
-
-        historial.innerHTML = "";
-
-        $("vacio").style.display =
-        movimientos.length
-        ?
-        "none"
-        :
-        "block";
-
-        let fechaActualRender = "";
-
-        movimientos.forEach(m=>{
-
-            if(m.fecha !== fechaActualRender){
-
-                fechaActualRender = m.fecha;
-
-                historial.innerHTML += `
-
-                <div class="dia-header">
-
-                    📅 ${m.fecha}
-
-                </div>
-
-                `;
-
-            }
-
-            historial.innerHTML += `
-
-            <div class="card-registro">
-
-                <div class="fila">
-                    <span class="lbl">
-                    Hora:
-                    </span>
-
-                    <span class="val">
-                    ${m.hora}
-                    </span>
-                </div>
-
-                <div class="fila">
-                    <span class="lbl">
-                    Nombre:
-                    </span>
-
-                    <span class="val">
-                    ${m.nombre}
-                    </span>
-                </div>
-
-                <div class="fila">
-                    <span class="lbl">
-                    Movimiento:
-                    </span>
-
-                    <span class="val">
-                    ${m.movimiento}
-                    </span>
-                </div>
-
-                <div class="fila">
-                    <span class="lbl">
-                    Estado:
-                    </span>
-
-                    <span class="val">
-                    ${m.estado}
-                    </span>
-                </div>
-
-                <div class="fila">
-                    <span class="lbl">
-                    Observación:
-                    </span>
-
-                    <span class="val">
-                    ${m.observacion}
-                    </span>
-                </div>
-
-                <div class="fila">
-                    <span class="lbl">
-                    Responsable:
-                    </span>
-
-                    <span class="val">
-                    ${m.responsable}
-                    </span>
-                </div>
-
-            </div>
-
-            `;
-
-        });
-
-    };
-
-}
-
-// =====================================================
-// BORRAR HISTORIAL
-// =====================================================
-
-function borrarHistorial(){
-
-    if(
-        !confirm(
-            "¿Borrar historial completo?"
-        )
-    ) return;
-
-    const tx = db.transaction(
-        STORE_NAME,
-        "readwrite"
-    );
-
-    tx.objectStore(STORE_NAME)
-    .clear();
-
-    tx.oncomplete = ()=>{
-
-        renderHistorial();
-
-    };
-
-}
-
-// =====================================================
-// EXPORTAR WORD
-// =====================================================
-
-async function exportarWord(){
-
-    const {
-        Document,
-        Packer,
-        Paragraph
-    } = window.docx;
-
-    const contenido = movimientos.map(m=>
-
-        new Paragraph(
-
-`${m.fecha} ${m.hora} | ${m.nombre} | ${m.movimiento} | ${m.estado} | ${m.observacion}`
-
-        )
-
-    );
-
-    const doc = new Document({
-
-        sections:[{
-
-            children:contenido
-
-        }]
 
     });
 
-    const blob =
-    await Packer.toBlob(doc);
+    const doc = new Document({
+        sections: [{
+            children: contenido
+        }]
+    });
 
-    saveAs(
-        blob,
-        "OPERACIONES_PMT.docx"
-    );
+    Packer.toBlob(doc).then(blob => {
 
+        saveAs(blob, "MOVIMIENTOS_OPERATIVOS.docx");
+
+    });
 }
+
+/* =========================
+   AUTO FECHA
+========================= */
+window.onload = () => {
+
+    const hoy = new Date();
+
+    f("fecha").value = hoy.toISOString().split("T")[0];
+
+    cargarMovimientos();
+};
