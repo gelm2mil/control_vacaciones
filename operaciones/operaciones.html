@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>OPERACIONES PMT — GELM</title>
+
+<!-- ===================================== -->
+<!-- WORD EXPORT -->
+<!-- ===================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+<style>
+
+body{
+    margin:0;
+    font-family:system-ui;
+    background:
+    radial-gradient(circle at top,#180024,#05000f);
+    color:#e9f9ff;
+}
+
+.shell{
+    max-width:1400px;
+    margin:20px auto;
+    padding:20px;
+}
+
+.panel{
+    background:rgba(2,5,20,.95);
+    border-radius:28px;
+    padding:25px;
+    box-shadow:0 0 35px rgba(0,255,200,.18);
+}
+
+h1{
+    text-align:center;
+    color:#00ffc8;
+    margin:0;
+    font-size:2rem;
+}
+
+.sub{
+    text-align:center;
+    color:#9cb3d8;
+    margin-top:8px;
+}
+
+.by{
+    text-align:center;
+    color:#00eaff;
+    letter-spacing:.2em;
+    font-size:.8rem;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#020616;
+    border-radius:22px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.span2{
+    grid-column:span 2;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+label{
+    display:block;
+    font-size:.7rem;
+    color:#8ca7d8;
+    margin-bottom:5px;
+    text-transform:uppercase;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    border-radius:16px;
+    border:1px solid #00eaff;
+    background:#020616;
+    color:#fff;
+    box-sizing:border-box;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    border-radius:999px;
+    padding:12px 22px;
+    font-weight:700;
+    background:
+    linear-gradient(
+        135deg,
+        #00eaff,
+        #00ffc8,
+        #b300ff
+    );
+    color:#020510;
+}
+
+.danger{
+    background:
+    linear-gradient(
+        135deg,
+        #ff003c,
+        #ff7a3c
+    );
+    color:#fff;
+}
+
+.historial{
+    margin-top:20px;
+}
+
+.dia-header{
+    background:#02131f;
+    color:#00ffc8;
+    padding:10px 14px;
+    border-radius:14px;
+    margin:20px 0 10px;
+}
+
+.card-registro{
+    background:#020616;
+    border-radius:18px;
+    padding:14px;
+    margin-bottom:12px;
+    border:1px solid rgba(0,255,200,.25);
+}
+
+.fila{
+    margin-bottom:6px;
+    font-size:.85rem;
+}
+
+.lbl{
+    color:#00ffc8;
+    font-size:.7rem;
+    text-transform:uppercase;
+}
+
+.val{
+    color:#e9f9ff;
+}
+
+footer{
+    text-align:center;
+    color:#8ca7d8;
+    font-size:.75rem;
+    margin-top:25px;
+}
+
+@media(max-width:900px){
+
+.grid{
+    grid-template-columns:1fr;
+}
+
+.span2{
+    grid-column:span 1;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="shell">
+
+<div class="panel">
+
+<h1>OPERACIONES PMT — 2026</h1>
+
+<div class="sub">
+Registro Operativo y Bitácora Institucional
+</div>
+
+<div class="by">
+== BY GELM ==
+</div>
+
+<!-- ===================================== -->
+<!-- FORMULARIO -->
+<!-- ===================================== -->
+
+<div class="card">
+
+<h3>Registrar Movimiento Operativo</h3>
+
+<div class="grid">
+
+<div>
+<label>Fecha</label>
+<input type="date" id="fecha">
+</div>
+
+<div>
+<label>Hora</label>
+<input type="time" id="hora">
+</div>
+
+<div>
+<label>Nombre</label>
+<input type="text" id="nombre">
+</div>
+
+<div>
+<label>Grupo</label>
+<select id="grupo">
+<option>A</option>
+<option>B</option>
+<option>MANDOS</option>
+<option>ADMINISTRATIVO</option>
+</select>
+</div>
+
+<div>
+<label>Movimiento</label>
+<select id="movimiento">
+<option>AUSENCIA</option>
+<option>VACACIONES</option>
+<option>IGSS</option>
+<option>PERMISO</option>
+<option>RETIRO</option>
+<option>REINGRESO</option>
+<option>CAPACITACION</option>
+<option>COMISION</option>
+<option>APOYO</option>
+<option>OPERATIVO</option>
+</select>
+</div>
+
+<div>
+<label>Estado</label>
+<select id="estado">
+<option>ACTIVO</option>
+<option>FUERA SERVICIO</option>
+</select>
+</div>
+
+<div>
+<label>Responsable</label>
+<input type="text" id="responsable">
+</div>
+
+<div>
+<label>Encargado</label>
+<input type="text" id="encargado">
+</div>
+
+<div class="full">
+<label>Observación Operativa</label>
+<textarea id="observacion"></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button onclick="guardarMovimiento()">
+Guardar Movimiento
+</button>
+
+<button onclick="exportarWord()">
+Exportar Word
+</button>
+
+<button onclick="renderHistorial()">
+Actualizar
+</button>
+
+<button class="danger" onclick="borrarHistorial()">
+Borrar Historial
+</button>
+
+</div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- HISTORIAL -->
+<!-- ===================================== -->
+
+<div class="card historial">
+
+<h3>Historial Operativo</h3>
+
+<div id="historial"></div>
+
+<div id="vacio">
+No hay movimientos registrados.
+</div>
+
+</div>
+
+<footer>
+
+2026 — Sistema Operativo PMT<br>
+
+<strong>BY GELM</strong>
+
+</footer>
+
+</div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- JS -->
+<!-- ===================================== -->
+
+<script src="operaciones.js"></script>
+
+</body>
+</html>
