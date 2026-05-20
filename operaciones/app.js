@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_3nNwGflD8UJMEot-DxoX7HyRSUzLWoaezcxEGTDi275q37bIB-MqRb0g56iUN2-XZw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFPyaQoLtqncLqHPR1cjytWMjLTzNsOvZWtN-jpUETfUhZyWpF90srJjyT4owIKmvp9g/exec";
 
 let movimientos = JSON.parse(localStorage.getItem("MOVIMIENTOS_PMT")) || [];
 
