@@ -1,24 +1,29 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_3nNwGflD8UJMEot-DxoX7HyRSUzLWoaezcxEGTDi275q37bIB-MqRb0g56iUN2-XZw/exec";
 
-const movimientos = JSON.parse(localStorage.getItem("MOVIMIENTOS_PMT")) || [];
+let movimientos = JSON.parse(localStorage.getItem("MOVIMIENTOS_PMT")) || [];
 
-const formatearFecha = (f) => {
-    if (!f) return "";
-    return new Date(f).toISOString().split("T")[0];
-};
-
-function guardarMovimiento() {
+function guardarMovimiento(){
 
     const movimiento = {
-        fecha: formatearFecha(document.getElementById("fecha").value),
+
+        fecha: document.getElementById("fecha").value,
+
         hora: document.getElementById("hora").value,
+
         nombre: document.getElementById("nombre").value,
+
         grupo: document.getElementById("grupo").value,
+
         movimiento: document.getElementById("movimiento").value,
+
         estado: document.getElementById("estado").value,
-        observacion: document.getElementById("observacion").value,
+
         responsable: document.getElementById("responsable").value,
-        encargado: document.getElementById("encargado").value
+
+        encargado: document.getElementById("encargado").value,
+
+        observacion: document.getElementById("observacion").value
+
     };
 
     movimientos.push(movimiento);
@@ -30,78 +35,169 @@ function guardarMovimiento() {
 
     enviarGoogleSheets(movimiento);
 
-    renderMovimientos();
+    renderHistorial();
 
     limpiarFormulario();
 
     alert("Movimiento guardado correctamente");
+
 }
 
-function enviarGoogleSheets(data) {
+function enviarGoogleSheets(datos){
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-            "Content-Type": "application/json"
+    fetch(SCRIPT_URL,{
+
+        method:"POST",
+
+        mode:"no-cors",
+
+        headers:{
+            "Content-Type":"application/json"
         },
-        body: JSON.stringify(data)
+
+        body:JSON.stringify(datos)
+
     })
-    .then(() => {
-        console.log("Enviado a Google Sheets");
+    .then(()=>{
+        console.log("Datos enviados");
     })
-    .catch(error => {
-        console.error("Error:", error);
+    .catch(error=>{
+        console.error(error);
     });
 
 }
 
-function renderMovimientos() {
+function renderHistorial(){
 
-    const contenedor = document.getElementById("historial");
+    const historial = document.getElementById("historial");
 
-    if (!contenedor) return;
+    const vacio = document.getElementById("vacio");
 
-    contenedor.innerHTML = "";
+    historial.innerHTML = "";
 
-    movimientos.reverse().forEach(m => {
+    if(movimientos.length === 0){
 
-        contenedor.innerHTML += `
-        <div class="card-movimiento">
-            <b>Fecha:</b> ${m.fecha}<br>
-            <b>Hora:</b> ${m.hora}<br>
-            <b>Nombre:</b> ${m.nombre}<br>
-            <b>Grupo:</b> ${m.grupo}<br>
-            <b>Movimiento:</b> ${m.movimiento}<br>
-            <b>Estado:</b> ${m.estado}<br>
-            <b>Responsable:</b> ${m.responsable}<br>
-            <b>Encargado:</b> ${m.encargado}<br>
-            <b>Observación:</b> ${m.observacion}
+        vacio.style.display = "block";
+
+        return;
+
+    }
+
+    vacio.style.display = "none";
+
+    movimientos.slice().reverse().forEach(m=>{
+
+        historial.innerHTML += `
+
+        <div class="card-registro">
+
+            <div class="fila">
+            <span class="lbl">Fecha:</span>
+            <span class="val">${m.fecha}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Hora:</span>
+            <span class="val">${m.hora}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Nombre:</span>
+            <span class="val">${m.nombre}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Grupo:</span>
+            <span class="val">${m.grupo}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Movimiento:</span>
+            <span class="val">${m.movimiento}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Estado:</span>
+            <span class="val">${m.estado}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Responsable:</span>
+            <span class="val">${m.responsable}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Encargado:</span>
+            <span class="val">${m.encargado}</span>
+            </div>
+
+            <div class="fila">
+            <span class="lbl">Observación:</span>
+            <span class="val">${m.observacion}</span>
+            </div>
+
         </div>
+
         `;
+
     });
 
 }
 
-function limpiarFormulario() {
+function limpiarFormulario(){
 
     document.getElementById("nombre").value = "";
-    document.getElementById("observacion").value = "";
+
     document.getElementById("responsable").value = "";
+
     document.getElementById("encargado").value = "";
+
+    document.getElementById("observacion").value = "";
 
 }
 
-function borrarHistorial() {
+function borrarHistorial(){
 
-    if (confirm("¿Borrar historial completo?")) {
+    if(confirm("¿Deseas borrar el historial?")){
 
         localStorage.removeItem("MOVIMIENTOS_PMT");
 
-        location.reload();
+        movimientos = [];
+
+        renderHistorial();
 
     }
 
 }
 
-renderMovimientos();
+function exportarWord(){
+
+    const {Document,Packer,Paragraph} = window.docx;
+
+    const doc = new Document({
+
+        sections:[{
+
+            children:movimientos.map(m=>
+
+                new Paragraph(
+
+                    `${m.fecha} ${m.hora} - ${m.nombre} - ${m.movimiento} - ${m.observacion}`
+
+                )
+
+            )
+
+        }]
+
+    });
+
+    Packer.toBlob(doc).then(blob=>{
+
+        saveAs(blob,"MOVIMIENTOS_OPERATIVOS.docx");
+
+    });
+
+}
+
+renderHistorial();
