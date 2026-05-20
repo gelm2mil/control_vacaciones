@@ -1,7 +1,6 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
 // VERSION PRO OPERATIVA FINAL
-// CORREGIDA FULL
 // ============================================
 
 // ============================================
@@ -20,6 +19,9 @@ const RESUMEN_URL =
 const VACACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=936650941&single=true&output=csv";
 
+const OPERACIONES_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vSdxL8NbBd5qZBfd7s1ValAKmVRQ2d3aWh3Fd07cTPLMXxly9Cap-AbpQuJtasRQw00EYnogECsVvtc/pub?gid=289242254&single=true&output=csv";
+
 // ============================================
 // VARIABLES
 // ============================================
@@ -29,6 +31,7 @@ let historialCambios = [];
 let bitacoraGlobal = [];
 let vacacionesGlobal = [];
 let resumenGlobal = [];
+let operacionesGlobal = [];
 
 // ============================================
 // INICIAR
@@ -54,20 +57,20 @@ async function cargarSistema() {
         );
 
         const [
+
             personalResponse,
             bitacoraResponse,
             resumenResponse,
-            vacacionesResponse
+            vacacionesResponse,
+            operacionesResponse
 
         ] = await Promise.all([
 
             fetch(PERSONAL_URL),
-
             fetch(BITACORA_URL),
-
             fetch(RESUMEN_URL),
-
-            fetch(VACACIONES_URL)
+            fetch(VACACIONES_URL),
+            fetch(OPERACIONES_URL)
 
         ]);
 
@@ -83,6 +86,9 @@ async function cargarSistema() {
         const vacacionesCSV =
             await vacacionesResponse.text();
 
+        const operacionesCSV =
+            await operacionesResponse.text();
+
         // ====================================
         // PERSONAL
         // ====================================
@@ -90,7 +96,6 @@ async function cargarSistema() {
         Papa.parse(personalCSV, {
 
             header: true,
-
             skipEmptyLines: true,
 
             complete: function(results) {
@@ -104,7 +109,6 @@ async function cargarSistema() {
                 Papa.parse(bitacoraCSV, {
 
                     header: true,
-
                     skipEmptyLines: true,
 
                     complete: function(bitacoraResults) {
@@ -123,7 +127,6 @@ async function cargarSistema() {
                 Papa.parse(resumenCSV, {
 
                     header: true,
-
                     skipEmptyLines: true,
 
                     complete: function(resumenResults) {
@@ -142,13 +145,30 @@ async function cargarSistema() {
                 Papa.parse(vacacionesCSV, {
 
                     header: true,
-
                     skipEmptyLines: true,
 
                     complete: function(vacacionesResults) {
 
                         vacacionesGlobal =
                             vacacionesResults.data;
+
+                    }
+
+                });
+
+                // ================================
+                // OPERACIONES
+                // ================================
+
+                Papa.parse(operacionesCSV, {
+
+                    header: true,
+                    skipEmptyLines: true,
+
+                    complete: function(operacionesResults) {
+
+                        operacionesGlobal =
+                            operacionesResults.data;
 
                     }
 
@@ -199,9 +219,7 @@ function procesarDatos(data) {
     let mandosActivos = 0;
 
     let grupoA = [];
-
     let grupoB = [];
-
     let mandos = [];
 
     let grupoAActivos = 0;
@@ -239,10 +257,6 @@ function procesarDatos(data) {
         const horario =
             limpiar(persona.HORARIO);
 
-        // ====================================
-        // ROTACION AUTOMATICA
-        // ====================================
-
         let turnoActual =
             obtenerTurnoAutomatico(
                 persona,
@@ -274,7 +288,7 @@ function procesarDatos(data) {
         }
 
         // ====================================
-        // CONTADORES GRUPOS
+        // CONTADORES
         // ====================================
 
         if (grupo === "A") {
@@ -314,21 +328,15 @@ function procesarDatos(data) {
         }
 
         // ====================================
-        // PANEL MANDOS
+        // MANDOS
         // ====================================
 
         if (
 
             cargo.includes("COMISARIO") ||
-
             cargo.includes("SUBDIRECTOR") ||
-
             cargo.includes("ENCARGADO") ||
-
             cargo.includes("TRANSPORTES") ||
-
-            cargo.includes("VIA PUBLICA") ||
-
             cargo.includes("SECRETARIO")
 
         ) {
@@ -338,8 +346,6 @@ function procesarDatos(data) {
                 nombre: persona.NOMBRE,
 
                 cargo: persona.CARGO,
-
-                horario: horario,
 
                 estado:
                     fuera
@@ -396,11 +402,8 @@ function procesarDatos(data) {
     actualizarDashboard(
 
         totalPMT,
-
         operativosHoy,
-
         fueraServicio,
-
         mandosActivos
 
     );
@@ -454,6 +457,89 @@ function procesarDatos(data) {
     // ====================================
 
     generarAlertas(data);
+
+    generarAlertasOperativas();
+
+}
+
+// ============================================
+// ALERTAS OPERATIVAS
+// ============================================
+
+function generarAlertasOperativas() {
+
+    if (!operacionesGlobal.length) return;
+
+    const hoy = new Date();
+
+    const yyyy = hoy.getFullYear();
+
+    const mm = String(
+        hoy.getMonth() + 1
+    ).padStart(2, "0");
+
+    const dd = String(
+        hoy.getDate()
+    ).padStart(2, "0");
+
+    const fechaHoy =
+        `${yyyy}-${mm}-${dd}`;
+
+    operacionesGlobal.forEach(item => {
+
+        const fecha =
+            (item.FECHA || "").trim();
+
+        const nombre =
+            (item.NOMBRE || "").trim();
+
+        const movimiento =
+            (item.MOVIMIENTO || "").trim();
+
+        const estado =
+            (item.ESTADO || "").trim();
+
+        const observacion =
+            (item.OBSERVACION || "").trim();
+
+        if (
+            fecha.includes(fechaHoy)
+        ) {
+
+            mostrarNuevaAlerta(
+
+                `🚨 ${nombre} — ${movimiento} — ${estado} — ${observacion}`
+
+            );
+
+        }
+
+    });
+
+}
+
+// ============================================
+// NUEVA ALERTA
+// ============================================
+
+function mostrarNuevaAlerta(texto) {
+
+    const contenedor =
+        document.getElementById(
+            "alertasContainer"
+        );
+
+    if (!contenedor) return;
+
+    contenedor.innerHTML += `
+
+    <div class="alerta-item">
+
+        ${texto}
+
+    </div>
+
+    `;
 
 }
 
@@ -534,15 +620,10 @@ function obtenerSemana(fecha) {
 // ============================================
 
 function actualizarDashboard(
-
     total,
-
     operativos,
-
     fuera,
-
     mandos
-
 ) {
 
     document.getElementById(
@@ -658,7 +739,7 @@ function renderGrupo(id, lista) {
 }
 
 // ============================================
-// ALERTAS
+// ALERTAS GENERALES
 // ============================================
 
 function generarAlertas(data) {
@@ -678,12 +759,6 @@ function generarAlertas(data) {
 
         const permiso =
             limpiar(persona.PERMISO);
-
-        const fechaSalida =
-            limpiar(persona.FECHA_SALIDA);
-
-        const fechaRegreso =
-            limpiar(persona.FECHA_REGRESO);
 
         if (vacaciones === "SI") {
 
@@ -705,22 +780,6 @@ function generarAlertas(data) {
 
             alertas.push(
                 `🟠 ${nombre} en PERMISO`
-            );
-
-        }
-
-        if (fechaSalida) {
-
-            alertas.push(
-                `📅 ${nombre} sale: ${fechaSalida}`
-            );
-
-        }
-
-        if (fechaRegreso) {
-
-            alertas.push(
-                `📌 ${nombre} regresa: ${fechaRegreso}`
             );
 
         }
@@ -961,6 +1020,19 @@ function mostrarAlerta(
     </div>
 
     `;
+
+}
+
+// ============================================
+// ABRIR OPERACIONES
+// ============================================
+
+function abrirOperaciones() {
+
+    window.open(
+        "operaciones/operaciones.html",
+        "_blank"
+    );
 
 }
 
