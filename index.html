@@ -55,16 +55,27 @@
     <!-- ALERTAS -->
     <!-- ===================================================== -->
 
-    <section class="alertas-box">
+    <section
+        class="alertas-box"
+        onclick="abrirOperaciones()"
+        style="cursor:pointer;"
+    >
 
         <div class="alerta-title">
-            ALERTAS OPERATIVAS
+
+            🚨 ALERTAS OPERATIVAS
+
         </div>
 
-        <div id="alertasContainer" class="alertas-container">
+        <div
+            id="alertasContainer"
+            class="alertas-container"
+        >
 
             <div class="alerta-item">
+
                 Sistema operativo cargado correctamente.
+
             </div>
 
         </div>
@@ -351,6 +362,10 @@
 
         <button onclick="verHistorial()">
             VER HISTORIAL
+        </button>
+
+        <button onclick="abrirOperaciones()">
+            CENTRO OPERATIVO
         </button>
 
     </section>
