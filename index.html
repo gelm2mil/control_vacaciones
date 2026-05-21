@@ -10,7 +10,6 @@
 
 <link rel="stylesheet" href="styles.css">
 
-<!-- PAPAPARSE -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 </head>
@@ -19,398 +18,370 @@
 
 <div class="main-container">
 
-    <!-- ===================================================== -->
-    <!-- HEADER -->
-    <!-- ===================================================== -->
+<header class="header">
 
-    <header class="header">
+<div class="logo-box">
+<img src="icons/pmt.png" class="logo">
+</div>
 
-        <div class="logo-box">
-            <img src="icons/pmt.png" class="logo">
-        </div>
+<div class="header-center">
 
-        <div class="header-center">
+<h1>SISTEMA OPERATIVO PMT</h1>
 
-            <h1>
-                SISTEMA OPERATIVO PMT
-            </h1>
+<h2>POLICÍA MUNICIPAL DE TRÁNSITO</h2>
 
-            <h2>
-                POLICÍA MUNICIPAL DE TRÁNSITO
-            </h2>
-
-            <h3>
-                CHIMALTENANGO — 2026
-            </h3>
-
-        </div>
-
-        <div class="logo-box">
-            <img src="icons/icon-512.png" class="logo">
-        </div>
-
-    </header>
-
-    <!-- ===================================================== -->
-    <!-- ALERTAS -->
-    <!-- ===================================================== -->
-
-    <section
-        class="alertas-box"
-        onclick="abrirOperaciones()"
-        style="cursor:pointer;"
-    >
-
-        <div class="alerta-title">
-
-            🚨 ALERTAS OPERATIVAS
-
-        </div>
-
-        <div
-            id="alertasContainer"
-            class="alertas-container"
-        >
-
-            <div class="alerta-item">
-
-                Sistema operativo cargado correctamente.
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- BUSCADOR -->
-    <!-- ===================================================== -->
-
-    <section class="buscador-section">
-
-        <h2 class="buscador-title">
-            Buscador Inteligente de Personal
-        </h2>
-
-        <div class="buscador-box">
-
-            <input
-                type="text"
-                id="busqueda"
-                placeholder="Buscar agente, cargo, grupo..."
-            >
-
-            <button id="buscarBtn">
-                Buscar
-            </button>
-
-        </div>
-
-        <p class="buscador-info">
-            Puedes buscar nombres, cargos, estados y grupos.
-        </p>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- DASHBOARD -->
-    <!-- ===================================================== -->
-
-    <section class="dashboard">
-
-        <div class="card">
-
-            <h3>TOTAL PMT</h3>
-
-            <span id="totalAgentes">
-                0
-            </span>
-
-        </div>
-
-        <div class="card">
-
-            <h3>OPERATIVOS HOY</h3>
-
-            <span id="operativosHoy">
-                0
-            </span>
-
-        </div>
-
-        <div class="card">
-
-            <h3>FUERA SERVICIO</h3>
-
-            <span id="fueraServicio">
-                0
-            </span>
-
-        </div>
-
-        <div class="card">
-
-            <h3>MANDOS ACTIVOS</h3>
-
-            <span id="mandosActivos">
-                0
-            </span>
-
-        </div>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- PANEL DIRECCIÓN -->
-    <!-- ===================================================== -->
-
-    <section class="direccion-panel">
-
-        <div class="panel-title">
-            PANEL DE DIRECCIÓN Y MANDOS
-        </div>
-
-        <div class="tabla-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Nombre</th>
-                        <th>Cargo</th>
-                        <th>Estado</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="mandos-body">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- GRUPOS -->
-    <!-- ===================================================== -->
-
-    <section class="grupos-container">
-
-        <!-- ======================= -->
-        <!-- GRUPO A -->
-        <!-- ======================= -->
-
-        <div class="grupo-box">
-
-            <div class="grupo-title">
-                GRUPO A — TURNO MAÑANA
-            </div>
-
-            <div class="grupo-dashboard">
-
-                <div class="mini-card">
-
-                    <span id="grupoAActivos">
-                        0
-                    </span>
-
-                    <p>Activos</p>
-
-                </div>
-
-                <div class="mini-card">
-
-                    <span id="grupoAVacaciones">
-                        0
-                    </span>
-
-                    <p>Vacaciones</p>
-
-                </div>
-
-                <div class="mini-card">
-
-                    <span id="grupoAIGSS">
-                        0
-                    </span>
-
-                    <p>IGSS</p>
-
-                </div>
-
-            </div>
-
-            <div class="tabla-scroll">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Nombre</th>
-                            <th>Cargo</th>
-                            <th>Turno</th>
-                            <th>Estado</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="grupoA-body">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-        <!-- ======================= -->
-        <!-- GRUPO B -->
-        <!-- ======================= -->
-
-        <div class="grupo-box">
-
-            <div class="grupo-title">
-                GRUPO B — TURNO TARDE
-            </div>
-
-            <div class="grupo-dashboard">
-
-                <div class="mini-card">
-
-                    <span id="grupoBActivos">
-                        0
-                    </span>
-
-                    <p>Activos</p>
-
-                </div>
-
-                <div class="mini-card">
-
-                    <span id="grupoBVacaciones">
-                        0
-                    </span>
-
-                    <p>Vacaciones</p>
-
-                </div>
-
-                <div class="mini-card">
-
-                    <span id="grupoBIGSS">
-                        0
-                    </span>
-
-                    <p>IGSS</p>
-
-                </div>
-
-            </div>
-
-            <div class="tabla-scroll">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Nombre</th>
-                            <th>Cargo</th>
-                            <th>Turno</th>
-                            <th>Estado</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="grupoB-body">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- BOTONES -->
-    <!-- ===================================================== -->
-
-    <section class="botones-panel">
-
-        <button onclick="generarSolicitud()">
-            GENERAR SOLICITUD
-        </button>
-
-        <button onclick="imprimirPDF()">
-            IMPRIMIR PDF
-        </button>
-
-        <button onclick="verHistorial()">
-            VER HISTORIAL
-        </button>
-
-        <button onclick="abrirOperaciones()">
-            CENTRO OPERATIVO
-        </button>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- ESTADO -->
-    <!-- ===================================================== -->
-
-    <section class="estado-box">
-
-        <h2>
-            Estado del sistema
-        </h2>
-
-        <div class="estado-luces">
-
-            <span class="luz rojo"></span>
-            <span class="luz amarillo"></span>
-            <span class="luz verde"></span>
-
-        </div>
-
-    </section>
-
-    <!-- ===================================================== -->
-    <!-- FOOTER -->
-    <!-- ===================================================== -->
-
-    <footer class="footer">
-
-        <p>
-            © 2025–2026 — Sistema GELM
-        </p>
-
-        <p>
-            Desarrollo, diseño y propiedad intelectual reservada — BY GELM
-        </p>
-
-    </footer>
+<h3>CHIMALTENANGO — 2026</h3>
 
 </div>
 
-<!-- ===================================================== -->
-<!-- APP JS -->
-<!-- ===================================================== -->
+<div class="logo-box">
+<img src="icons/icon-512.png" class="logo">
+</div>
+
+</header>
+
+<!-- ALERTAS -->
+
+<section
+class="alertas-box"
+onclick="abrirOperaciones()"
+style="cursor:pointer;"
+>
+
+<div class="alerta-title">
+
+🚨 ALERTAS OPERATIVAS
+
+</div>
+
+<div
+id="alertasContainer"
+class="alertas-container"
+>
+
+<div class="alerta-item">
+
+Sistema operativo cargado correctamente.
+
+</div>
+
+</div>
+
+</section>
+
+<!-- BUSCADOR -->
+
+<section class="buscador-section">
+
+<h2 class="buscador-title">
+
+Buscador Inteligente de Personal
+
+</h2>
+
+<div class="buscador-box">
+
+<input
+type="text"
+id="busqueda"
+placeholder="Buscar agente, grupo, cargo..."
+>
+
+<button onclick="buscarPersonal()">
+
+Buscar
+
+</button>
+
+</div>
+
+<p class="buscador-info">
+
+Busca por nombre, cargo, grupo o estado.
+
+</p>
+
+</section>
+
+<!-- DASHBOARD -->
+
+<section class="dashboard">
+
+<div class="card">
+
+<h3>TOTAL PMT</h3>
+
+<span id="totalAgentes">0</span>
+
+</div>
+
+<div class="card">
+
+<h3>OPERATIVOS HOY</h3>
+
+<span id="operativosHoy">0</span>
+
+</div>
+
+<div class="card">
+
+<h3>FUERA SERVICIO</h3>
+
+<span id="fueraServicio">0</span>
+
+</div>
+
+<div class="card">
+
+<h3>MANDOS ACTIVOS</h3>
+
+<span id="mandosActivos">0</span>
+
+</div>
+
+</section>
+
+<!-- PANEL DIRECCION -->
+
+<section class="direccion-panel">
+
+<div class="panel-title">
+
+PANEL DE DIRECCIÓN Y MANDOS
+
+</div>
+
+<div class="tabla-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Nombre</th>
+<th>Cargo</th>
+<th>Estado</th>
+
+</tr>
+
+</thead>
+
+<tbody id="mandos-body">
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- GRUPOS -->
+
+<section class="grupos-container">
+
+<div class="grupo-box">
+
+<div
+class="grupo-title"
+id="tituloGrupoA"
+>
+
+GRUPO A
+
+</div>
+
+<div class="grupo-dashboard">
+
+<div class="mini-card">
+
+<span id="grupoAActivos">0</span>
+
+<p>Activos</p>
+
+</div>
+
+<div class="mini-card">
+
+<span id="grupoAVacaciones">0</span>
+
+<p>Vacaciones</p>
+
+</div>
+
+<div class="mini-card">
+
+<span id="grupoAIGSS">0</span>
+
+<p>IGSS</p>
+
+</div>
+
+</div>
+
+<div class="tabla-scroll">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Nombre</th>
+<th>Cargo</th>
+<th>Turno</th>
+<th>Estado</th>
+
+</tr>
+
+</thead>
+
+<tbody id="grupoA-body">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="grupo-box">
+
+<div
+class="grupo-title"
+id="tituloGrupoB"
+>
+
+GRUPO B
+
+</div>
+
+<div class="grupo-dashboard">
+
+<div class="mini-card">
+
+<span id="grupoBActivos">0</span>
+
+<p>Activos</p>
+
+</div>
+
+<div class="mini-card">
+
+<span id="grupoBVacaciones">0</span>
+
+<p>Vacaciones</p>
+
+</div>
+
+<div class="mini-card">
+
+<span id="grupoBIGSS">0</span>
+
+<p>IGSS</p>
+
+</div>
+
+</div>
+
+<div class="tabla-scroll">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Nombre</th>
+<th>Cargo</th>
+<th>Turno</th>
+<th>Estado</th>
+
+</tr>
+
+</thead>
+
+<tbody id="grupoB-body">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- BOTONES -->
+
+<section class="botones-panel">
+
+<button onclick="generarSolicitud()">
+
+GENERAR SOLICITUD
+
+</button>
+
+<button onclick="imprimirPDF()">
+
+IMPRIMIR PDF
+
+</button>
+
+<button onclick="verHistorial()">
+
+VER HISTORIAL
+
+</button>
+
+<button onclick="abrirOperaciones()">
+
+CENTRO OPERATIVO
+
+</button>
+
+</section>
+
+<!-- ESTADO -->
+
+<section class="estado-box">
+
+<h2>
+
+Estado del sistema
+
+</h2>
+
+<div class="estado-luces">
+
+<span class="luz rojo"></span>
+<span class="luz amarillo"></span>
+<span class="luz verde"></span>
+
+</div>
+
+</section>
+
+<footer class="footer">
+
+<p>
+
+© 2025–2026 — Sistema GELM
+
+</p>
+
+<p>
+
+Desarrollo y propiedad intelectual — BY GELM
+
+</p>
+
+</footer>
+
+</div>
 
 <script src="app.js"></script>
 
