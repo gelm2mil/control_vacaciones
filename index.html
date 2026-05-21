@@ -12,40 +12,721 @@
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:Arial,sans-serif;
+
+    background:
+    linear-gradient(
+        135deg,
+        #020617,
+        #071126,
+        #0f172a
+    );
+
+    color:white;
+
+    min-height:100vh;
+
+}
+
+.main-container{
+
+    width:100%;
+    max-width:1600px;
+
+    margin:auto;
+
+    padding:20px;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:20px;
+
+    background:
+    rgba(0,0,0,0.35);
+
+    border-radius:25px;
+
+    margin-bottom:20px;
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(10px);
+
+}
+
+.logo-box{
+
+    width:120px;
+    height:120px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.logo{
+
+    width:100%;
+    max-width:100px;
+
+    object-fit:contain;
+
+}
+
+.header-center{
+
+    text-align:center;
+
+    flex:1;
+
+}
+
+.header-center h1{
+
+    color:#00e5ff;
+
+    font-size:2rem;
+
+    margin-bottom:8px;
+
+}
+
+.header-center h2{
+
+    color:#ffffff;
+
+    margin-bottom:5px;
+
+}
+
+.header-center h3{
+
+    color:#94a3b8;
+
+    font-weight:normal;
+
+}
+
+/* =========================================
+ALERTAS
+========================================= */
+
+.alertas-box{
+
+    background:
+    rgba(255,0,60,0.15);
+
+    border:
+    1px solid rgba(255,0,60,0.35);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+.alertas-box:hover{
+
+    transform:scale(1.01);
+
+    box-shadow:
+    0 0 25px rgba(255,0,60,0.35);
+
+}
+
+.alerta-title{
+
+    font-size:1.3rem;
+
+    font-weight:bold;
+
+    color:#ff3355;
+
+    margin-bottom:15px;
+
+}
+
+.alertas-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    max-height:300px;
+
+    overflow:auto;
+
+}
+
+.alerta-item{
+
+    background:
+    rgba(0,0,0,0.3);
+
+    padding:12px;
+
+    border-radius:14px;
+
+    border-left:
+    5px solid #ff3355;
+
+    font-size:0.95rem;
+
+}
+
+/* =========================================
+BUSCADOR
+========================================= */
+
+.buscador-section{
+
+    background:
+    rgba(0,0,0,0.25);
+
+    padding:20px;
+
+    border-radius:20px;
+
+    margin-bottom:20px;
+
+}
+
+.buscador-title{
+
+    margin-bottom:15px;
+
+    color:#00e5ff;
+
+}
+
+.buscador-box{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    align-items:center;
+
+}
+
+.buscador-box input{
+
+    flex:1;
+
+    min-width:250px;
+
+    padding:14px;
+
+    border-radius:14px;
+
+    border:none;
+
+    background:#0f172a;
+
+    color:white;
+
+    font-size:1rem;
+
+}
+
+.buscador-box button{
+
+    padding:14px 22px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+
+}
+
+/* =========================================
+BOTON BUSCAR
+========================================= */
+
+.btn-buscar{
+
+    background:
+    linear-gradient(
+        90deg,
+        #00e5ff,
+        #00bcd4
+    );
+
+    color:black;
+
+}
+
+/* =========================================
+BOTON NOVEDADES
+========================================= */
+
+.btn-novedades{
+
+    background:
+    linear-gradient(
+        90deg,
+        #ff004c,
+        #ff6a00
+    );
+
+    color:white;
+
+    box-shadow:
+    0 0 20px rgba(255,0,76,0.5);
+
+}
+
+.btn-novedades:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* =========================================
+DASHBOARD
+========================================= */
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+    margin-bottom:20px;
+
+}
+
+.card{
+
+    background:
+    rgba(0,0,0,0.25);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    text-align:center;
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+
+}
+
+.card h3{
+
+    margin-bottom:15px;
+
+    color:#94a3b8;
+
+}
+
+.card span{
+
+    font-size:2rem;
+
+    font-weight:bold;
+
+    color:#00e5ff;
+
+}
+
+/* =========================================
+TABLAS
+========================================= */
+
+.grupos-container{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(500px,1fr));
+
+    gap:20px;
+
+    margin-bottom:20px;
+
+}
+
+.grupo-box{
+
+    background:
+    rgba(0,0,0,0.25);
+
+    border-radius:20px;
+
+    padding:20px;
+
+}
+
+.grupo-title{
+
+    font-size:1.2rem;
+
+    font-weight:bold;
+
+    color:#00e5ff;
+
+    margin-bottom:15px;
+
+}
+
+.grupo-dashboard{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.mini-card{
+
+    flex:1;
+
+    min-width:100px;
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border-radius:14px;
+
+    padding:10px;
+
+    text-align:center;
+
+}
+
+.mini-card span{
+
+    font-size:1.4rem;
+
+    font-weight:bold;
+
+    color:#00e5ff;
+
+}
+
+.tabla-scroll{
+
+    overflow:auto;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th{
+
+    background:
+    rgba(0,229,255,0.2);
+
+    padding:12px;
+
+    text-align:left;
+
+    color:#00e5ff;
+
+}
+
+td{
+
+    padding:12px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,0.08);
+
+}
+
+.estado-activo{
+
+    background:#00c853;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+    font-size:0.8rem;
+
+}
+
+.estado-fuera{
+
+    background:#ff1744;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+    font-size:0.8rem;
+
+}
+
+/* =========================================
+MANDOS
+========================================= */
+
+.direccion-panel{
+
+    background:
+    rgba(0,0,0,0.25);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+}
+
+.panel-title{
+
+    color:#00e5ff;
+
+    font-size:1.2rem;
+
+    margin-bottom:15px;
+
+}
+
+/* =========================================
+BOTONES
+========================================= */
+
+.botones-panel{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.botones-panel button{
+
+    padding:14px 22px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    background:
+    linear-gradient(
+        90deg,
+        #00e5ff,
+        #00bcd4
+    );
+
+    color:black;
+
+    transition:0.3s;
+
+}
+
+.botones-panel button:hover{
+
+    transform:scale(1.03);
+
+}
+
+/* =========================================
+ESTADO
+========================================= */
+
+.estado-box{
+
+    background:
+    rgba(0,0,0,0.25);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+}
+
+.estado-luces{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:15px;
+
+}
+
+.luz{
+
+    width:20px;
+    height:20px;
+
+    border-radius:50%;
+
+}
+
+.rojo{
+    background:#ff1744;
+}
+
+.amarillo{
+    background:#ffea00;
+}
+
+.verde{
+    background:#00e676;
+}
+
+/* =========================================
+FOOTER
+========================================= */
+
+.footer{
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    padding:30px 10px;
+
+}
+
+/* =========================================
+RESPONSIVE
+========================================= */
+
+@media(max-width:768px){
+
+    .header{
+
+        flex-direction:column;
+
+    }
+
+    .grupos-container{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
 <div class="main-container">
 
+<!-- =====================================
+HEADER
+===================================== -->
+
 <header class="header">
 
 <div class="logo-box">
-<img src="icons/pmt.png" class="logo">
+
+<img
+src="icons/pmt.png"
+class="logo"
+>
+
 </div>
 
 <div class="header-center">
 
-<h1>SISTEMA OPERATIVO PMT</h1>
+<h1>
+SISTEMA OPERATIVO PMT
+</h1>
 
-<h2>POLICÍA MUNICIPAL DE TRÁNSITO</h2>
+<h2>
+POLICÍA MUNICIPAL DE TRÁNSITO
+</h2>
 
-<h3>CHIMALTENANGO — 2026</h3>
+<h3>
+CHIMALTENANGO — 2026
+</h3>
 
 </div>
 
 <div class="logo-box">
-<img src="icons/icon-512.png" class="logo">
+
+<img
+src="icons/icon-512.png"
+class="logo"
+>
+
 </div>
 
 </header>
 
-<!-- ALERTAS -->
+<!-- =====================================
+ALERTAS
+===================================== -->
 
 <section
 class="alertas-box"
 onclick="abrirOperaciones()"
-style="cursor:pointer;"
 >
 
 <div class="alerta-title">
@@ -61,7 +742,7 @@ class="alertas-container"
 
 <div class="alerta-item">
 
-Sistema operativo cargado correctamente.
+Sistema operativo estable.
 
 </div>
 
@@ -69,13 +750,15 @@ Sistema operativo cargado correctamente.
 
 </section>
 
-<!-- BUSCADOR -->
+<!-- =====================================
+BUSCADOR
+===================================== -->
 
 <section class="buscador-section">
 
 <h2 class="buscador-title">
 
-Buscador Inteligente de Personal
+Buscador Inteligente PMT
 
 </h2>
 
@@ -84,26 +767,34 @@ Buscador Inteligente de Personal
 <input
 type="text"
 id="busqueda"
-placeholder="Buscar agente, grupo, cargo..."
+placeholder="Buscar agente, cargo, grupo..."
 >
 
-<button onclick="buscarPersonal()">
+<button
+class="btn-buscar"
+onclick="buscarPersonal()"
+>
 
-Buscar
+BUSCAR
+
+</button>
+
+<button
+class="btn-novedades"
+onclick="abrirOperaciones()"
+>
+
+--== NOVEDADES ==--
 
 </button>
 
 </div>
 
-<p class="buscador-info">
-
-Busca por nombre, cargo, grupo o estado.
-
-</p>
-
 </section>
 
-<!-- DASHBOARD -->
+<!-- =====================================
+DASHBOARD
+===================================== -->
 
 <section class="dashboard">
 
@@ -111,7 +802,9 @@ Busca por nombre, cargo, grupo o estado.
 
 <h3>TOTAL PMT</h3>
 
-<span id="totalAgentes">0</span>
+<span id="totalAgentes">
+0
+</span>
 
 </div>
 
@@ -119,7 +812,9 @@ Busca por nombre, cargo, grupo o estado.
 
 <h3>OPERATIVOS HOY</h3>
 
-<span id="operativosHoy">0</span>
+<span id="operativosHoy">
+0
+</span>
 
 </div>
 
@@ -127,7 +822,9 @@ Busca por nombre, cargo, grupo o estado.
 
 <h3>FUERA SERVICIO</h3>
 
-<span id="fueraServicio">0</span>
+<span id="fueraServicio">
+0
+</span>
 
 </div>
 
@@ -135,13 +832,17 @@ Busca por nombre, cargo, grupo o estado.
 
 <h3>MANDOS ACTIVOS</h3>
 
-<span id="mandosActivos">0</span>
+<span id="mandosActivos">
+0
+</span>
 
 </div>
 
 </section>
 
-<!-- PANEL DIRECCION -->
+<!-- =====================================
+MANDOS
+===================================== -->
 
 <section class="direccion-panel">
 
@@ -151,7 +852,7 @@ PANEL DE DIRECCIÓN Y MANDOS
 
 </div>
 
-<div class="tabla-container">
+<div class="tabla-scroll">
 
 <table>
 
@@ -177,9 +878,15 @@ PANEL DE DIRECCIÓN Y MANDOS
 
 </section>
 
-<!-- GRUPOS -->
+<!-- =====================================
+GRUPOS
+===================================== -->
 
 <section class="grupos-container">
+
+<!-- =================================
+GRUPO A
+================================= -->
 
 <div class="grupo-box">
 
@@ -196,7 +903,9 @@ GRUPO A
 
 <div class="mini-card">
 
-<span id="grupoAActivos">0</span>
+<span id="grupoAActivos">
+0
+</span>
 
 <p>Activos</p>
 
@@ -204,7 +913,9 @@ GRUPO A
 
 <div class="mini-card">
 
-<span id="grupoAVacaciones">0</span>
+<span id="grupoAVacaciones">
+0
+</span>
 
 <p>Vacaciones</p>
 
@@ -212,7 +923,9 @@ GRUPO A
 
 <div class="mini-card">
 
-<span id="grupoAIGSS">0</span>
+<span id="grupoAIGSS">
+0
+</span>
 
 <p>IGSS</p>
 
@@ -247,6 +960,10 @@ GRUPO A
 
 </div>
 
+<!-- =================================
+GRUPO B
+================================= -->
+
 <div class="grupo-box">
 
 <div
@@ -262,7 +979,9 @@ GRUPO B
 
 <div class="mini-card">
 
-<span id="grupoBActivos">0</span>
+<span id="grupoBActivos">
+0
+</span>
 
 <p>Activos</p>
 
@@ -270,7 +989,9 @@ GRUPO B
 
 <div class="mini-card">
 
-<span id="grupoBVacaciones">0</span>
+<span id="grupoBVacaciones">
+0
+</span>
 
 <p>Vacaciones</p>
 
@@ -278,7 +999,9 @@ GRUPO B
 
 <div class="mini-card">
 
-<span id="grupoBIGSS">0</span>
+<span id="grupoBIGSS">
+0
+</span>
 
 <p>IGSS</p>
 
@@ -315,7 +1038,9 @@ GRUPO B
 
 </section>
 
-<!-- BOTONES -->
+<!-- =====================================
+BOTONES
+===================================== -->
 
 <section class="botones-panel">
 
@@ -345,7 +1070,9 @@ CENTRO OPERATIVO
 
 </section>
 
-<!-- ESTADO -->
+<!-- =====================================
+ESTADO SISTEMA
+===================================== -->
 
 <section class="estado-box">
 
@@ -364,6 +1091,10 @@ Estado del sistema
 </div>
 
 </section>
+
+<!-- =====================================
+FOOTER
+===================================== -->
 
 <footer class="footer">
 
