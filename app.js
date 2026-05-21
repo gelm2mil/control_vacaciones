@@ -1,6 +1,6 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
-// VERSION PRO OPERATIVA FINAL
+// VERSION FULL INTEGRADA FINAL
 // ============================================
 
 // ============================================
@@ -23,7 +23,7 @@ const OPERACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdxL8NbBd5qZBfd7s1ValAKmVRQ2d3aWh3Fd07cTPLMXxly9Cap-AbpQuJtasRQw00EYnogECsVvtc/pub?gid=289242254&single=true&output=csv";
 
 // ============================================
-// VARIABLES
+// VARIABLES GLOBALES
 // ============================================
 
 let personalGlobal = [];
@@ -34,12 +34,19 @@ let resumenGlobal = [];
 let operacionesGlobal = [];
 
 // ============================================
-// INICIAR
+// INICIAR SISTEMA
 // ============================================
 
 window.addEventListener("DOMContentLoaded", () => {
 
     cargarSistema();
+
+    // ACTUALIZACION AUTOMATICA
+    setInterval(() => {
+
+        cargarSistema();
+
+    }, 60000);
 
 });
 
@@ -89,10 +96,6 @@ async function cargarSistema() {
         const operacionesCSV =
             await operacionesResponse.text();
 
-        // ====================================
-        // PERSONAL
-        // ====================================
-
         Papa.parse(personalCSV, {
 
             header: true,
@@ -101,10 +104,6 @@ async function cargarSistema() {
             complete: function(results) {
 
                 personalGlobal = results.data;
-
-                // ================================
-                // BITACORA
-                // ================================
 
                 Papa.parse(bitacoraCSV, {
 
@@ -120,10 +119,6 @@ async function cargarSistema() {
 
                 });
 
-                // ================================
-                // RESUMEN
-                // ================================
-
                 Papa.parse(resumenCSV, {
 
                     header: true,
@@ -137,10 +132,6 @@ async function cargarSistema() {
                     }
 
                 });
-
-                // ================================
-                // VACACIONES
-                // ================================
 
                 Papa.parse(vacacionesCSV, {
 
@@ -156,10 +147,6 @@ async function cargarSistema() {
 
                 });
 
-                // ================================
-                // OPERACIONES
-                // ================================
-
                 Papa.parse(operacionesCSV, {
 
                     header: true,
@@ -170,11 +157,13 @@ async function cargarSistema() {
                         operacionesGlobal =
                             operacionesResults.data;
 
+                        integrarOperaciones();
+
+                        procesarDatos(personalGlobal);
+
                     }
 
                 });
-
-                procesarDatos(personalGlobal);
 
             }
 
@@ -194,6 +183,132 @@ async function cargarSistema() {
 }
 
 // ============================================
+// INTEGRAR OPERACIONES
+// ============================================
+
+function integrarOperaciones() {
+
+    operacionesGlobal.forEach(op => {
+
+        const nombreOperacion =
+            limpiar(op.NOMBRE);
+
+        const estadoOperacion =
+            limpiar(op.ESTADO);
+
+        const movimiento =
+            limpiar(op.MOVIMIENTO);
+
+        const persona =
+            personalGlobal.find(p =>
+
+                limpiar(p.NOMBRE)
+                ===
+                nombreOperacion
+
+            );
+
+        if (!persona) return;
+
+        // ====================================
+        // FUERA SERVICIO
+        // ====================================
+
+        if (
+
+            estadoOperacion ===
+            "FUERA SERVICIO"
+
+        ) {
+
+            persona.ESTADO =
+                "AUSENTE";
+
+        }
+
+        // ====================================
+        // VACACIONES
+        // ====================================
+
+        if (
+            movimiento === "VACACIONES"
+        ) {
+
+            persona.VACACIONES =
+                "SI";
+
+        }
+
+        // ====================================
+        // IGSS
+        // ====================================
+
+        if (
+            movimiento === "IGSS"
+        ) {
+
+            persona.IGSS =
+                "SI";
+
+        }
+
+        // ====================================
+        // PERMISOS
+        // ====================================
+
+        if (
+            movimiento === "PERMISO"
+        ) {
+
+            persona.PERMISO =
+                "SI";
+
+        }
+
+        // ====================================
+        // REPOSICION
+        // ====================================
+
+        if (
+            movimiento === "REPOSICION"
+        ) {
+
+            persona.ESTADO =
+                "AUSENTE";
+
+        }
+
+        // ====================================
+        // AUSENCIA
+        // ====================================
+
+        if (
+            movimiento === "AUSENCIA"
+        ) {
+
+            persona.ESTADO =
+                "AUSENTE";
+
+        }
+
+        // ====================================
+        // RETIRO
+        // ====================================
+
+        if (
+            movimiento === "RETIRO"
+        ) {
+
+            persona.ESTADO =
+                "AUSENTE";
+
+        }
+
+    });
+
+}
+
+// ============================================
 // PROCESAR DATOS
 // ============================================
 
@@ -207,15 +322,54 @@ function procesarDatos(data) {
 
     const semana = obtenerSemana(hoy);
 
+    // ====================================
+    // ROTACION CORREGIDA
+    // ====================================
+
     const grupoActivoSemana =
-        semana % 2 === 0 ? "A" : "B";
+        semana % 2 === 0 ? "B" : "A";
+
+    // ====================================
+    // TITULOS DINAMICOS
+    // ====================================
+
+    const tituloGrupoA =
+        document.getElementById(
+            "tituloGrupoA"
+        );
+
+    const tituloGrupoB =
+        document.getElementById(
+            "tituloGrupoB"
+        );
+
+    if (tituloGrupoA) {
+
+        tituloGrupoA.textContent =
+
+            grupoActivoSemana === "A"
+            ?
+            "GRUPO A — MAÑANA"
+            :
+            "GRUPO A — TARDE";
+
+    }
+
+    if (tituloGrupoB) {
+
+        tituloGrupoB.textContent =
+
+            grupoActivoSemana === "B"
+            ?
+            "GRUPO B — MAÑANA"
+            :
+            "GRUPO B — TARDE";
+
+    }
 
     let totalPMT = 0;
-
     let operativosHoy = 0;
-
     let fueraServicio = 0;
-
     let mandosActivos = 0;
 
     let grupoA = [];
@@ -254,9 +408,6 @@ function procesarDatos(data) {
         const permiso =
             limpiar(persona.PERMISO);
 
-        const horario =
-            limpiar(persona.HORARIO);
-
         let turnoActual =
             obtenerTurnoAutomatico(
                 persona,
@@ -264,7 +415,7 @@ function procesarDatos(data) {
             );
 
         // ====================================
-        // ESTADO
+        // FUERA SERVICIO
         // ====================================
 
         const fuera =
@@ -412,29 +563,35 @@ function procesarDatos(data) {
     // DASHBOARD GRUPOS
     // ====================================
 
-    document.getElementById(
-        "grupoAActivos"
-    ).textContent = grupoAActivos;
+    setText(
+        "grupoAActivos",
+        grupoAActivos
+    );
 
-    document.getElementById(
-        "grupoAVacaciones"
-    ).textContent = grupoAVacaciones;
+    setText(
+        "grupoAVacaciones",
+        grupoAVacaciones
+    );
 
-    document.getElementById(
-        "grupoAIGSS"
-    ).textContent = grupoAIGSS;
+    setText(
+        "grupoAIGSS",
+        grupoAIGSS
+    );
 
-    document.getElementById(
-        "grupoBActivos"
-    ).textContent = grupoBActivos;
+    setText(
+        "grupoBActivos",
+        grupoBActivos
+    );
 
-    document.getElementById(
-        "grupoBVacaciones"
-    ).textContent = grupoBVacaciones;
+    setText(
+        "grupoBVacaciones",
+        grupoBVacaciones
+    );
 
-    document.getElementById(
-        "grupoBIGSS"
-    ).textContent = grupoBIGSS;
+    setText(
+        "grupoBIGSS",
+        grupoBIGSS
+    );
 
     // ====================================
     // TABLAS
@@ -468,62 +625,6 @@ function procesarDatos(data) {
 
 function generarAlertasOperativas() {
 
-    if (!operacionesGlobal.length) return;
-
-    const hoy = new Date();
-
-    const yyyy = hoy.getFullYear();
-
-    const mm = String(
-        hoy.getMonth() + 1
-    ).padStart(2, "0");
-
-    const dd = String(
-        hoy.getDate()
-    ).padStart(2, "0");
-
-    const fechaHoy =
-        `${yyyy}-${mm}-${dd}`;
-
-    operacionesGlobal.forEach(item => {
-
-        const fecha =
-            (item.FECHA || "").trim();
-
-        const nombre =
-            (item.NOMBRE || "").trim();
-
-        const movimiento =
-            (item.MOVIMIENTO || "").trim();
-
-        const estado =
-            (item.ESTADO || "").trim();
-
-        const observacion =
-            (item.OBSERVACION || "").trim();
-
-        if (
-            fecha.includes(fechaHoy)
-        ) {
-
-            mostrarNuevaAlerta(
-
-                `🚨 ${nombre} — ${movimiento} — ${estado} — ${observacion}`
-
-            );
-
-        }
-
-    });
-
-}
-
-// ============================================
-// NUEVA ALERTA
-// ============================================
-
-function mostrarNuevaAlerta(texto) {
-
     const contenedor =
         document.getElementById(
             "alertasContainer"
@@ -531,15 +632,109 @@ function mostrarNuevaAlerta(texto) {
 
     if (!contenedor) return;
 
-    contenedor.innerHTML += `
+    contenedor.innerHTML = "";
 
-    <div class="alerta-item">
+    if (!operacionesGlobal.length) {
 
-        ${texto}
+        contenedor.innerHTML = `
 
-    </div>
+        <div class="alerta-item">
 
-    `;
+        Sistema operativo estable.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    operacionesGlobal
+    .slice()
+    .reverse()
+    .slice(0, 10)
+    .forEach(item => {
+
+        const nombre =
+            item.NOMBRE || "";
+
+        const movimiento =
+            item.MOVIMIENTO || "";
+
+        const estado =
+            item.ESTADO || "";
+
+        const observacion =
+            item.OBSERVACION || "";
+
+        contenedor.innerHTML += `
+
+        <div class="alerta-item">
+
+        🚨 ${nombre}
+        —
+        ${movimiento}
+        —
+        ${estado}
+        —
+        ${observacion}
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+// ============================================
+// BUSCADOR
+// ============================================
+
+function buscarPersonal() {
+
+    const texto =
+        limpiar(
+
+            document.getElementById(
+                "busqueda"
+            ).value
+
+        );
+
+    if (!texto) {
+
+        procesarDatos(personalGlobal);
+
+        return;
+
+    }
+
+    const filtrado =
+        personalGlobal.filter(p =>
+
+            limpiar(p.NOMBRE)
+            .includes(texto)
+
+            ||
+
+            limpiar(p.CARGO)
+            .includes(texto)
+
+            ||
+
+            limpiar(p.GRUPO)
+            .includes(texto)
+
+            ||
+
+            limpiar(p.ESTADO)
+            .includes(texto)
+
+        );
+
+    procesarDatos(filtrado);
 
 }
 
@@ -626,21 +821,25 @@ function actualizarDashboard(
     mandos
 ) {
 
-    document.getElementById(
-        "totalAgentes"
-    ).textContent = total;
+    setText(
+        "totalAgentes",
+        total
+    );
 
-    document.getElementById(
-        "operativosHoy"
-    ).textContent = operativos;
+    setText(
+        "operativosHoy",
+        operativos
+    );
 
-    document.getElementById(
-        "fueraServicio"
-    ).textContent = fuera;
+    setText(
+        "fueraServicio",
+        fuera
+    );
 
-    document.getElementById(
-        "mandosActivos"
-    ).textContent = mandos;
+    setText(
+        "mandosActivos",
+        mandos
+    );
 
 }
 
@@ -951,29 +1150,34 @@ function compararCambio(
 
 function limpiarTablas() {
 
-    const grupoA =
-        document.getElementById(
-            "grupoA-body"
-        );
+    limpiarTabla(
+        "grupoA-body"
+    );
 
-    const grupoB =
-        document.getElementById(
-            "grupoB-body"
-        );
+    limpiarTabla(
+        "grupoB-body"
+    );
 
-    const mandos =
-        document.getElementById(
-            "mandos-body"
-        );
+    limpiarTabla(
+        "mandos-body"
+    );
 
-    if (grupoA)
-        grupoA.innerHTML = "";
+}
 
-    if (grupoB)
-        grupoB.innerHTML = "";
+// ============================================
+// LIMPIAR TABLA
+// ============================================
 
-    if (mandos)
-        mandos.innerHTML = "";
+function limpiarTabla(id) {
+
+    const tabla =
+        document.getElementById(id);
+
+    if (tabla) {
+
+        tabla.innerHTML = "";
+
+    }
 
 }
 
@@ -989,6 +1193,19 @@ function limpiar(valor) {
         .toString()
         .trim()
         .toUpperCase();
+
+}
+
+function setText(id, valor) {
+
+    const elemento =
+        document.getElementById(id);
+
+    if (elemento) {
+
+        elemento.textContent = valor;
+
+    }
 
 }
 
@@ -1012,7 +1229,7 @@ function mostrarAlerta(
 
     <div
         class="alerta-item"
-        style="border-left: 4px solid ${color}"
+        style="border-left:4px solid ${color}"
     >
 
         ${texto}
