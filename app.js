@@ -1,6 +1,6 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
-// VERSION FULL INTEGRADA FINAL
+// VERSION FULL FINAL INTEGRADA
 // ============================================
 
 // ============================================
@@ -34,19 +34,20 @@ let resumenGlobal = [];
 let operacionesGlobal = [];
 
 // ============================================
-// INICIAR SISTEMA
+// INICIO
 // ============================================
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded",()=>{
+
+    limpiarOperacionesAntiguas();
 
     cargarSistema();
 
-    // ACTUALIZACION AUTOMATICA
-    setInterval(() => {
+    setInterval(()=>{
 
         cargarSistema();
 
-    }, 60000);
+    },60000);
 
 });
 
@@ -54,9 +55,9 @@ window.addEventListener("DOMContentLoaded", () => {
 // CARGAR SISTEMA
 // ============================================
 
-async function cargarSistema() {
+async function cargarSistema(){
 
-    try {
+    try{
 
         mostrarAlerta(
             "Cargando sistema operativo...",
@@ -96,21 +97,21 @@ async function cargarSistema() {
         const operacionesCSV =
             await operacionesResponse.text();
 
-        Papa.parse(personalCSV, {
+        Papa.parse(personalCSV,{
 
-            header: true,
-            skipEmptyLines: true,
+            header:true,
+            skipEmptyLines:true,
 
-            complete: function(results) {
+            complete:function(results){
 
                 personalGlobal = results.data;
 
-                Papa.parse(bitacoraCSV, {
+                Papa.parse(bitacoraCSV,{
 
-                    header: true,
-                    skipEmptyLines: true,
+                    header:true,
+                    skipEmptyLines:true,
 
-                    complete: function(bitacoraResults) {
+                    complete:function(bitacoraResults){
 
                         bitacoraGlobal =
                             bitacoraResults.data;
@@ -119,12 +120,12 @@ async function cargarSistema() {
 
                 });
 
-                Papa.parse(resumenCSV, {
+                Papa.parse(resumenCSV,{
 
-                    header: true,
-                    skipEmptyLines: true,
+                    header:true,
+                    skipEmptyLines:true,
 
-                    complete: function(resumenResults) {
+                    complete:function(resumenResults){
 
                         resumenGlobal =
                             resumenResults.data;
@@ -133,12 +134,12 @@ async function cargarSistema() {
 
                 });
 
-                Papa.parse(vacacionesCSV, {
+                Papa.parse(vacacionesCSV,{
 
-                    header: true,
-                    skipEmptyLines: true,
+                    header:true,
+                    skipEmptyLines:true,
 
-                    complete: function(vacacionesResults) {
+                    complete:function(vacacionesResults){
 
                         vacacionesGlobal =
                             vacacionesResults.data;
@@ -147,19 +148,25 @@ async function cargarSistema() {
 
                 });
 
-                Papa.parse(operacionesCSV, {
+                Papa.parse(operacionesCSV,{
 
-                    header: true,
-                    skipEmptyLines: true,
+                    header:true,
+                    skipEmptyLines:true,
 
-                    complete: function(operacionesResults) {
+                    complete:function(operacionesResults){
 
                         operacionesGlobal =
-                            operacionesResults.data;
+                            filtrarOperacionesDelDia(
+                                operacionesResults.data
+                            );
+
+                        eliminarDuplicados();
 
                         integrarOperaciones();
 
-                        procesarDatos(personalGlobal);
+                        procesarDatos(
+                            personalGlobal
+                        );
 
                     }
 
@@ -169,7 +176,7 @@ async function cargarSistema() {
 
         });
 
-    } catch (error) {
+    }catch(error){
 
         console.error(error);
 
@@ -183,12 +190,93 @@ async function cargarSistema() {
 }
 
 // ============================================
+// FILTRAR SOLO DIA ACTUAL
+// ============================================
+
+function filtrarOperacionesDelDia(lista){
+
+    const hoy = new Date()
+    .toISOString()
+    .split("T")[0];
+
+    return lista.filter(item=>{
+
+        if(!item.FECHA) return false;
+
+        return item.FECHA.includes(hoy);
+
+    });
+
+}
+
+// ============================================
+// ELIMINAR DUPLICADOS
+// ============================================
+
+function eliminarDuplicados(){
+
+    const vistos = new Set();
+
+    operacionesGlobal =
+        operacionesGlobal.filter(op=>{
+
+            const clave =
+
+                limpiar(op.NOMBRE)
+                +
+                limpiar(op.MOVIMIENTO)
+                +
+                limpiar(op.ESTADO);
+
+            if(vistos.has(clave)){
+
+                return false;
+
+            }
+
+            vistos.add(clave);
+
+            return true;
+
+        });
+
+}
+
+// ============================================
+// LIMPIEZA AUTOMATICA
+// ============================================
+
+function limpiarOperacionesAntiguas(){
+
+    const hoy = new Date()
+    .toISOString()
+    .split("T")[0];
+
+    const ultimaFecha =
+        localStorage.getItem(
+            "PMT_RESET"
+        );
+
+    if(ultimaFecha !== hoy){
+
+        localStorage.setItem(
+            "PMT_RESET",
+            hoy
+        );
+
+        historialCambios = [];
+
+    }
+
+}
+
+// ============================================
 // INTEGRAR OPERACIONES
 // ============================================
 
-function integrarOperaciones() {
+function integrarOperaciones(){
 
-    operacionesGlobal.forEach(op => {
+    operacionesGlobal.forEach(op=>{
 
         const nombreOperacion =
             limpiar(op.NOMBRE);
@@ -200,7 +288,7 @@ function integrarOperaciones() {
             limpiar(op.MOVIMIENTO);
 
         const persona =
-            personalGlobal.find(p =>
+            personalGlobal.find(p=>
 
                 limpiar(p.NOMBRE)
                 ===
@@ -208,96 +296,65 @@ function integrarOperaciones() {
 
             );
 
-        if (!persona) return;
+        if(!persona) return;
 
-        // ====================================
-        // FUERA SERVICIO
-        // ====================================
-
-        if (
+        if(
 
             estadoOperacion ===
             "FUERA SERVICIO"
 
-        ) {
+        ){
 
             persona.ESTADO =
                 "AUSENTE";
 
         }
 
-        // ====================================
-        // VACACIONES
-        // ====================================
-
-        if (
+        if(
             movimiento === "VACACIONES"
-        ) {
+        ){
 
-            persona.VACACIONES =
-                "SI";
+            persona.VACACIONES = "SI";
 
         }
 
-        // ====================================
-        // IGSS
-        // ====================================
-
-        if (
+        if(
             movimiento === "IGSS"
-        ) {
+        ){
 
-            persona.IGSS =
-                "SI";
+            persona.IGSS = "SI";
 
         }
 
-        // ====================================
-        // PERMISOS
-        // ====================================
-
-        if (
+        if(
             movimiento === "PERMISO"
-        ) {
+        ){
 
-            persona.PERMISO =
-                "SI";
+            persona.PERMISO = "SI";
 
         }
 
-        // ====================================
-        // REPOSICION
-        // ====================================
-
-        if (
+        if(
             movimiento === "REPOSICION"
-        ) {
+        ){
 
             persona.ESTADO =
                 "AUSENTE";
 
         }
 
-        // ====================================
-        // AUSENCIA
-        // ====================================
-
-        if (
+        if(
             movimiento === "AUSENCIA"
-        ) {
+        ){
 
             persona.ESTADO =
                 "AUSENTE";
 
         }
 
-        // ====================================
-        // RETIRO
-        // ====================================
-
-        if (
+        if(
             movimiento === "RETIRO"
-        ) {
+        ){
 
             persona.ESTADO =
                 "AUSENTE";
@@ -312,7 +369,7 @@ function integrarOperaciones() {
 // PROCESAR DATOS
 // ============================================
 
-function procesarDatos(data) {
+function procesarDatos(data){
 
     limpiarTablas();
 
@@ -320,52 +377,17 @@ function procesarDatos(data) {
 
     const hoy = new Date();
 
-    const semana = obtenerSemana(hoy);
-
-    // ====================================
-    // ROTACION CORREGIDA
-    // ====================================
+    const semana =
+        obtenerSemana(hoy);
 
     const grupoActivoSemana =
-        semana % 2 === 0 ? "B" : "A";
+        semana % 2 === 0
+        ? "B"
+        : "A";
 
-    // ====================================
-    // TITULOS DINAMICOS
-    // ====================================
-
-    const tituloGrupoA =
-        document.getElementById(
-            "tituloGrupoA"
-        );
-
-    const tituloGrupoB =
-        document.getElementById(
-            "tituloGrupoB"
-        );
-
-    if (tituloGrupoA) {
-
-        tituloGrupoA.textContent =
-
-            grupoActivoSemana === "A"
-            ?
-            "GRUPO A — MAÑANA"
-            :
-            "GRUPO A — TARDE";
-
-    }
-
-    if (tituloGrupoB) {
-
-        tituloGrupoB.textContent =
-
-            grupoActivoSemana === "B"
-            ?
-            "GRUPO B — MAÑANA"
-            :
-            "GRUPO B — TARDE";
-
-    }
+    actualizarTitulos(
+        grupoActivoSemana
+    );
 
     let totalPMT = 0;
     let operativosHoy = 0;
@@ -384,9 +406,9 @@ function procesarDatos(data) {
     let grupoBVacaciones = 0;
     let grupoBIGSS = 0;
 
-    data.forEach(persona => {
+    data.forEach(persona=>{
 
-        if (!persona.NOMBRE) return;
+        if(!persona.NOMBRE) return;
 
         totalPMT++;
 
@@ -408,51 +430,43 @@ function procesarDatos(data) {
         const permiso =
             limpiar(persona.PERMISO);
 
+        const fuera =
+
+            vacaciones === "SI"
+            ||
+            igss === "SI"
+            ||
+            permiso === "SI"
+            ||
+            estado === "AUSENTE";
+
         let turnoActual =
             obtenerTurnoAutomatico(
                 persona,
                 grupoActivoSemana
             );
 
-        // ====================================
-        // FUERA SERVICIO
-        // ====================================
-
-        const fuera =
-
-            vacaciones === "SI" ||
-
-            igss === "SI" ||
-
-            permiso === "SI" ||
-
-            estado === "AUSENTE";
-
-        if (fuera) {
+        if(fuera){
 
             fueraServicio++;
 
-        } else {
+        }else{
 
             operativosHoy++;
 
         }
 
-        // ====================================
-        // CONTADORES
-        // ====================================
+        if(grupo === "A"){
 
-        if (grupo === "A") {
-
-            if (vacaciones === "SI") {
+            if(vacaciones === "SI"){
 
                 grupoAVacaciones++;
 
-            } else if (igss === "SI") {
+            }else if(igss === "SI"){
 
                 grupoAIGSS++;
 
-            } else {
+            }else{
 
                 grupoAActivos++;
 
@@ -460,17 +474,17 @@ function procesarDatos(data) {
 
         }
 
-        if (grupo === "B") {
+        if(grupo === "B"){
 
-            if (vacaciones === "SI") {
+            if(vacaciones === "SI"){
 
                 grupoBVacaciones++;
 
-            } else if (igss === "SI") {
+            }else if(igss === "SI"){
 
                 grupoBIGSS++;
 
-            } else {
+            }else{
 
                 grupoBActivos++;
 
@@ -478,25 +492,25 @@ function procesarDatos(data) {
 
         }
 
-        // ====================================
-        // MANDOS
-        // ====================================
+        if(
 
-        if (
-
-            cargo.includes("COMISARIO") ||
-            cargo.includes("SUBDIRECTOR") ||
-            cargo.includes("ENCARGADO") ||
-            cargo.includes("TRANSPORTES") ||
+            cargo.includes("COMISARIO")
+            ||
+            cargo.includes("SUBDIRECTOR")
+            ||
+            cargo.includes("ENCARGADO")
+            ||
+            cargo.includes("TRANSPORTES")
+            ||
             cargo.includes("SECRETARIO")
 
-        ) {
+        ){
 
             mandos.push({
 
-                nombre: persona.NOMBRE,
+                nombre:persona.NOMBRE,
 
-                cargo: persona.CARGO,
+                cargo:persona.CARGO,
 
                 estado:
                     fuera
@@ -505,7 +519,7 @@ function procesarDatos(data) {
 
             });
 
-            if (!fuera) {
+            if(!fuera){
 
                 mandosActivos++;
 
@@ -513,17 +527,13 @@ function procesarDatos(data) {
 
         }
 
-        // ====================================
-        // REGISTRO
-        // ====================================
-
         const registro = {
 
-            nombre: persona.NOMBRE,
+            nombre:persona.NOMBRE,
 
-            cargo: persona.CARGO,
+            cargo:persona.CARGO,
 
-            turno: turnoActual,
+            turno:turnoActual,
 
             estado:
                 fuera
@@ -532,23 +542,19 @@ function procesarDatos(data) {
 
         };
 
-        if (grupo === "A") {
+        if(grupo === "A"){
 
             grupoA.push(registro);
 
         }
 
-        if (grupo === "B") {
+        if(grupo === "B"){
 
             grupoB.push(registro);
 
         }
 
     });
-
-    // ====================================
-    // DASHBOARD
-    // ====================================
 
     actualizarDashboard(
 
@@ -558,10 +564,6 @@ function procesarDatos(data) {
         mandosActivos
 
     );
-
-    // ====================================
-    // DASHBOARD GRUPOS
-    // ====================================
 
     setText(
         "grupoAActivos",
@@ -593,10 +595,6 @@ function procesarDatos(data) {
         grupoBIGSS
     );
 
-    // ====================================
-    // TABLAS
-    // ====================================
-
     renderMandos(mandos);
 
     renderGrupo(
@@ -609,10 +607,6 @@ function procesarDatos(data) {
         grupoB
     );
 
-    // ====================================
-    // ALERTAS
-    // ====================================
-
     generarAlertas(data);
 
     generarAlertasOperativas();
@@ -620,25 +614,72 @@ function procesarDatos(data) {
 }
 
 // ============================================
+// TITULOS DINAMICOS
+// ============================================
+
+function actualizarTitulos(
+    grupoActivoSemana
+){
+
+    const tituloGrupoA =
+        document.getElementById(
+            "tituloGrupoA"
+        );
+
+    const tituloGrupoB =
+        document.getElementById(
+            "tituloGrupoB"
+        );
+
+    if(tituloGrupoA){
+
+        tituloGrupoA.textContent =
+
+            grupoActivoSemana === "A"
+            ?
+            "GRUPO A — MAÑANA"
+            :
+            "GRUPO A — TARDE";
+
+    }
+
+    if(tituloGrupoB){
+
+        tituloGrupoB.textContent =
+
+            grupoActivoSemana === "B"
+            ?
+            "GRUPO B — MAÑANA"
+            :
+            "GRUPO B — TARDE";
+
+    }
+
+}
+
+// ============================================
 // ALERTAS OPERATIVAS
 // ============================================
 
-function generarAlertasOperativas() {
+function generarAlertasOperativas(){
 
     const contenedor =
         document.getElementById(
             "alertasContainer"
         );
 
-    if (!contenedor) return;
+    if(!contenedor) return;
 
     contenedor.innerHTML = "";
 
-    if (!operacionesGlobal.length) {
+    if(!operacionesGlobal.length){
 
         contenedor.innerHTML = `
 
-        <div class="alerta-item">
+        <div
+        class="alerta-item"
+        onclick="abrirOperaciones()"
+        >
 
         Sistema operativo estable.
 
@@ -653,32 +694,22 @@ function generarAlertasOperativas() {
     operacionesGlobal
     .slice()
     .reverse()
-    .slice(0, 10)
-    .forEach(item => {
-
-        const nombre =
-            item.NOMBRE || "";
-
-        const movimiento =
-            item.MOVIMIENTO || "";
-
-        const estado =
-            item.ESTADO || "";
-
-        const observacion =
-            item.OBSERVACION || "";
+    .slice(0,10)
+    .forEach(item=>{
 
         contenedor.innerHTML += `
 
-        <div class="alerta-item">
+        <div
+        class="alerta-item"
+        onclick="abrirOperaciones()"
+        style="cursor:pointer;"
+        >
 
-        🚨 ${nombre}
+        🚨 ${item.NOMBRE || ""}
         —
-        ${movimiento}
+        ${item.MOVIMIENTO || ""}
         —
-        ${estado}
-        —
-        ${observacion}
+        ${item.ESTADO || ""}
 
         </div>
 
@@ -692,7 +723,7 @@ function generarAlertasOperativas() {
 // BUSCADOR
 // ============================================
 
-function buscarPersonal() {
+function buscarPersonal(){
 
     const texto =
         limpiar(
@@ -703,16 +734,18 @@ function buscarPersonal() {
 
         );
 
-    if (!texto) {
+    if(!texto){
 
-        procesarDatos(personalGlobal);
+        procesarDatos(
+            personalGlobal
+        );
 
         return;
 
     }
 
     const filtrado =
-        personalGlobal.filter(p =>
+        personalGlobal.filter(p=>
 
             limpiar(p.NOMBRE)
             .includes(texto)
@@ -739,13 +772,13 @@ function buscarPersonal() {
 }
 
 // ============================================
-// ROTACION AUTOMATICA
+// TURNOS
 // ============================================
 
 function obtenerTurnoAutomatico(
     persona,
     grupoActivoSemana
-) {
+){
 
     const grupo =
         limpiar(persona.GRUPO);
@@ -753,27 +786,28 @@ function obtenerTurnoAutomatico(
     const turnoOriginal =
         limpiar(persona.TURNO);
 
-    if (
-        turnoOriginal === "ADMINISTRATIVO"
-    ) {
+    if(
+        turnoOriginal ===
+        "ADMINISTRATIVO"
+    ){
 
         return "ADMINISTRATIVO";
 
     }
 
-    if (grupo === "A") {
+    if(grupo === "A"){
 
         return grupoActivoSemana === "A"
-            ? "MAÑANA"
-            : "TARDE";
+        ? "MAÑANA"
+        : "TARDE";
 
     }
 
-    if (grupo === "B") {
+    if(grupo === "B"){
 
         return grupoActivoSemana === "B"
-            ? "MAÑANA"
-            : "TARDE";
+        ? "MAÑANA"
+        : "TARDE";
 
     }
 
@@ -782,13 +816,17 @@ function obtenerTurnoAutomatico(
 }
 
 // ============================================
-// OBTENER SEMANA
+// SEMANA
 // ============================================
 
-function obtenerSemana(fecha) {
+function obtenerSemana(fecha){
 
     const inicio =
-        new Date(fecha.getFullYear(), 0, 1);
+        new Date(
+            fecha.getFullYear(),
+            0,
+            1
+        );
 
     const dias = Math.floor(
 
@@ -796,15 +834,15 @@ function obtenerSemana(fecha) {
 
         /
 
-        (24 * 60 * 60 * 1000)
+        (24*60*60*1000)
 
     );
 
     return Math.ceil(
 
-        (dias + inicio.getDay() + 1)
+        (dias + inicio.getDay()+1)
 
-        / 7
+        /7
 
     );
 
@@ -819,7 +857,7 @@ function actualizarDashboard(
     operativos,
     fuera,
     mandos
-) {
+){
 
     setText(
         "totalAgentes",
@@ -847,18 +885,18 @@ function actualizarDashboard(
 // TABLA MANDOS
 // ============================================
 
-function renderMandos(lista) {
+function renderMandos(lista){
 
     const tabla =
         document.getElementById(
             "mandos-body"
         );
 
-    if (!tabla) return;
+    if(!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item => {
+    lista.forEach(item=>{
 
         tabla.innerHTML += `
 
@@ -894,16 +932,16 @@ function renderMandos(lista) {
 // TABLAS GRUPOS
 // ============================================
 
-function renderGrupo(id, lista) {
+function renderGrupo(id,lista){
 
     const tabla =
         document.getElementById(id);
 
-    if (!tabla) return;
+    if(!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item => {
+    lista.forEach(item=>{
 
         tabla.innerHTML += `
 
@@ -941,11 +979,11 @@ function renderGrupo(id, lista) {
 // ALERTAS GENERALES
 // ============================================
 
-function generarAlertas(data) {
+function generarAlertas(data){
 
     let alertas = [];
 
-    data.forEach(persona => {
+    data.forEach(persona=>{
 
         const nombre =
             persona.NOMBRE;
@@ -959,7 +997,7 @@ function generarAlertas(data) {
         const permiso =
             limpiar(persona.PERMISO);
 
-        if (vacaciones === "SI") {
+        if(vacaciones === "SI"){
 
             alertas.push(
                 `🚨 ${nombre} en VACACIONES`
@@ -967,7 +1005,7 @@ function generarAlertas(data) {
 
         }
 
-        if (igss === "SI") {
+        if(igss === "SI"){
 
             alertas.push(
                 `🟡 ${nombre} en IGSS`
@@ -975,7 +1013,7 @@ function generarAlertas(data) {
 
         }
 
-        if (permiso === "SI") {
+        if(permiso === "SI"){
 
             alertas.push(
                 `🟠 ${nombre} en PERMISO`
@@ -985,7 +1023,7 @@ function generarAlertas(data) {
 
     });
 
-    if (alertas.length === 0) {
+    if(alertas.length === 0){
 
         alertas.push(
             "Sistema operativo estable."
@@ -1001,22 +1039,26 @@ function generarAlertas(data) {
 // MOSTRAR ALERTAS
 // ============================================
 
-function mostrarAlertas(lista) {
+function mostrarAlertas(lista){
 
     const contenedor =
         document.getElementById(
             "alertasContainer"
         );
 
-    if (!contenedor) return;
+    if(!contenedor) return;
 
     contenedor.innerHTML = "";
 
-    lista.forEach(alerta => {
+    lista.forEach(alerta=>{
 
         contenedor.innerHTML += `
 
-        <div class="alerta-item">
+        <div
+        class="alerta-item"
+        onclick="abrirOperaciones()"
+        style="cursor:pointer;"
+        >
 
             ${alerta}
 
@@ -1032,7 +1074,7 @@ function mostrarAlertas(lista) {
 // DETECTAR CAMBIOS
 // ============================================
 
-function detectarCambios(data) {
+function detectarCambios(data){
 
     const anterior =
 
@@ -1042,9 +1084,9 @@ function detectarCambios(data) {
             )
         ) || [];
 
-    if (anterior.length > 0) {
+    if(anterior.length > 0){
 
-        data.forEach(actual => {
+        data.forEach(actual=>{
 
             const viejo =
                 anterior.find(
@@ -1054,7 +1096,7 @@ function detectarCambios(data) {
 
                 );
 
-            if (!viejo) return;
+            if(!viejo) return;
 
             compararCambio(
                 viejo,
@@ -1102,7 +1144,7 @@ function compararCambio(
     viejo,
     actual,
     campo
-) {
+){
 
     const viejoValor =
         limpiar(viejo[campo]);
@@ -1110,7 +1152,7 @@ function compararCambio(
     const nuevoValor =
         limpiar(actual[campo]);
 
-    if (viejoValor !== nuevoValor) {
+    if(viejoValor !== nuevoValor){
 
         const registro = {
 
@@ -1135,11 +1177,6 @@ function compararCambio(
 
         historialCambios.push(registro);
 
-        console.log(
-            "CAMBIO:",
-            registro
-        );
-
     }
 
 }
@@ -1148,7 +1185,7 @@ function compararCambio(
 // LIMPIAR TABLAS
 // ============================================
 
-function limpiarTablas() {
+function limpiarTablas(){
 
     limpiarTabla(
         "grupoA-body"
@@ -1168,12 +1205,12 @@ function limpiarTablas() {
 // LIMPIAR TABLA
 // ============================================
 
-function limpiarTabla(id) {
+function limpiarTabla(id){
 
     const tabla =
         document.getElementById(id);
 
-    if (tabla) {
+    if(tabla){
 
         tabla.innerHTML = "";
 
@@ -1185,23 +1222,23 @@ function limpiarTabla(id) {
 // UTILIDADES
 // ============================================
 
-function limpiar(valor) {
+function limpiar(valor){
 
-    if (!valor) return "";
+    if(!valor) return "";
 
     return valor
-        .toString()
-        .trim()
-        .toUpperCase();
+    .toString()
+    .trim()
+    .toUpperCase();
 
 }
 
-function setText(id, valor) {
+function setText(id,valor){
 
     const elemento =
         document.getElementById(id);
 
-    if (elemento) {
+    if(elemento){
 
         elemento.textContent = valor;
 
@@ -1216,20 +1253,24 @@ function setText(id, valor) {
 function mostrarAlerta(
     texto,
     color
-) {
+){
 
     const contenedor =
         document.getElementById(
             "alertasContainer"
         );
 
-    if (!contenedor) return;
+    if(!contenedor) return;
 
     contenedor.innerHTML = `
 
     <div
         class="alerta-item"
-        style="border-left:4px solid ${color}"
+        style="
+        border-left:4px solid ${color};
+        cursor:pointer;
+        "
+        onclick="abrirOperaciones()"
     >
 
         ${texto}
@@ -1244,7 +1285,7 @@ function mostrarAlerta(
 // ABRIR OPERACIONES
 // ============================================
 
-function abrirOperaciones() {
+function abrirOperaciones(){
 
     window.open(
         "operaciones/operaciones.html",
@@ -1257,7 +1298,7 @@ function abrirOperaciones() {
 // BOTONES
 // ============================================
 
-function generarSolicitud() {
+function generarSolicitud(){
 
     alert(
         "Módulo de solicitudes en desarrollo."
@@ -1265,15 +1306,17 @@ function generarSolicitud() {
 
 }
 
-function imprimirPDF() {
+function imprimirPDF(){
 
     window.print();
 
 }
 
-function verHistorial() {
+function verHistorial(){
 
-    console.table(historialCambios);
+    console.table(
+        historialCambios
+    );
 
     alert(
         "Historial mostrado en consola."
