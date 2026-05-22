@@ -1,6 +1,6 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
-// VERSION FULL FINAL INTEGRADA
+// VERSION FULL FINAL + MULTAS EN TIEMPO REAL
 // ============================================
 
 // ============================================
@@ -23,6 +23,13 @@ const OPERACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdxL8NbBd5qZBfd7s1ValAKmVRQ2d3aWh3Fd07cTPLMXxly9Cap-AbpQuJtasRQw00EYnogECsVvtc/pub?gid=289242254&single=true&output=csv";
 
 // ============================================
+// API MULTAS
+// ============================================
+
+const API_MULTAS =
+"https://script.google.com/macros/s/AKfycbw_zF-9ao0DhjvJdLiJx4ZRGV74pLzdRrUnpm8Gs-Z4OEYZ9oWRGhIJyb8Vw_qAZG_2/exec";
+
+// ============================================
 // VARIABLES GLOBALES
 // ============================================
 
@@ -32,6 +39,7 @@ let bitacoraGlobal = [];
 let vacacionesGlobal = [];
 let resumenGlobal = [];
 let operacionesGlobal = [];
+let multasGlobal = [];
 
 // ============================================
 // INICIO
@@ -70,7 +78,8 @@ async function cargarSistema(){
             bitacoraResponse,
             resumenResponse,
             vacacionesResponse,
-            operacionesResponse
+            operacionesResponse,
+            multasResponse
 
         ] = await Promise.all([
 
@@ -78,7 +87,8 @@ async function cargarSistema(){
             fetch(BITACORA_URL),
             fetch(RESUMEN_URL),
             fetch(VACACIONES_URL),
-            fetch(OPERACIONES_URL)
+            fetch(OPERACIONES_URL),
+            fetch(API_MULTAS)
 
         ]);
 
@@ -96,6 +106,9 @@ async function cargarSistema(){
 
         const operacionesCSV =
             await operacionesResponse.text();
+
+        const multasJSON =
+            await multasResponse.json();
 
         Papa.parse(personalCSV,{
 
@@ -159,6 +172,8 @@ async function cargarSistema(){
                             filtrarOperacionesDelDia(
                                 operacionesResults.data
                             );
+
+                        multasGlobal = multasJSON;
 
                         eliminarDuplicados();
 
@@ -527,6 +542,22 @@ function procesarDatos(data){
 
         }
 
+        // ============================================
+        // MULTAS AUTOMATICAS
+        // ============================================
+
+        const chapaPersona =
+            limpiar(persona.CHAPA);
+
+        const multasElemento =
+            multasGlobal.filter(m =>
+
+                limpiar(m.chapa)
+                ===
+                chapaPersona
+
+            ).length;
+
         const registro = {
 
             nombre:persona.NOMBRE,
@@ -534,6 +565,8 @@ function procesarDatos(data){
             cargo:persona.CARGO,
 
             turno:turnoActual,
+
+            multas:multasElemento,
 
             estado:
                 fuera
@@ -658,277 +691,6 @@ function actualizarTitulos(
 }
 
 // ============================================
-// ALERTAS OPERATIVAS
-// ============================================
-
-function generarAlertasOperativas(){
-
-    const contenedor =
-        document.getElementById(
-            "alertasContainer"
-        );
-
-    if(!contenedor) return;
-
-    contenedor.innerHTML = "";
-
-    if(!operacionesGlobal.length){
-
-        contenedor.innerHTML = `
-
-        <div
-        class="alerta-item"
-        onclick="abrirOperaciones()"
-        >
-
-        Sistema operativo estable.
-
-        </div>
-
-        `;
-
-        return;
-
-    }
-
-    operacionesGlobal
-    .slice()
-    .reverse()
-    .slice(0,10)
-    .forEach(item=>{
-
-        contenedor.innerHTML += `
-
-        <div
-        class="alerta-item"
-        onclick="abrirOperaciones()"
-        style="cursor:pointer;"
-        >
-
-        🚨 ${item.NOMBRE || ""}
-        —
-        ${item.MOVIMIENTO || ""}
-        —
-        ${item.ESTADO || ""}
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// ============================================
-// BUSCADOR
-// ============================================
-
-function buscarPersonal(){
-
-    const texto =
-        limpiar(
-
-            document.getElementById(
-                "busqueda"
-            ).value
-
-        );
-
-    if(!texto){
-
-        procesarDatos(
-            personalGlobal
-        );
-
-        return;
-
-    }
-
-    const filtrado =
-        personalGlobal.filter(p=>
-
-            limpiar(p.NOMBRE)
-            .includes(texto)
-
-            ||
-
-            limpiar(p.CARGO)
-            .includes(texto)
-
-            ||
-
-            limpiar(p.GRUPO)
-            .includes(texto)
-
-            ||
-
-            limpiar(p.ESTADO)
-            .includes(texto)
-
-        );
-
-    procesarDatos(filtrado);
-
-}
-
-// ============================================
-// TURNOS
-// ============================================
-
-function obtenerTurnoAutomatico(
-    persona,
-    grupoActivoSemana
-){
-
-    const grupo =
-        limpiar(persona.GRUPO);
-
-    const turnoOriginal =
-        limpiar(persona.TURNO);
-
-    if(
-        turnoOriginal ===
-        "ADMINISTRATIVO"
-    ){
-
-        return "ADMINISTRATIVO";
-
-    }
-
-    if(grupo === "A"){
-
-        return grupoActivoSemana === "A"
-        ? "MAÑANA"
-        : "TARDE";
-
-    }
-
-    if(grupo === "B"){
-
-        return grupoActivoSemana === "B"
-        ? "MAÑANA"
-        : "TARDE";
-
-    }
-
-    return turnoOriginal;
-
-}
-
-// ============================================
-// SEMANA
-// ============================================
-
-function obtenerSemana(fecha){
-
-    const inicio =
-        new Date(
-            fecha.getFullYear(),
-            0,
-            1
-        );
-
-    const dias = Math.floor(
-
-        (fecha - inicio)
-
-        /
-
-        (24*60*60*1000)
-
-    );
-
-    return Math.ceil(
-
-        (dias + inicio.getDay()+1)
-
-        /7
-
-    );
-
-}
-
-// ============================================
-// DASHBOARD
-// ============================================
-
-function actualizarDashboard(
-    total,
-    operativos,
-    fuera,
-    mandos
-){
-
-    setText(
-        "totalAgentes",
-        total
-    );
-
-    setText(
-        "operativosHoy",
-        operativos
-    );
-
-    setText(
-        "fueraServicio",
-        fuera
-    );
-
-    setText(
-        "mandosActivos",
-        mandos
-    );
-
-}
-
-// ============================================
-// TABLA MANDOS
-// ============================================
-
-function renderMandos(lista){
-
-    const tabla =
-        document.getElementById(
-            "mandos-body"
-        );
-
-    if(!tabla) return;
-
-    tabla.innerHTML = "";
-
-    lista.forEach(item=>{
-
-        tabla.innerHTML += `
-
-        <tr>
-
-            <td>${item.nombre}</td>
-
-            <td>${item.cargo}</td>
-
-            <td>
-
-                <span class="${
-                    item.estado === "ACTIVO"
-                    ? "estado-activo"
-                    : "estado-fuera"
-                }">
-
-                    ${item.estado}
-
-                </span>
-
-            </td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-// ============================================
 // TABLAS GRUPOS
 // ============================================
 
@@ -955,6 +717,16 @@ function renderGrupo(id,lista){
 
             <td>
 
+                <span class="badge-multas">
+
+                    ${item.multas || 0}
+
+                </span>
+
+            </td>
+
+            <td>
+
                 <span class="${
                     item.estado === "ACTIVO"
                     ? "estado-activo"
@@ -972,249 +744,6 @@ function renderGrupo(id,lista){
         `;
 
     });
-
-}
-
-// ============================================
-// ALERTAS GENERALES
-// ============================================
-
-function generarAlertas(data){
-
-    let alertas = [];
-
-    data.forEach(persona=>{
-
-        const nombre =
-            persona.NOMBRE;
-
-        const vacaciones =
-            limpiar(persona.VACACIONES);
-
-        const igss =
-            limpiar(persona.IGSS);
-
-        const permiso =
-            limpiar(persona.PERMISO);
-
-        if(vacaciones === "SI"){
-
-            alertas.push(
-                `🚨 ${nombre} en VACACIONES`
-            );
-
-        }
-
-        if(igss === "SI"){
-
-            alertas.push(
-                `🟡 ${nombre} en IGSS`
-            );
-
-        }
-
-        if(permiso === "SI"){
-
-            alertas.push(
-                `🟠 ${nombre} en PERMISO`
-            );
-
-        }
-
-    });
-
-    if(alertas.length === 0){
-
-        alertas.push(
-            "Sistema operativo estable."
-        );
-
-    }
-
-    mostrarAlertas(alertas);
-
-}
-
-// ============================================
-// MOSTRAR ALERTAS
-// ============================================
-
-function mostrarAlertas(lista){
-
-    const contenedor =
-        document.getElementById(
-            "alertasContainer"
-        );
-
-    if(!contenedor) return;
-
-    contenedor.innerHTML = "";
-
-    lista.forEach(alerta=>{
-
-        contenedor.innerHTML += `
-
-        <div
-        class="alerta-item"
-        onclick="abrirOperaciones()"
-        style="cursor:pointer;"
-        >
-
-            ${alerta}
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// ============================================
-// DETECTAR CAMBIOS
-// ============================================
-
-function detectarCambios(data){
-
-    const anterior =
-
-        JSON.parse(
-            localStorage.getItem(
-                "pmt_anterior"
-            )
-        ) || [];
-
-    if(anterior.length > 0){
-
-        data.forEach(actual=>{
-
-            const viejo =
-                anterior.find(
-
-                    x =>
-                    x.NOMBRE === actual.NOMBRE
-
-                );
-
-            if(!viejo) return;
-
-            compararCambio(
-                viejo,
-                actual,
-                "VACACIONES"
-            );
-
-            compararCambio(
-                viejo,
-                actual,
-                "IGSS"
-            );
-
-            compararCambio(
-                viejo,
-                actual,
-                "PERMISO"
-            );
-
-            compararCambio(
-                viejo,
-                actual,
-                "ESTADO"
-            );
-
-        });
-
-    }
-
-    localStorage.setItem(
-
-        "pmt_anterior",
-
-        JSON.stringify(data)
-
-    );
-
-}
-
-// ============================================
-// COMPARAR CAMBIOS
-// ============================================
-
-function compararCambio(
-    viejo,
-    actual,
-    campo
-){
-
-    const viejoValor =
-        limpiar(viejo[campo]);
-
-    const nuevoValor =
-        limpiar(actual[campo]);
-
-    if(viejoValor !== nuevoValor){
-
-        const registro = {
-
-            fecha:
-                new Date()
-                .toLocaleDateString(),
-
-            hora:
-                new Date()
-                .toLocaleTimeString(),
-
-            nombre:
-                actual.NOMBRE,
-
-            movimiento:
-                campo,
-
-            detalle:
-                `${viejoValor} → ${nuevoValor}`
-
-        };
-
-        historialCambios.push(registro);
-
-    }
-
-}
-
-// ============================================
-// LIMPIAR TABLAS
-// ============================================
-
-function limpiarTablas(){
-
-    limpiarTabla(
-        "grupoA-body"
-    );
-
-    limpiarTabla(
-        "grupoB-body"
-    );
-
-    limpiarTabla(
-        "mandos-body"
-    );
-
-}
-
-// ============================================
-// LIMPIAR TABLA
-// ============================================
-
-function limpiarTabla(id){
-
-    const tabla =
-        document.getElementById(id);
-
-    if(tabla){
-
-        tabla.innerHTML = "";
-
-    }
 
 }
 
@@ -1243,83 +772,5 @@ function setText(id,valor){
         elemento.textContent = valor;
 
     }
-
-}
-
-// ============================================
-// ALERTA SIMPLE
-// ============================================
-
-function mostrarAlerta(
-    texto,
-    color
-){
-
-    const contenedor =
-        document.getElementById(
-            "alertasContainer"
-        );
-
-    if(!contenedor) return;
-
-    contenedor.innerHTML = `
-
-    <div
-        class="alerta-item"
-        style="
-        border-left:4px solid ${color};
-        cursor:pointer;
-        "
-        onclick="abrirOperaciones()"
-    >
-
-        ${texto}
-
-    </div>
-
-    `;
-
-}
-
-// ============================================
-// ABRIR OPERACIONES
-// ============================================
-
-function abrirOperaciones(){
-
-    window.open(
-        "operaciones/operaciones.html",
-        "_blank"
-    );
-
-}
-
-// ============================================
-// BOTONES
-// ============================================
-
-function generarSolicitud(){
-
-    alert(
-        "Módulo de solicitudes en desarrollo."
-    );
-
-}
-
-function imprimirPDF(){
-
-    window.print();
-
-}
-
-function verHistorial(){
-
-    console.table(
-        historialCambios
-    );
-
-    alert(
-        "Historial mostrado en consola."
-    );
 
 }
