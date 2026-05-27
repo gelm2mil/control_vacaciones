@@ -1,6 +1,6 @@
 // ============================================
 // SISTEMA OPERATIVO PMT — GELM
-// VERSION FULL FINAL RESTAURADA
+// VERSION FULL FINAL ESTABLE
 // ============================================
 
 // ============================================
@@ -9,15 +9,6 @@
 
 const PERSONAL_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=1097513246&single=true&output=csv";
-
-const BITACORA_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=624752042&single=true&output=csv";
-
-const RESUMEN_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=1553827404&single=true&output=csv";
-
-const VACACIONES_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=936650941&single=true&output=csv";
 
 const OPERACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdxL8NbBd5qZBfd7s1ValAKmVRQ2d3aWh3Fd07cTPLMXxly9Cap-AbpQuJtasRQw00EYnogECsVvtc/pub?gid=289242254&single=true&output=csv";
@@ -32,23 +23,20 @@ const API_MULTAS =
 let personalGlobal = [];
 let operacionesGlobal = [];
 let multasGlobal = [];
-let historialCambios = [];
 
 // ============================================
 // INICIO
 // ============================================
 
-window.addEventListener("DOMContentLoaded",()=>{
-
-    limpiarOperacionesAntiguas();
+window.addEventListener("DOMContentLoaded", () => {
 
     cargarSistema();
 
-    setInterval(()=>{
+    setInterval(() => {
 
         cargarSistema();
 
-    },60000);
+    }, 60000);
 
 });
 
@@ -56,21 +44,16 @@ window.addEventListener("DOMContentLoaded",()=>{
 // CARGAR SISTEMA
 // ============================================
 
-async function cargarSistema(){
+async function cargarSistema() {
 
-    try{
+    try {
 
-        mostrarAlerta(
-            "Conectando sistema PMT...",
-            "#00e5ff"
-        );
+        console.log("Cargando sistema PMT...");
 
         const [
-
             personalResponse,
             operacionesResponse,
             multasResponse
-
         ] = await Promise.all([
 
             fetch(PERSONAL_URL),
@@ -85,31 +68,40 @@ async function cargarSistema(){
         const operacionesCSV =
             await operacionesResponse.text();
 
-        const multasJSON =
-            await multasResponse.json();
+        let multasJSON = [];
+
+        try {
+
+            multasJSON =
+                await multasResponse.json();
+
+        } catch (e) {
+
+            multasJSON = [];
+
+        }
 
         multasGlobal = multasJSON;
 
-        Papa.parse(personalCSV,{
+        Papa.parse(personalCSV, {
 
-            header:true,
-            skipEmptyLines:true,
+            header: true,
+            skipEmptyLines: true,
 
-            complete:function(results){
+            complete: function (personalResults) {
 
-                personalGlobal = results.data;
+                personalGlobal =
+                    personalResults.data;
 
-                Papa.parse(operacionesCSV,{
+                Papa.parse(operacionesCSV, {
 
-                    header:true,
-                    skipEmptyLines:true,
+                    header: true,
+                    skipEmptyLines: true,
 
-                    complete:function(operacionesResults){
+                    complete: function (operacionesResults) {
 
                         operacionesGlobal =
-                            filtrarOperacionesDelDia(
-                                operacionesResults.data
-                            );
+                            operacionesResults.data;
 
                         integrarOperaciones();
 
@@ -125,62 +117,9 @@ async function cargarSistema(){
 
         });
 
-    }catch(error){
+    } catch (error) {
 
         console.error(error);
-
-        mostrarAlerta(
-            "Error cargando sistema",
-            "#ff1744"
-        );
-
-    }
-
-}
-
-// ============================================
-// FILTRAR OPERACIONES DEL DIA
-// ============================================
-
-function filtrarOperacionesDelDia(lista){
-
-    const hoy = new Date()
-    .toISOString()
-    .split("T")[0];
-
-    return lista.filter(item=>{
-
-        if(!item.FECHA) return false;
-
-        return item.FECHA.includes(hoy);
-
-    });
-
-}
-
-// ============================================
-// LIMPIAR OPERACIONES ANTIGUAS
-// ============================================
-
-function limpiarOperacionesAntiguas(){
-
-    const hoy = new Date()
-    .toISOString()
-    .split("T")[0];
-
-    const fechaGuardada =
-        localStorage.getItem(
-            "PMT_RESET"
-        );
-
-    if(fechaGuardada !== hoy){
-
-        localStorage.setItem(
-            "PMT_RESET",
-            hoy
-        );
-
-        historialCambios = [];
 
     }
 
@@ -190,9 +129,9 @@ function limpiarOperacionesAntiguas(){
 // INTEGRAR OPERACIONES
 // ============================================
 
-function integrarOperaciones(){
+function integrarOperaciones() {
 
-    operacionesGlobal.forEach(op=>{
+    operacionesGlobal.forEach(op => {
 
         const nombreOperacion =
             limpiar(op.NOMBRE);
@@ -201,7 +140,7 @@ function integrarOperaciones(){
             limpiar(op.MOVIMIENTO);
 
         const persona =
-            personalGlobal.find(p=>
+            personalGlobal.find(p =>
 
                 limpiar(p.NOMBRE)
                 ===
@@ -209,43 +148,31 @@ function integrarOperaciones(){
 
             );
 
-        if(!persona) return;
+        if (!persona) return;
 
-        if(
-            movimiento === "VACACIONES"
-        ){
+        if (movimiento === "VACACIONES") {
 
             persona.VACACIONES = "SI";
 
         }
 
-        if(
-            movimiento === "IGSS"
-        ){
+        if (movimiento === "IGSS") {
 
             persona.IGSS = "SI";
 
         }
 
-        if(
-            movimiento === "PERMISO"
-        ){
+        if (movimiento === "PERMISO") {
 
             persona.PERMISO = "SI";
 
         }
 
-        if(
+        if (
             movimiento === "AUSENCIA"
-        ){
-
-            persona.ESTADO = "AUSENTE";
-
-        }
-
-        if(
+            ||
             movimiento === "RETIRO"
-        ){
+        ) {
 
             persona.ESTADO = "AUSENTE";
 
@@ -259,7 +186,7 @@ function integrarOperaciones(){
 // PROCESAR DATOS
 // ============================================
 
-function procesarDatos(data){
+function procesarDatos(data) {
 
     limpiarTablas();
 
@@ -270,8 +197,8 @@ function procesarDatos(data){
 
     const grupoActivoSemana =
         semana % 2 === 0
-        ? "B"
-        : "A";
+            ? "B"
+            : "A";
 
     actualizarTitulos(
         grupoActivoSemana
@@ -294,9 +221,9 @@ function procesarDatos(data){
     let grupoBVacaciones = 0;
     let grupoBIGSS = 0;
 
-    data.forEach(persona=>{
+    data.forEach(persona => {
 
-        if(!persona.NOMBRE) return;
+        if (!persona.NOMBRE) return;
 
         totalPMT++;
 
@@ -334,11 +261,11 @@ function procesarDatos(data){
                 grupoActivoSemana
             );
 
-        if(fuera){
+        if (fuera) {
 
             fueraServicio++;
 
-        }else{
+        } else {
 
             operativosHoy++;
 
@@ -348,17 +275,17 @@ function procesarDatos(data){
         // ESTADISTICAS GRUPOS
         // =====================================
 
-        if(grupo === "A"){
+        if (grupo === "A") {
 
-            if(vacaciones === "SI"){
+            if (vacaciones === "SI") {
 
                 grupoAVacaciones++;
 
-            }else if(igss === "SI"){
+            } else if (igss === "SI") {
 
                 grupoAIGSS++;
 
-            }else{
+            } else {
 
                 grupoAActivos++;
 
@@ -366,17 +293,17 @@ function procesarDatos(data){
 
         }
 
-        if(grupo === "B"){
+        if (grupo === "B") {
 
-            if(vacaciones === "SI"){
+            if (vacaciones === "SI") {
 
                 grupoBVacaciones++;
 
-            }else if(igss === "SI"){
+            } else if (igss === "SI") {
 
                 grupoBIGSS++;
 
-            }else{
+            } else {
 
                 grupoBActivos++;
 
@@ -385,10 +312,10 @@ function procesarDatos(data){
         }
 
         // =====================================
-        // MANDOS
+        // PANEL MANDOS
         // =====================================
 
-        if(
+        if (
 
             cargo.includes("COMISARIO")
             ||
@@ -400,22 +327,22 @@ function procesarDatos(data){
             ||
             cargo.includes("SECRETARIO")
 
-        ){
+        ) {
 
             mandos.push({
 
-                nombre:persona.NOMBRE,
+                nombre: persona.NOMBRE,
 
-                cargo:persona.CARGO,
+                cargo: persona.CARGO,
 
                 estado:
                     fuera
-                    ? "FUERA"
-                    : "ACTIVO"
+                        ? "FUERA"
+                        : "ACTIVO"
 
             });
 
-            if(!fuera){
+            if (!fuera) {
 
                 mandosActivos++;
 
@@ -431,7 +358,7 @@ function procesarDatos(data){
             limpiar(persona.CHAPA);
 
         const multasElemento =
-            multasGlobal.filter(m=>
+            multasGlobal.filter(m =>
 
                 limpiar(m.chapa)
                 ===
@@ -441,28 +368,28 @@ function procesarDatos(data){
 
         const registro = {
 
-            nombre:persona.NOMBRE,
+            nombre: persona.NOMBRE,
 
-            cargo:persona.CARGO,
+            cargo: persona.CARGO,
 
-            turno:turnoActual,
+            turno: turnoActual,
 
-            multas:multasElemento,
+            multas: multasElemento,
 
             estado:
                 fuera
-                ? "FUERA"
-                : "ACTIVO"
+                    ? "FUERA"
+                    : "ACTIVO"
 
         };
 
-        if(grupo === "A"){
+        if (grupo === "A") {
 
             grupoA.push(registro);
 
         }
 
-        if(grupo === "B"){
+        if (grupo === "B") {
 
             grupoB.push(registro);
 
@@ -525,26 +452,24 @@ function procesarDatos(data){
         grupoB
     );
 
-    generarAlertasOperativas();
-
 }
 
 // ============================================
 // RENDER MANDOS
 // ============================================
 
-function renderMandos(lista){
+function renderMandos(lista) {
 
     const tabla =
         document.getElementById(
             "mandos-body"
         );
 
-    if(!tabla) return;
+    if (!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item=>{
+    lista.forEach(item => {
 
         tabla.innerHTML += `
 
@@ -556,11 +481,10 @@ function renderMandos(lista){
 
             <td>
 
-                <span class="${
-                    item.estado === "ACTIVO"
-                    ? "estado-activo"
-                    : "estado-fuera"
-                }">
+                <span class="${item.estado === "ACTIVO"
+                ? "estado-activo"
+                : "estado-fuera"
+            }">
 
                     ${item.estado}
 
@@ -580,16 +504,16 @@ function renderMandos(lista){
 // RENDER GRUPOS
 // ============================================
 
-function renderGrupo(id,lista){
+function renderGrupo(id, lista) {
 
     const tabla =
         document.getElementById(id);
 
-    if(!tabla) return;
+    if (!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item=>{
+    lista.forEach(item => {
 
         tabla.innerHTML += `
 
@@ -613,11 +537,10 @@ function renderGrupo(id,lista){
 
             <td>
 
-                <span class="${
-                    item.estado === "ACTIVO"
-                    ? "estado-activo"
-                    : "estado-fuera"
-                }">
+                <span class="${item.estado === "ACTIVO"
+                ? "estado-activo"
+                : "estado-fuera"
+            }">
 
                     ${item.estado}
 
@@ -638,13 +561,11 @@ function renderGrupo(id,lista){
 // ============================================
 
 function actualizarDashboard(
-
     total,
     operativos,
     fuera,
     mandos
-
-){
+) {
 
     setText(
         "totalAgentes",
@@ -669,62 +590,10 @@ function actualizarDashboard(
 }
 
 // ============================================
-// ALERTAS
-// ============================================
-
-function generarAlertasOperativas(){
-
-    const contenedor =
-        document.getElementById(
-            "alertasContainer"
-        );
-
-    if(!contenedor) return;
-
-    contenedor.innerHTML = "";
-
-    if(operacionesGlobal.length === 0){
-
-        contenedor.innerHTML = `
-
-        <div class="alerta-item">
-
-            Sin novedades operativas hoy.
-
-        </div>
-
-        `;
-
-        return;
-
-    }
-
-    operacionesGlobal
-    .slice()
-    .reverse()
-    .forEach(op=>{
-
-        contenedor.innerHTML += `
-
-        <div class="alerta-item">
-
-            ${op.NOMBRE}
-            —
-            ${op.MOVIMIENTO}
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// ============================================
 // LIMPIAR TABLAS
 // ============================================
 
-function limpiarTablas(){
+function limpiarTablas() {
 
     const grupoA =
         document.getElementById(
@@ -741,19 +610,19 @@ function limpiarTablas(){
             "mandos-body"
         );
 
-    if(grupoA){
+    if (grupoA) {
 
         grupoA.innerHTML = "";
 
     }
 
-    if(grupoB){
+    if (grupoB) {
 
         grupoB.innerHTML = "";
 
     }
 
-    if(mandos){
+    if (mandos) {
 
         mandos.innerHTML = "";
 
@@ -762,12 +631,12 @@ function limpiarTablas(){
 }
 
 // ============================================
-// TITULOS DINAMICOS
+// TITULOS
 // ============================================
 
 function actualizarTitulos(
     grupoActivoSemana
-){
+) {
 
     const tituloGrupoA =
         document.getElementById(
@@ -779,45 +648,45 @@ function actualizarTitulos(
             "tituloGrupoB"
         );
 
-    if(tituloGrupoA){
+    if (tituloGrupoA) {
 
         tituloGrupoA.textContent =
 
             grupoActivoSemana === "A"
-            ?
-            "GRUPO A — MAÑANA"
-            :
-            "GRUPO A — TARDE";
+                ?
+                "GRUPO A — MAÑANA"
+                :
+                "GRUPO A — TARDE";
 
     }
 
-    if(tituloGrupoB){
+    if (tituloGrupoB) {
 
         tituloGrupoB.textContent =
 
             grupoActivoSemana === "B"
-            ?
-            "GRUPO B — MAÑANA"
-            :
-            "GRUPO B — TARDE";
+                ?
+                "GRUPO B — MAÑANA"
+                :
+                "GRUPO B — TARDE";
 
     }
 
 }
 
 // ============================================
-// TURNOS AUTOMATICOS
+// TURNOS
 // ============================================
 
 function obtenerTurnoAutomatico(
     persona,
     grupoActivoSemana
-){
+) {
 
     const grupo =
         limpiar(persona.GRUPO);
 
-    if(grupo === grupoActivoSemana){
+    if (grupo === grupoActivoSemana) {
 
         return "MAÑANA";
 
@@ -831,7 +700,7 @@ function obtenerTurnoAutomatico(
 // CALCULAR SEMANA
 // ============================================
 
-function obtenerSemana(fecha){
+function obtenerSemana(fecha) {
 
     const inicio =
         new Date(
@@ -857,40 +726,40 @@ function obtenerSemana(fecha){
 // BUSCADOR
 // ============================================
 
-function buscarPersonal(){
+function buscarPersonal() {
 
     const texto =
         limpiar(
-
             document.getElementById(
                 "busqueda"
             ).value
-
         );
 
-    if(!texto){
+    if (!texto) {
 
-        cargarSistema();
+        procesarDatos(
+            personalGlobal
+        );
 
         return;
 
     }
 
     const resultado =
-        personalGlobal.filter(p=>
+        personalGlobal.filter(p =>
 
             limpiar(p.NOMBRE)
-            .includes(texto)
+                .includes(texto)
 
             ||
 
             limpiar(p.CARGO)
-            .includes(texto)
+                .includes(texto)
 
             ||
 
             limpiar(p.GRUPO)
-            .includes(texto)
+                .includes(texto)
 
         );
 
@@ -899,58 +768,33 @@ function buscarPersonal(){
 }
 
 // ============================================
-// ABRIR OPERACIONES
+// BOTONES
 // ============================================
 
-function abrirOperaciones(){
+function abrirOperaciones() {
 
     window.open(
-
         "https://gelm2mil.github.io/control_vacaciones/operaciones/operaciones.html",
         "_blank"
-
     );
 
 }
 
-// ============================================
-// BOTONES PLACEHOLDER
-// ============================================
+function generarSolicitud() {
 
-function generarSolicitud(){
-
-    alert(
-        "Modulo en desarrollo"
-    );
+    alert("Módulo en desarrollo");
 
 }
 
-function imprimirPDF(){
+function imprimirPDF() {
 
     window.print();
 
 }
 
-function verHistorial(){
+function verHistorial() {
 
-    alert(
-        "Historial operativo en desarrollo"
-    );
-
-}
-
-// ============================================
-// ALERTAS VISUALES
-// ============================================
-
-function mostrarAlerta(
-    mensaje,
-    color
-){
-
-    console.log(
-        mensaje
-    );
+    alert("Historial en desarrollo");
 
 }
 
@@ -958,23 +802,23 @@ function mostrarAlerta(
 // UTILIDADES
 // ============================================
 
-function limpiar(valor){
+function limpiar(valor) {
 
-    if(!valor) return "";
+    if (!valor) return "";
 
     return valor
-    .toString()
-    .trim()
-    .toUpperCase();
+        .toString()
+        .trim()
+        .toUpperCase();
 
 }
 
-function setText(id,valor){
+function setText(id, valor) {
 
     const elemento =
         document.getElementById(id);
 
-    if(elemento){
+    if (elemento) {
 
         elemento.textContent = valor;
 
