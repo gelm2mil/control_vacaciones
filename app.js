@@ -1,23 +1,14 @@
-// ============================================
-// SISTEMA OPERATIVO PMT — GELM
-// VERSION FULL FINAL RESTAURADA
-// ============================================
+// =====================================================
+// SISTEMA OPERATIVO PMT — GELM FULL FINAL
+// VERSION ESTABLE PROFESIONAL
+// =====================================================
 
-// ============================================
-// GOOGLE SHEETS
-// ============================================
+// =====================================================
+// URLS GOOGLE SHEETS
+// =====================================================
 
 const PERSONAL_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=1097513246&single=true&output=csv";
-
-const BITACORA_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=624752042&single=true&output=csv";
-
-const RESUMEN_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=1553827404&single=true&output=csv";
-
-const VACACIONES_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRgumTRicXBKZJbA1GJ-JGhrRnNAVhtgJmK87zHV7M2lfkNaxYi9AVQ3a_dADEaNg/pub?gid=936650941&single=true&output=csv";
 
 const OPERACIONES_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdxL8NbBd5qZBfd7s1ValAKmVRQ2d3aWh3Fd07cTPLMXxly9Cap-AbpQuJtasRQw00EYnogECsVvtc/pub?gid=289242254&single=true&output=csv";
@@ -25,52 +16,47 @@ const OPERACIONES_URL =
 const API_MULTAS =
 "https://script.google.com/macros/s/AKfycbw_zF-9ao0DhjvJdLiJx4ZRGV74pLzdRrUnpm8Gs-Z4OEYZ9oWRGhIJyb8Vw_qAZG_2/exec";
 
-// ============================================
+// =====================================================
 // VARIABLES GLOBALES
-// ============================================
+// =====================================================
 
 let personalGlobal = [];
 let operacionesGlobal = [];
 let multasGlobal = [];
-let historialCambios = [];
+let personalProcesado = [];
 
-// ============================================
+// =====================================================
 // INICIO
-// ============================================
+// =====================================================
 
-window.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-    limpiarOperacionesAntiguas();
+    iniciarSistema();
 
-    cargarSistema();
+    setInterval(() => {
 
-    setInterval(()=>{
+        iniciarSistema();
 
-        cargarSistema();
-
-    },60000);
+    }, 60000);
 
 });
 
-// ============================================
-// CARGAR SISTEMA
-// ============================================
+// =====================================================
+// INICIAR SISTEMA
+// =====================================================
 
-async function cargarSistema(){
+async function iniciarSistema() {
 
-    try{
+    try {
 
         mostrarAlerta(
-            "Conectando sistema PMT...",
-            "#00e5ff"
+            "🔄 Actualizando sistema operativo..."
         );
 
         const [
-
             personalResponse,
             operacionesResponse,
             multasResponse
-
         ] = await Promise.all([
 
             fetch(PERSONAL_URL),
@@ -85,37 +71,42 @@ async function cargarSistema(){
         const operacionesCSV =
             await operacionesResponse.text();
 
-        const multasJSON =
-            await multasResponse.json();
+        let multasJSON = [];
+
+        try {
+
+            multasJSON =
+                await multasResponse.json();
+
+        } catch (e) {
+
+            multasJSON = [];
+
+        }
 
         multasGlobal = multasJSON;
 
-        Papa.parse(personalCSV,{
+        Papa.parse(personalCSV, {
 
-            header:true,
-            skipEmptyLines:true,
+            header: true,
+            skipEmptyLines: true,
 
-            complete:function(results){
+            complete: function (resultadoPersonal) {
 
-                personalGlobal = results.data;
+                personalGlobal =
+                    resultadoPersonal.data;
 
-                Papa.parse(operacionesCSV,{
+                Papa.parse(operacionesCSV, {
 
-                    header:true,
-                    skipEmptyLines:true,
+                    header: true,
+                    skipEmptyLines: true,
 
-                    complete:function(operacionesResults){
+                    complete: function (resultadoOperaciones) {
 
                         operacionesGlobal =
-                            filtrarOperacionesDelDia(
-                                operacionesResults.data
-                            );
+                            resultadoOperaciones.data;
 
-                        integrarOperaciones();
-
-                        procesarDatos(
-                            personalGlobal
-                        );
+                        procesarSistema();
 
                     }
 
@@ -125,74 +116,42 @@ async function cargarSistema(){
 
         });
 
-    }catch(error){
+    } catch (error) {
 
         console.error(error);
 
         mostrarAlerta(
-            "Error cargando sistema",
-            "#ff1744"
+            "❌ Error cargando sistema"
         );
 
     }
 
 }
 
-// ============================================
-// FILTRAR OPERACIONES DEL DIA
-// ============================================
+// =====================================================
+// PROCESAR SISTEMA
+// =====================================================
 
-function filtrarOperacionesDelDia(lista){
+function procesarSistema() {
 
-    const hoy = new Date()
-    .toISOString()
-    .split("T")[0];
+    personalProcesado =
+        JSON.parse(
+            JSON.stringify(personalGlobal)
+        );
 
-    return lista.filter(item=>{
+    aplicarOperaciones();
 
-        if(!item.FECHA) return false;
-
-        return item.FECHA.includes(hoy);
-
-    });
+    renderizarSistema();
 
 }
 
-// ============================================
-// LIMPIAR OPERACIONES ANTIGUAS
-// ============================================
+// =====================================================
+// APLICAR OPERACIONES
+// =====================================================
 
-function limpiarOperacionesAntiguas(){
+function aplicarOperaciones() {
 
-    const hoy = new Date()
-    .toISOString()
-    .split("T")[0];
-
-    const fechaGuardada =
-        localStorage.getItem(
-            "PMT_RESET"
-        );
-
-    if(fechaGuardada !== hoy){
-
-        localStorage.setItem(
-            "PMT_RESET",
-            hoy
-        );
-
-        historialCambios = [];
-
-    }
-
-}
-
-// ============================================
-// INTEGRAR OPERACIONES
-// ============================================
-
-function integrarOperaciones(){
-
-    operacionesGlobal.forEach(op=>{
+    operacionesGlobal.forEach(op => {
 
         const nombreOperacion =
             limpiar(op.NOMBRE);
@@ -201,7 +160,7 @@ function integrarOperaciones(){
             limpiar(op.MOVIMIENTO);
 
         const persona =
-            personalGlobal.find(p=>
+            personalProcesado.find(p =>
 
                 limpiar(p.NOMBRE)
                 ===
@@ -209,45 +168,37 @@ function integrarOperaciones(){
 
             );
 
-        if(!persona) return;
+        if (!persona) return;
 
-        if(
-            movimiento === "VACACIONES"
-        ){
+        if (movimiento === "VACACIONES") {
 
-            persona.VACACIONES = "SI";
-
-        }
-
-        if(
-            movimiento === "IGSS"
-        ){
-
-            persona.IGSS = "SI";
+            persona.ESTADO_ACTUAL =
+                "VACACIONES";
 
         }
 
-        if(
-            movimiento === "PERMISO"
-        ){
+        else if (movimiento === "IGSS") {
 
-            persona.PERMISO = "SI";
+            persona.ESTADO_ACTUAL =
+                "IGSS";
 
         }
 
-        if(
+        else if (
             movimiento === "AUSENCIA"
-        ){
+            ||
+            movimiento === "RETIRO"
+        ) {
 
-            persona.ESTADO = "AUSENTE";
+            persona.ESTADO_ACTUAL =
+                "FUERA";
 
         }
 
-        if(
-            movimiento === "RETIRO"
-        ){
+        else {
 
-            persona.ESTADO = "AUSENTE";
+            persona.ESTADO_ACTUAL =
+                "ACTIVO";
 
         }
 
@@ -255,27 +206,13 @@ function integrarOperaciones(){
 
 }
 
-// ============================================
-// PROCESAR DATOS
-// ============================================
+// =====================================================
+// RENDERIZAR SISTEMA
+// =====================================================
 
-function procesarDatos(data){
+function renderizarSistema() {
 
     limpiarTablas();
-
-    const semana =
-        obtenerSemana(
-            new Date()
-        );
-
-    const grupoActivoSemana =
-        semana % 2 === 0
-        ? "B"
-        : "A";
-
-    actualizarTitulos(
-        grupoActivoSemana
-    );
 
     let totalPMT = 0;
     let operativosHoy = 0;
@@ -294,9 +231,19 @@ function procesarDatos(data){
     let grupoBVacaciones = 0;
     let grupoBIGSS = 0;
 
-    data.forEach(persona=>{
+    const semana =
+        obtenerSemanaActual();
 
-        if(!persona.NOMBRE) return;
+    const grupoMañana =
+        semana % 2 === 0 ? "B" : "A";
+
+    actualizarTitulos(
+        grupoMañana
+    );
+
+    personalProcesado.forEach(persona => {
+
+        if (!persona.NOMBRE) return;
 
         totalPMT++;
 
@@ -307,58 +254,48 @@ function procesarDatos(data){
             limpiar(persona.CARGO);
 
         const estado =
-            limpiar(persona.ESTADO);
+            persona.ESTADO_ACTUAL || "ACTIVO";
 
-        const vacaciones =
-            limpiar(persona.VACACIONES);
+        const chapa =
+            limpiar(persona.CHAPA);
 
-        const igss =
-            limpiar(persona.IGSS);
+        const multas =
+            contarMultas(chapa);
 
-        const permiso =
-            limpiar(persona.PERMISO);
+        const turno =
+            grupo === grupoMañana
+                ? "MAÑANA"
+                : "TARDE";
 
-        const fuera =
-
-            vacaciones === "SI"
-            ||
-            igss === "SI"
-            ||
-            permiso === "SI"
-            ||
-            estado === "AUSENTE";
-
-        const turnoActual =
-            obtenerTurnoAutomatico(
-                persona,
-                grupoActivoSemana
-            );
-
-        if(fuera){
-
-            fueraServicio++;
-
-        }else{
+        if (estado === "ACTIVO") {
 
             operativosHoy++;
 
+        } else {
+
+            fueraServicio++;
+
         }
 
-        // =====================================
+        // =================================================
         // ESTADISTICAS GRUPOS
-        // =====================================
+        // =================================================
 
-        if(grupo === "A"){
+        if (grupo === "A") {
 
-            if(vacaciones === "SI"){
+            if (estado === "VACACIONES") {
 
                 grupoAVacaciones++;
 
-            }else if(igss === "SI"){
+            }
+
+            else if (estado === "IGSS") {
 
                 grupoAIGSS++;
 
-            }else{
+            }
+
+            else {
 
                 grupoAActivos++;
 
@@ -366,17 +303,21 @@ function procesarDatos(data){
 
         }
 
-        if(grupo === "B"){
+        if (grupo === "B") {
 
-            if(vacaciones === "SI"){
+            if (estado === "VACACIONES") {
 
                 grupoBVacaciones++;
 
-            }else if(igss === "SI"){
+            }
+
+            else if (estado === "IGSS") {
 
                 grupoBIGSS++;
 
-            }else{
+            }
+
+            else {
 
                 grupoBActivos++;
 
@@ -384,11 +325,11 @@ function procesarDatos(data){
 
         }
 
-        // =====================================
-        // MANDOS
-        // =====================================
+        // =================================================
+        // PANEL MANDOS
+        // =================================================
 
-        if(
+        if (
 
             cargo.includes("COMISARIO")
             ||
@@ -400,22 +341,17 @@ function procesarDatos(data){
             ||
             cargo.includes("SECRETARIO")
 
-        ){
+        ) {
 
             mandos.push({
 
-                nombre:persona.NOMBRE,
-
-                cargo:persona.CARGO,
-
-                estado:
-                    fuera
-                    ? "FUERA"
-                    : "ACTIVO"
+                nombre: persona.NOMBRE,
+                cargo: persona.CARGO,
+                estado
 
             });
 
-            if(!fuera){
+            if (estado === "ACTIVO") {
 
                 mandosActivos++;
 
@@ -423,46 +359,27 @@ function procesarDatos(data){
 
         }
 
-        // =====================================
-        // MULTAS
-        // =====================================
-
-        const chapaPersona =
-            limpiar(persona.CHAPA);
-
-        const multasElemento =
-            multasGlobal.filter(m=>
-
-                limpiar(m.chapa)
-                ===
-                chapaPersona
-
-            ).length;
+        // =================================================
+        // REGISTRO TABLAS
+        // =================================================
 
         const registro = {
 
-            nombre:persona.NOMBRE,
-
-            cargo:persona.CARGO,
-
-            turno:turnoActual,
-
-            multas:multasElemento,
-
-            estado:
-                fuera
-                ? "FUERA"
-                : "ACTIVO"
+            nombre: persona.NOMBRE,
+            cargo: persona.CARGO,
+            turno,
+            multas,
+            estado
 
         };
 
-        if(grupo === "A"){
+        if (grupo === "A") {
 
             grupoA.push(registro);
 
         }
 
-        if(grupo === "B"){
+        if (grupo === "B") {
 
             grupoB.push(registro);
 
@@ -470,48 +387,63 @@ function procesarDatos(data){
 
     });
 
-    // =====================================
+    // =================================================
     // DASHBOARD
-    // =====================================
+    // =================================================
 
-    actualizarDashboard(
-
-        totalPMT,
-        operativosHoy,
-        fueraServicio,
-        mandosActivos
-
+    actualizarTexto(
+        "totalAgentes",
+        totalPMT
     );
 
-    setText(
+    actualizarTexto(
+        "operativosHoy",
+        operativosHoy
+    );
+
+    actualizarTexto(
+        "fueraServicio",
+        fueraServicio
+    );
+
+    actualizarTexto(
+        "mandosActivos",
+        mandosActivos
+    );
+
+    actualizarTexto(
         "grupoAActivos",
         grupoAActivos
     );
 
-    setText(
+    actualizarTexto(
         "grupoAVacaciones",
         grupoAVacaciones
     );
 
-    setText(
+    actualizarTexto(
         "grupoAIGSS",
         grupoAIGSS
     );
 
-    setText(
+    actualizarTexto(
         "grupoBActivos",
         grupoBActivos
     );
 
-    setText(
+    actualizarTexto(
         "grupoBVacaciones",
         grupoBVacaciones
     );
 
-    setText(
+    actualizarTexto(
         "grupoBIGSS",
         grupoBIGSS
     );
+
+    // =================================================
+    // RENDER TABLAS
+    // =================================================
 
     renderMandos(mandos);
 
@@ -525,26 +457,44 @@ function procesarDatos(data){
         grupoB
     );
 
-    generarAlertasOperativas();
+    mostrarAlerta(
+        "✅ Sistema operativo activo"
+    );
 
 }
 
-// ============================================
-// RENDER MANDOS
-// ============================================
+// =====================================================
+// CONTAR MULTAS
+// =====================================================
 
-function renderMandos(lista){
+function contarMultas(chapa) {
+
+    return multasGlobal.filter(m =>
+
+        limpiar(m.chapa)
+        ===
+        chapa
+
+    ).length;
+
+}
+
+// =====================================================
+// RENDER MANDOS
+// =====================================================
+
+function renderMandos(lista) {
 
     const tabla =
         document.getElementById(
             "mandos-body"
         );
 
-    if(!tabla) return;
+    if (!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item=>{
+    lista.forEach(item => {
 
         tabla.innerHTML += `
 
@@ -556,11 +506,10 @@ function renderMandos(lista){
 
             <td>
 
-                <span class="${
-                    item.estado === "ACTIVO"
-                    ? "estado-activo"
-                    : "estado-fuera"
-                }">
+                <span class="${item.estado === "ACTIVO"
+                ? "estado-activo"
+                : "estado-fuera"
+            }">
 
                     ${item.estado}
 
@@ -576,20 +525,20 @@ function renderMandos(lista){
 
 }
 
-// ============================================
+// =====================================================
 // RENDER GRUPOS
-// ============================================
+// =====================================================
 
-function renderGrupo(id,lista){
+function renderGrupo(id, lista) {
 
     const tabla =
         document.getElementById(id);
 
-    if(!tabla) return;
+    if (!tabla) return;
 
     tabla.innerHTML = "";
 
-    lista.forEach(item=>{
+    lista.forEach(item => {
 
         tabla.innerHTML += `
 
@@ -605,7 +554,7 @@ function renderGrupo(id,lista){
 
                 <span class="badge-multas">
 
-                    ${item.multas || 0}
+                    ${item.multas}
 
                 </span>
 
@@ -613,11 +562,10 @@ function renderGrupo(id,lista){
 
             <td>
 
-                <span class="${
-                    item.estado === "ACTIVO"
-                    ? "estado-activo"
-                    : "estado-fuera"
-                }">
+                <span class="${item.estado === "ACTIVO"
+                ? "estado-activo"
+                : "estado-fuera"
+            }">
 
                     ${item.estado}
 
@@ -633,98 +581,68 @@ function renderGrupo(id,lista){
 
 }
 
-// ============================================
-// DASHBOARD
-// ============================================
+// =====================================================
+// BUSCADOR
+// =====================================================
 
-function actualizarDashboard(
+function buscarPersonal() {
 
-    total,
-    operativos,
-    fuera,
-    mandos
-
-){
-
-    setText(
-        "totalAgentes",
-        total
-    );
-
-    setText(
-        "operativosHoy",
-        operativos
-    );
-
-    setText(
-        "fueraServicio",
-        fuera
-    );
-
-    setText(
-        "mandosActivos",
-        mandos
-    );
-
-}
-
-// ============================================
-// ALERTAS
-// ============================================
-
-function generarAlertasOperativas(){
-
-    const contenedor =
-        document.getElementById(
-            "alertasContainer"
+    const texto =
+        limpiar(
+            document.getElementById(
+                "busqueda"
+            ).value
         );
 
-    if(!contenedor) return;
+    if (!texto) {
 
-    contenedor.innerHTML = "";
-
-    if(operacionesGlobal.length === 0){
-
-        contenedor.innerHTML = `
-
-        <div class="alerta-item">
-
-            Sin novedades operativas hoy.
-
-        </div>
-
-        `;
+        renderizarSistema();
 
         return;
 
     }
 
-    operacionesGlobal
-    .slice()
-    .reverse()
-    .forEach(op=>{
+    const filtrado =
+        personalProcesado.filter(p =>
 
-        contenedor.innerHTML += `
+            limpiar(p.NOMBRE)
+            .includes(texto)
 
-        <div class="alerta-item">
+            ||
 
-            ${op.NOMBRE}
-            —
-            ${op.MOVIMIENTO}
+            limpiar(p.CARGO)
+            .includes(texto)
 
-        </div>
+            ||
 
-        `;
+            limpiar(p.GRUPO)
+            .includes(texto)
 
-    });
+        );
+
+    limpiarTablas();
+
+    renderGrupo(
+        "grupoA-body",
+        filtrado.filter(x =>
+            limpiar(x.GRUPO) === "A"
+        )
+    );
+
+    renderGrupo(
+        "grupoB-body",
+        filtrado.filter(x =>
+            limpiar(x.GRUPO) === "B"
+        )
+    );
 
 }
 
-// ============================================
+// =====================================================
 // LIMPIAR TABLAS
-// ============================================
+// =====================================================
 
-function limpiarTablas(){
+function limpiarTablas() {
 
     const grupoA =
         document.getElementById(
@@ -741,97 +659,137 @@ function limpiarTablas(){
             "mandos-body"
         );
 
-    if(grupoA){
-
-        grupoA.innerHTML = "";
-
-    }
-
-    if(grupoB){
-
-        grupoB.innerHTML = "";
-
-    }
-
-    if(mandos){
-
-        mandos.innerHTML = "";
-
-    }
+    if (grupoA) grupoA.innerHTML = "";
+    if (grupoB) grupoB.innerHTML = "";
+    if (mandos) mandos.innerHTML = "";
 
 }
 
-// ============================================
-// TITULOS DINAMICOS
-// ============================================
+// =====================================================
+// TITULOS
+// =====================================================
 
-function actualizarTitulos(
-    grupoActivoSemana
-){
+function actualizarTitulos(grupoMañana) {
 
-    const tituloGrupoA =
+    const tituloA =
         document.getElementById(
             "tituloGrupoA"
         );
 
-    const tituloGrupoB =
+    const tituloB =
         document.getElementById(
             "tituloGrupoB"
         );
 
-    if(tituloGrupoA){
+    if (tituloA) {
 
-        tituloGrupoA.textContent =
+        tituloA.innerHTML =
 
-            grupoActivoSemana === "A"
-            ?
-            "GRUPO A — MAÑANA"
-            :
-            "GRUPO A — TARDE";
+            grupoMañana === "A"
+                ?
+                "GRUPO A — MAÑANA"
+                :
+                "GRUPO A — TARDE";
 
     }
 
-    if(tituloGrupoB){
+    if (tituloB) {
 
-        tituloGrupoB.textContent =
+        tituloB.innerHTML =
 
-            grupoActivoSemana === "B"
-            ?
-            "GRUPO B — MAÑANA"
-            :
-            "GRUPO B — TARDE";
+            grupoMañana === "B"
+                ?
+                "GRUPO B — MAÑANA"
+                :
+                "GRUPO B — TARDE";
 
     }
 
 }
 
-// ============================================
-// TURNOS AUTOMATICOS
-// ============================================
+// =====================================================
+// ALERTAS
+// =====================================================
 
-function obtenerTurnoAutomatico(
-    persona,
-    grupoActivoSemana
-){
+function mostrarAlerta(texto) {
 
-    const grupo =
-        limpiar(persona.GRUPO);
+    const alerta =
+        document.getElementById(
+            "alertaTexto"
+        );
 
-    if(grupo === grupoActivoSemana){
+    if (!alerta) return;
 
-        return "MAÑANA";
-
-    }
-
-    return "TARDE";
+    alerta.innerHTML = texto;
 
 }
 
-// ============================================
-// CALCULAR SEMANA
-// ============================================
+// =====================================================
+// BOTONES
+// =====================================================
 
-function obtenerSemana(fecha){
+function abrirOperaciones() {
+
+    window.open(
+        "https://gelm2mil.github.io/control_vacaciones/operaciones/operaciones.html",
+        "_blank"
+    );
+
+}
+
+function generarSolicitud() {
+
+    alert(
+        "Módulo en desarrollo"
+    );
+
+}
+
+function imprimirPDF() {
+
+    window.print();
+
+}
+
+function verHistorial() {
+
+    alert(
+        "Historial operativo en desarrollo"
+    );
+
+}
+
+// =====================================================
+// UTILIDADES
+// =====================================================
+
+function limpiar(valor) {
+
+    if (!valor) return "";
+
+    return valor
+        .toString()
+        .trim()
+        .toUpperCase();
+
+}
+
+function actualizarTexto(id, valor) {
+
+    const elemento =
+        document.getElementById(id);
+
+    if (elemento) {
+
+        elemento.innerHTML = valor;
+
+    }
+
+}
+
+function obtenerSemanaActual() {
+
+    const fecha = new Date();
 
     const inicio =
         new Date(
@@ -850,134 +808,5 @@ function obtenerSemana(fecha){
         (dias + inicio.getDay() + 1)
         / 7
     );
-
-}
-
-// ============================================
-// BUSCADOR
-// ============================================
-
-function buscarPersonal(){
-
-    const texto =
-        limpiar(
-
-            document.getElementById(
-                "busqueda"
-            ).value
-
-        );
-
-    if(!texto){
-
-        cargarSistema();
-
-        return;
-
-    }
-
-    const resultado =
-        personalGlobal.filter(p=>
-
-            limpiar(p.NOMBRE)
-            .includes(texto)
-
-            ||
-
-            limpiar(p.CARGO)
-            .includes(texto)
-
-            ||
-
-            limpiar(p.GRUPO)
-            .includes(texto)
-
-        );
-
-    procesarDatos(resultado);
-
-}
-
-// ============================================
-// ABRIR OPERACIONES
-// ============================================
-
-function abrirOperaciones(){
-
-    window.open(
-
-        "https://gelm2mil.github.io/control_vacaciones/operaciones/operaciones.html",
-        "_blank"
-
-    );
-
-}
-
-// ============================================
-// BOTONES PLACEHOLDER
-// ============================================
-
-function generarSolicitud(){
-
-    alert(
-        "Modulo en desarrollo"
-    );
-
-}
-
-function imprimirPDF(){
-
-    window.print();
-
-}
-
-function verHistorial(){
-
-    alert(
-        "Historial operativo en desarrollo"
-    );
-
-}
-
-// ============================================
-// ALERTAS VISUALES
-// ============================================
-
-function mostrarAlerta(
-    mensaje,
-    color
-){
-
-    console.log(
-        mensaje
-    );
-
-}
-
-// ============================================
-// UTILIDADES
-// ============================================
-
-function limpiar(valor){
-
-    if(!valor) return "";
-
-    return valor
-    .toString()
-    .trim()
-    .toUpperCase();
-
-}
-
-function setText(id,valor){
-
-    const elemento =
-        document.getElementById(id);
-
-    if(elemento){
-
-        elemento.textContent = valor;
-
-    }
 
 }
