@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
@@ -21,10 +20,10 @@
 
 body{
 
-    background:#0f172a;
+    background:#081225;
     color:white;
     font-family:Arial,sans-serif;
-    padding:20px;
+    padding:15px;
 
 }
 
@@ -38,8 +37,41 @@ body{
 h1{
 
     text-align:center;
-    margin-bottom:20px;
     color:#00e5ff;
+    margin-bottom:20px;
+
+}
+
+.resumen{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+
+}
+
+.card{
+
+    background:#16233b;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+
+}
+
+.card h3{
+
+    font-size:14px;
+    color:#b8c3d1;
+
+}
+
+.card span{
+
+    font-size:28px;
+    color:#00e5ff;
+    font-weight:bold;
 
 }
 
@@ -54,11 +86,17 @@ h1{
 
 }
 
+.table-container{
+
+    overflow-x:auto;
+
+}
+
 table{
 
     width:100%;
     border-collapse:collapse;
-    background:#1e293b;
+    min-width:900px;
 
 }
 
@@ -72,14 +110,56 @@ th{
 
 td{
 
-    padding:12px;
+    padding:10px;
     border-bottom:1px solid #334155;
 
 }
 
 tr:hover{
 
-    background:#334155;
+    background:#22304a;
+
+}
+
+.vacaciones-row{
+
+    background:#5b1d1d;
+
+}
+
+.mando-row{
+
+    background:#123f7a;
+
+}
+
+.sale-cell{
+
+    background:#7a5a12;
+    font-weight:bold;
+
+}
+
+.ingresa-cell{
+
+    background:#0f5e2d;
+    font-weight:bold;
+
+}
+
+@media(max-width:768px){
+
+    h1{
+
+        font-size:26px;
+
+    }
+
+    table{
+
+        min-width:750px;
+
+    }
 
 }
 
@@ -93,12 +173,33 @@ tr:hover{
 
 <h1>CONTROL DE VACACIONES PMT</h1>
 
+<div class="resumen">
+
+<div class="card">
+<h3>VACACIONES ACTIVAS</h3>
+<span id="totalVacaciones">0</span>
+</div>
+
+<div class="card">
+<h3>PRÓXIMOS INGRESOS</h3>
+<span id="totalIngresos">0</span>
+</div>
+
+<div class="card">
+<h3>MANDOS</h3>
+<span id="totalMandos">0</span>
+</div>
+
+</div>
+
 <input
 type="text"
 id="busqueda"
 placeholder="Buscar por nombre o chapa..."
 
 >
+
+<div class="table-container">
 
 <table>
 
@@ -109,6 +210,7 @@ placeholder="Buscar por nombre o chapa..."
 <th>CHAPA</th>
 <th>NOMBRE</th>
 <th>CARGO</th>
+<th>VACACIONES</th>
 <th>SALE</th>
 <th>INGRESA</th>
 
@@ -122,20 +224,22 @@ placeholder="Buscar por nombre o chapa..."
 
 </div>
 
+</div>
+
 <script>
 
 const CSV_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsxA_1DCqrTBHMILm7bC3DRNTs5cLyJplztjRPvUyLLvJIvwbDSGrulY2CN9dcxQILbmTs_1yp5jAP/pub?gid=895287596&single=true&output=csv";
 
-let personal = [];
+let personal=[];
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded",()=>{
 
     cargarDatos();
 
     document
     .getElementById("busqueda")
-    .addEventListener("input", buscar);
+    .addEventListener("input",buscar);
 
 });
 
@@ -154,6 +258,8 @@ async function cargarDatos(){
 
             personal = resultado.data;
 
+            actualizarResumen();
+
             render(personal);
 
         }
@@ -162,18 +268,89 @@ async function cargarDatos(){
 
 }
 
+function actualizarResumen(){
+
+    let vacaciones = 0;
+    let ingresos = 0;
+    let mandos = 0;
+
+    personal.forEach(p=>{
+
+        const vac =
+        (p.vacaciones || "").trim();
+
+        const ingresa =
+        (p.ingresa || "").trim();
+
+        const cargo =
+        (p.CARGO || "").toUpperCase();
+
+        if(vac !== "")
+            vacaciones++;
+
+        if(ingresa !== "")
+            ingresos++;
+
+        if(
+            cargo.includes("DIRECTOR") ||
+            cargo.includes("SUB-DIRECTOR") ||
+            cargo.includes("ENCARGADO") ||
+            cargo.includes("SECRETARIO") ||
+            cargo.includes("TRANSPORTES") ||
+            cargo.includes("VIA PUBLICA")
+        ){
+            mandos++;
+        }
+
+    });
+
+    document.getElementById("totalVacaciones").textContent = vacaciones;
+    document.getElementById("totalIngresos").textContent = ingresos;
+    document.getElementById("totalMandos").textContent = mandos;
+
+}
+
 function render(lista){
 
     const tabla =
     document.getElementById("tabla");
 
-    tabla.innerHTML = "";
+    tabla.innerHTML="";
 
-    lista.forEach(persona => {
+    lista.forEach(persona=>{
+
+        const vac =
+        (persona.vacaciones || "").trim();
+
+        const sale =
+        (persona.sale || "").trim();
+
+        const ingresa =
+        (persona.ingresa || "").trim();
+
+        const cargo =
+        (persona.CARGO || "").toUpperCase();
+
+        let claseFila="";
+
+        if(
+            cargo.includes("DIRECTOR") ||
+            cargo.includes("SUB-DIRECTOR") ||
+            cargo.includes("ENCARGADO") ||
+            cargo.includes("SECRETARIO") ||
+            cargo.includes("TRANSPORTES") ||
+            cargo.includes("VIA PUBLICA")
+        ){
+            claseFila="mando-row";
+        }
+
+        if(vac !== ""){
+            claseFila="vacaciones-row";
+        }
 
         tabla.innerHTML += `
 
-        <tr>
+        <tr class="${claseFila}">
 
             <td>${persona.CHAPA || ""}</td>
 
@@ -181,9 +358,15 @@ function render(lista){
 
             <td>${persona.CARGO || ""}</td>
 
-            <td>${persona.sale || ""}</td>
+            <td>${vac}</td>
 
-            <td>${persona.ingresa || ""}</td>
+            <td class="${sale ? 'sale-cell' : ''}">
+                ${sale}
+            </td>
+
+            <td class="${ingresa ? 'ingresa-cell' : ''}">
+                ${ingresa}
+            </td>
 
         </tr>
 
@@ -202,15 +385,15 @@ function buscar(){
     .toUpperCase();
 
     const resultado =
-    personal.filter(persona =>
+    personal.filter(p =>
 
-        (persona.CHAPA || "")
+        (p.CHAPA || "")
         .toUpperCase()
         .includes(texto)
 
         ||
 
-        (persona["PERSONAL PMT"] || "")
+        (p["PERSONAL PMT"] || "")
         .toUpperCase()
         .includes(texto)
 
@@ -223,5 +406,4 @@ function buscar(){
 </script>
 
 </body>
-
 </html>
