@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -6,9 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SISTEMA OPERATIVO PMT</title>
-
-<link rel="stylesheet" href="styles.css">
+<title>CONTROL DE VACACIONES PMT</title>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -22,651 +21,65 @@
 
 body{
 
-    font-family:Arial,sans-serif;
-
-    background:
-    linear-gradient(
-        135deg,
-        #020617,
-        #071126,
-        #0f172a
-    );
-
+    background:#0f172a;
     color:white;
-
-    min-height:100vh;
+    font-family:Arial,sans-serif;
+    padding:20px;
 
 }
 
-.main-container{
+.container{
 
-    width:100%;
-    max-width:1600px;
-
+    max-width:1400px;
     margin:auto;
 
-    padding:20px;
-
 }
 
-/* =========================================
-HEADER
-========================================= */
+h1{
 
-.header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:20px;
-
-    padding:20px;
-
-    background:
-    rgba(0,0,0,0.35);
-
-    border-radius:25px;
-
+    text-align:center;
     margin-bottom:20px;
-
-    border:
-    1px solid rgba(255,255,255,0.08);
-
-    backdrop-filter:blur(10px);
+    color:#00e5ff;
 
 }
 
-.logo-box{
-
-    width:120px;
-    height:120px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-}
-
-.logo{
+#busqueda{
 
     width:100%;
-    max-width:100px;
-
-    object-fit:contain;
-
-}
-
-.header-center{
-
-    text-align:center;
-
-    flex:1;
-
-}
-
-.header-center h1{
-
-    color:#00e5ff;
-
-    font-size:2rem;
-
-    margin-bottom:8px;
-
-}
-
-.header-center h2{
-
-    color:#ffffff;
-
-    margin-bottom:5px;
-
-}
-
-.header-center h3{
-
-    color:#94a3b8;
-
-    font-weight:normal;
-
-}
-
-/* =========================================
-ALERTAS
-========================================= */
-
-.alertas-box{
-
-    background:
-    rgba(255,0,60,0.15);
-
-    border:
-    1px solid rgba(255,0,60,0.35);
-
-    border-radius:20px;
-
-    padding:20px;
-
-    margin-bottom:20px;
-
-    cursor:pointer;
-
-    transition:0.3s;
-
-}
-
-.alertas-box:hover{
-
-    transform:scale(1.01);
-
-    box-shadow:
-    0 0 25px rgba(255,0,60,0.35);
-
-}
-
-.alerta-title{
-
-    font-size:1.3rem;
-
-    font-weight:bold;
-
-    color:#ff3355;
-
-    margin-bottom:15px;
-
-}
-
-.alertas-container{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:10px;
-
-    max-height:300px;
-
-    overflow:auto;
-
-}
-
-.alerta-item{
-
-    background:
-    rgba(0,0,0,0.3);
-
-    padding:12px;
-
-    border-radius:14px;
-
-    border-left:
-    5px solid #ff3355;
-
-    font-size:0.95rem;
-
-}
-
-/* =========================================
-BUSCADOR
-========================================= */
-
-.buscador-section{
-
-    background:
-    rgba(0,0,0,0.25);
-
-    padding:20px;
-
-    border-radius:20px;
-
-    margin-bottom:20px;
-
-}
-
-.buscador-title{
-
-    margin-bottom:15px;
-
-    color:#00e5ff;
-
-}
-
-.buscador-box{
-
-    display:flex;
-
-    gap:12px;
-
-    flex-wrap:wrap;
-
-    align-items:center;
-
-}
-
-.buscador-box input{
-
-    flex:1;
-
-    min-width:250px;
-
-    padding:14px;
-
-    border-radius:14px;
-
+    padding:15px;
     border:none;
-
-    background:#0f172a;
-
-    color:white;
-
-    font-size:1rem;
-
-}
-
-.buscador-box button{
-
-    padding:14px 22px;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-weight:bold;
-
-    transition:0.3s;
-
-}
-
-/* =========================================
-BOTON BUSCAR
-========================================= */
-
-.btn-buscar{
-
-    background:
-    linear-gradient(
-        90deg,
-        #00e5ff,
-        #00bcd4
-    );
-
-    color:black;
-
-}
-
-/* =========================================
-BOTON NOVEDADES
-========================================= */
-
-.btn-novedades{
-
-    background:
-    linear-gradient(
-        90deg,
-        #ff004c,
-        #ff6a00
-    );
-
-    color:white;
-
-    box-shadow:
-    0 0 20px rgba(255,0,76,0.5);
-
-}
-
-.btn-novedades:hover{
-
-    transform:scale(1.05);
-
-}
-
-/* =========================================
-DASHBOARD
-========================================= */
-
-.dashboard{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(220px,1fr));
-
-    gap:20px;
-
+    border-radius:10px;
     margin-bottom:20px;
-
-}
-
-.card{
-
-    background:
-    rgba(0,0,0,0.25);
-
-    border-radius:20px;
-
-    padding:25px;
-
-    text-align:center;
-
-    border:
-    1px solid rgba(255,255,255,0.08);
-
-}
-
-.card h3{
-
-    margin-bottom:15px;
-
-    color:#94a3b8;
-
-}
-
-.card span{
-
-    font-size:2rem;
-
-    font-weight:bold;
-
-    color:#00e5ff;
-
-}
-
-/* =========================================
-TABLAS
-========================================= */
-
-.grupos-container{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(500px,1fr));
-
-    gap:20px;
-
-    margin-bottom:20px;
-
-}
-
-.grupo-box{
-
-    background:
-    rgba(0,0,0,0.25);
-
-    border-radius:20px;
-
-    padding:20px;
-
-}
-
-.grupo-title{
-
-    font-size:1.2rem;
-
-    font-weight:bold;
-
-    color:#00e5ff;
-
-    margin-bottom:15px;
-
-}
-
-.grupo-dashboard{
-
-    display:flex;
-
-    gap:10px;
-
-    margin-bottom:15px;
-
-    flex-wrap:wrap;
-
-}
-
-.mini-card{
-
-    flex:1;
-
-    min-width:100px;
-
-    background:
-    rgba(255,255,255,0.05);
-
-    border-radius:14px;
-
-    padding:10px;
-
-    text-align:center;
-
-}
-
-.mini-card span{
-
-    font-size:1.4rem;
-
-    font-weight:bold;
-
-    color:#00e5ff;
-
-}
-
-.tabla-scroll{
-
-    overflow:auto;
+    font-size:16px;
 
 }
 
 table{
 
     width:100%;
-
     border-collapse:collapse;
+    background:#1e293b;
 
 }
 
 th{
 
-    background:
-    rgba(0,229,255,0.2);
-
+    background:#00bcd4;
+    color:black;
     padding:12px;
-
-    text-align:left;
-
-    color:#00e5ff;
 
 }
 
 td{
 
     padding:12px;
-
-    border-bottom:
-    1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid #334155;
 
 }
 
-.estado-activo{
+tr:hover{
 
-    background:#00c853;
-
-    padding:5px 10px;
-
-    border-radius:20px;
-
-    font-size:0.8rem;
-
-}
-
-.estado-fuera{
-
-    background:#ff1744;
-
-    padding:5px 10px;
-
-    border-radius:20px;
-
-    font-size:0.8rem;
-
-}
-
-/* =========================================
-MANDOS
-========================================= */
-
-.direccion-panel{
-
-    background:
-    rgba(0,0,0,0.25);
-
-    border-radius:20px;
-
-    padding:20px;
-
-    margin-bottom:20px;
-
-}
-
-.panel-title{
-
-    color:#00e5ff;
-
-    font-size:1.2rem;
-
-    margin-bottom:15px;
-
-}
-
-/* =========================================
-BOTONES
-========================================= */
-
-.botones-panel{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:15px;
-
-    margin-bottom:20px;
-
-}
-
-.botones-panel button{
-
-    padding:14px 22px;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-weight:bold;
-
-    background:
-    linear-gradient(
-        90deg,
-        #00e5ff,
-        #00bcd4
-    );
-
-    color:black;
-
-    transition:0.3s;
-
-}
-
-.botones-panel button:hover{
-
-    transform:scale(1.03);
-
-}
-
-/* =========================================
-ESTADO
-========================================= */
-
-.estado-box{
-
-    background:
-    rgba(0,0,0,0.25);
-
-    border-radius:20px;
-
-    padding:20px;
-
-    margin-bottom:20px;
-
-}
-
-.estado-luces{
-
-    display:flex;
-
-    gap:12px;
-
-    margin-top:15px;
-
-}
-
-.luz{
-
-    width:20px;
-    height:20px;
-
-    border-radius:50%;
-
-}
-
-.rojo{
-    background:#ff1744;
-}
-
-.amarillo{
-    background:#ffea00;
-}
-
-.verde{
-    background:#00e676;
-}
-
-/* =========================================
-FOOTER
-========================================= */
-
-.footer{
-
-    text-align:center;
-
-    color:#94a3b8;
-
-    padding:30px 10px;
-
-}
-
-/* =========================================
-RESPONSIVE
-========================================= */
-
-@media(max-width:768px){
-
-    .header{
-
-        flex-direction:column;
-
-    }
-
-    .grupos-container{
-
-        grid-template-columns:1fr;
-
-    }
+    background:#334155;
 
 }
 
@@ -676,183 +89,16 @@ RESPONSIVE
 
 <body>
 
-<div class="main-container">
+<div class="container">
 
-<!-- =====================================
-HEADER
-===================================== -->
-
-<header class="header">
-
-<div class="logo-box">
-
-<img
-src="icons/pmt.png"
-class="logo"
->
-
-</div>
-
-<div class="header-center">
-
-<h1>
-SISTEMA OPERATIVO PMT
-</h1>
-
-<h2>
-POLICÍA MUNICIPAL DE TRÁNSITO
-</h2>
-
-<h3>
-CHIMALTENANGO — 2026
-</h3>
-
-</div>
-
-<div class="logo-box">
-
-<img
-src="icons/icon-512.png"
-class="logo"
->
-
-</div>
-
-</header>
-
-<!-- =====================================
-ALERTAS
-===================================== -->
-
-<section
-class="alertas-box"
-onclick="abrirOperaciones()"
->
-
-<div class="alerta-title">
-
-🚨 ALERTAS OPERATIVAS
-
-</div>
-
-<div
-id="alertasContainer"
-class="alertas-container"
->
-
-<div class="alerta-item">
-
-Sistema operativo estable.
-
-</div>
-
-</div>
-
-</section>
-
-<!-- =====================================
-BUSCADOR
-===================================== -->
-
-<section class="buscador-section">
-
-<h2 class="buscador-title">
-
-Buscador Inteligente PMT
-
-</h2>
-
-<div class="buscador-box">
+<h1>CONTROL DE VACACIONES PMT</h1>
 
 <input
 type="text"
 id="busqueda"
-placeholder="Buscar agente, cargo, grupo..."
+placeholder="Buscar por nombre o chapa..."
+
 >
-
-<button
-class="btn-buscar"
-onclick="buscarPersonal()"
->
-
-BUSCAR
-
-</button>
-
-<button
-class="btn-novedades"
-onclick="abrirOperaciones()"
->
-
---== NOVEDADES ==--
-
-</button>
-
-</div>
-
-</section>
-
-<!-- =====================================
-DASHBOARD
-===================================== -->
-
-<section class="dashboard">
-
-<div class="card">
-
-<h3>TOTAL PMT</h3>
-
-<span id="totalAgentes">
-0
-</span>
-
-</div>
-
-<div class="card">
-
-<h3>OPERATIVOS HOY</h3>
-
-<span id="operativosHoy">
-0
-</span>
-
-</div>
-
-<div class="card">
-
-<h3>FUERA SERVICIO</h3>
-
-<span id="fueraServicio">
-0
-</span>
-
-</div>
-
-<div class="card">
-
-<h3>MANDOS ACTIVOS</h3>
-
-<span id="mandosActivos">
-0
-</span>
-
-</div>
-
-</section>
-
-<!-- =====================================
-MANDOS
-===================================== -->
-
-<section class="direccion-panel">
-
-<div class="panel-title">
-
-PANEL DE DIRECCIÓN Y MANDOS
-
-</div>
-
-<div class="tabla-scroll">
 
 <table>
 
@@ -860,261 +106,122 @@ PANEL DE DIRECCIÓN Y MANDOS
 
 <tr>
 
-<th>Nombre</th>
-<th>Cargo</th>
-<th>Estado</th>
+<th>CHAPA</th>
+<th>NOMBRE</th>
+<th>CARGO</th>
+<th>SALE</th>
+<th>INGRESA</th>
 
 </tr>
 
 </thead>
 
-<tbody id="mandos-body">
-
-</tbody>
+<tbody id="tabla"></tbody>
 
 </table>
 
 </div>
 
-</section>
+<script>
 
-<!-- =====================================
-GRUPOS
-===================================== -->
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTsxA_1DCqrTBHMILm7bC3DRNTs5cLyJplztjRPvUyLLvJIvwbDSGrulY2CN9dcxQILbmTs_1yp5jAP/pub?gid=895287596&single=true&output=csv";
 
-<section class="grupos-container">
+let personal = [];
 
-<!-- =================================
-GRUPO A
-================================= -->
+window.addEventListener("DOMContentLoaded", () => {
 
-<div class="grupo-box">
+    cargarDatos();
 
-<div
-class="grupo-title"
-id="tituloGrupoA"
->
+    document
+    .getElementById("busqueda")
+    .addEventListener("input", buscar);
 
-GRUPO A
+});
 
-</div>
+async function cargarDatos(){
 
-<div class="grupo-dashboard">
+    const respuesta = await fetch(CSV_URL);
 
-<div class="mini-card">
+    const csv = await respuesta.text();
 
-<span id="grupoAActivos">
-0
-</span>
+    Papa.parse(csv,{
 
-<p>Activos</p>
+        header:true,
+        skipEmptyLines:true,
 
-</div>
+        complete:function(resultado){
 
-<div class="mini-card">
+            personal = resultado.data;
 
-<span id="grupoAVacaciones">
-0
-</span>
+            render(personal);
 
-<p>Vacaciones</p>
+        }
 
-</div>
+    });
 
-<div class="mini-card">
+}
 
-<span id="grupoAIGSS">
-0
-</span>
+function render(lista){
 
-<p>IGSS</p>
+    const tabla =
+    document.getElementById("tabla");
 
-</div>
+    tabla.innerHTML = "";
 
-</div>
+    lista.forEach(persona => {
 
-<div class="tabla-scroll">
+        tabla.innerHTML += `
 
-<table>
+        <tr>
 
-<thead>
+            <td>${persona.CHAPA || ""}</td>
 
-<tr>
+            <td>${persona["PERSONAL PMT"] || ""}</td>
 
-<th>Nombre</th>
-<th>Cargo</th>
-<th>Turno</th>
-<th>Estado</th>
+            <td>${persona.CARGO || ""}</td>
 
-</tr>
+            <td>${persona.sale || ""}</td>
 
-</thead>
+            <td>${persona.ingresa || ""}</td>
 
-<tbody id="grupoA-body">
+        </tr>
 
-</tbody>
+        `;
 
-</table>
+    });
 
-</div>
+}
 
-</div>
+function buscar(){
 
-<!-- =================================
-GRUPO B
-================================= -->
+    const texto =
+    document
+    .getElementById("busqueda")
+    .value
+    .toUpperCase();
 
-<div class="grupo-box">
+    const resultado =
+    personal.filter(persona =>
 
-<div
-class="grupo-title"
-id="tituloGrupoB"
->
+        (persona.CHAPA || "")
+        .toUpperCase()
+        .includes(texto)
 
-GRUPO B
+        ||
 
-</div>
+        (persona["PERSONAL PMT"] || "")
+        .toUpperCase()
+        .includes(texto)
 
-<div class="grupo-dashboard">
+    );
 
-<div class="mini-card">
+    render(resultado);
 
-<span id="grupoBActivos">
-0
-</span>
+}
 
-<p>Activos</p>
-
-</div>
-
-<div class="mini-card">
-
-<span id="grupoBVacaciones">
-0
-</span>
-
-<p>Vacaciones</p>
-
-</div>
-
-<div class="mini-card">
-
-<span id="grupoBIGSS">
-0
-</span>
-
-<p>IGSS</p>
-
-</div>
-
-</div>
-
-<div class="tabla-scroll">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Nombre</th>
-<th>Cargo</th>
-<th>Turno</th>
-<th>Estado</th>
-
-</tr>
-
-</thead>
-
-<tbody id="grupoB-body">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- =====================================
-BOTONES
-===================================== -->
-
-<section class="botones-panel">
-
-<button onclick="generarSolicitud()">
-
-GENERAR SOLICITUD
-
-</button>
-
-<button onclick="imprimirPDF()">
-
-IMPRIMIR PDF
-
-</button>
-
-<button onclick="verHistorial()">
-
-VER HISTORIAL
-
-</button>
-
-<button onclick="abrirOperaciones()">
-
-CENTRO OPERATIVO
-
-</button>
-
-</section>
-
-<!-- =====================================
-ESTADO SISTEMA
-===================================== -->
-
-<section class="estado-box">
-
-<h2>
-
-Estado del sistema
-
-</h2>
-
-<div class="estado-luces">
-
-<span class="luz rojo"></span>
-<span class="luz amarillo"></span>
-<span class="luz verde"></span>
-
-</div>
-
-</section>
-
-<!-- =====================================
-FOOTER
-===================================== -->
-
-<footer class="footer">
-
-<p>
-
-© 2025–2026 — Sistema GELM
-
-</p>
-
-<p>
-
-Desarrollo y propiedad intelectual — BY GELM
-
-</p>
-
-</footer>
-
-</div>
-
-<script src="app.js"></script>
+</script>
 
 </body>
+
 </html>
