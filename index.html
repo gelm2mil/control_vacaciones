@@ -276,8 +276,16 @@ function actualizarResumen(){
 
     personal.forEach(p=>{
 
-        const vac =
-        (p.vacaciones || "").trim();
+        const vacKey =
+Object.keys(persona).find(k =>
+k.toLowerCase().includes("vacacion")
+);
+
+const vac =
+vacKey
+? String(persona[vacKey] || "").trim()
+: "";
+
 
         const ingresa =
         (p.ingresa || "").trim();
@@ -319,8 +327,16 @@ function render(lista){
 
     lista.forEach(persona=>{
 
-        const vac =
-        (persona.vacaciones || "").trim();
+        const vacKey =
+Object.keys(p).find(k =>
+k.toLowerCase().includes("vacacion")
+);
+
+const vac =
+vacKey
+? String(p[vacKey] || "").trim()
+: "";
+
 
         const sale =
         (persona.sale || "").trim();
@@ -358,7 +374,14 @@ function render(lista){
 
             <td>${persona.CARGO || ""}</td>
 
-            <td>${vac}</td>
+            <td>
+
+${vac
+? '<span style="color:#ff5b5b;font-weight:bold;">VACACIONES</span>'
+: ''}
+
+</td>
+
 
             <td class="${sale ? 'sale-cell' : ''}">
                 ${sale}
