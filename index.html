@@ -1,70 +1,103 @@
-function render(lista){
 
-    const tabla =
-    document.getElementById("tabla");
+<!DOCTYPE html>
+<html lang="es">
 
-    tabla.innerHTML="";
+<head>
 
-    lista.forEach(persona=>{
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        const vacCampo = Object.keys(persona).find(
-            k => k.toLowerCase().includes("vacacion")
-        );
+<title>CONTROL DE VACACIONES PMT</title>
 
-        const vac = vacCampo
-            ? String(persona[vacCampo] || "").trim()
-            : "";
+<link rel="stylesheet" href="styles.css">
 
-        const sale =
-        String(persona.sale || "").trim();
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-        const ingresa =
-        String(persona.ingresa || "").trim();
+</head>
 
-        const cargo =
-        String(persona.CARGO || "").toUpperCase();
+<body>
 
-        let claseFila="";
+<div class="main-container">
 
-        if(
-            cargo.includes("DIRECTOR") ||
-            cargo.includes("SUB-DIRECTOR") ||
-            cargo.includes("ENCARGADO") ||
-            cargo.includes("SECRETARIO") ||
-            cargo.includes("TRANSPORTES") ||
-            cargo.includes("VIA PUBLICA")
-        ){
-            claseFila="mando-row";
-        }
+    <div class="header">
 
-        if(vac !== ""){
-            claseFila="vacaciones-row";
-        }
+        <div class="header-center">
+            <h1>CONTROL DE VACACIONES PMT</h1>
+            <h2>GESTIÓN DE PERSONAL</h2>
+            <h3>PMT CHIMALTENANGO</h3>
+        </div>
 
-        tabla.innerHTML += `
+    </div>
 
-        <tr class="${claseFila}">
+    <div class="dashboard">
 
-            <td>${persona.CHAPA || ""}</td>
+        <div class="card">
+            <h3>VACACIONES ACTIVAS</h3>
+            <span id="totalVacaciones">0</span>
+        </div>
 
-            <td>${persona["PERSONAL PMT"] || ""}</td>
+        <div class="card">
+            <h3>PRÓXIMOS INGRESOS</h3>
+            <span id="totalIngresos">0</span>
+        </div>
 
-            <td>${persona.CARGO || ""}</td>
+        <div class="card">
+            <h3>MANDOS</h3>
+            <span id="totalMandos">0</span>
+        </div>
 
-            <td>${vac ? "VACACIONES" : ""}</td>
+    </div>
 
-            <td class="${sale ? 'sale-cell' : ''}">
-                ${sale}
-            </td>
+    <div class="buscador-section">
 
-            <td class="${ingresa ? 'ingresa-cell' : ''}">
-                ${ingresa}
-            </td>
+        <div class="buscador-box">
 
-        </tr>
+            <input
+                type="text"
+                id="busqueda"
+                placeholder="Buscar por nombre o chapa..."
+            >
 
-        `;
+        </div>
 
-    });
+    </div>
 
-}
+    <div class="direccion-panel">
+
+        <div class="panel-title">
+            PERSONAL PMT
+        </div>
+
+        <div class="tabla-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>CHAPA</th>
+                        <th>NOMBRE</th>
+                        <th>CARGO</th>
+                        <th>VACACIONES</th>
+                        <th>SALE</th>
+                        <th>INGRESA</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tabla"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
