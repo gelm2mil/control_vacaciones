@@ -1,315 +1,3 @@
-<!DOCTYPE html>
-
-<html lang="es">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CONTROL DE VACACIONES PMT</title>
-
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-
-    background:#081225;
-    color:white;
-    font-family:Arial,sans-serif;
-    padding:15px;
-
-}
-
-.container{
-
-    max-width:1400px;
-    margin:auto;
-
-}
-
-h1{
-
-    text-align:center;
-    color:#00e5ff;
-    margin-bottom:20px;
-
-}
-
-.resumen{
-
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-    margin-bottom:20px;
-
-}
-
-.card{
-
-    background:#16233b;
-    padding:15px;
-    border-radius:12px;
-    text-align:center;
-
-}
-
-.card h3{
-
-    font-size:14px;
-    color:#b8c3d1;
-
-}
-
-.card span{
-
-    font-size:28px;
-    color:#00e5ff;
-    font-weight:bold;
-
-}
-
-#busqueda{
-
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-size:16px;
-
-}
-
-.table-container{
-
-    overflow-x:auto;
-
-}
-
-table{
-
-    width:100%;
-    border-collapse:collapse;
-    min-width:900px;
-
-}
-
-th{
-
-    background:#00bcd4;
-    color:black;
-    padding:12px;
-
-}
-
-td{
-
-    padding:10px;
-    border-bottom:1px solid #334155;
-
-}
-
-tr:hover{
-
-    background:#22304a;
-
-}
-
-.vacaciones-row{
-
-    background:#5b1d1d;
-
-}
-
-.mando-row{
-
-    background:#123f7a;
-
-}
-
-.sale-cell{
-
-    background:#7a5a12;
-    font-weight:bold;
-
-}
-
-.ingresa-cell{
-
-    background:#0f5e2d;
-    font-weight:bold;
-
-}
-
-@media(max-width:768px){
-
-    h1{
-
-        font-size:26px;
-
-    }
-
-    table{
-
-        min-width:750px;
-
-    }
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>CONTROL DE VACACIONES PMT</h1>
-
-<div class="resumen">
-
-<div class="card">
-<h3>VACACIONES ACTIVAS</h3>
-<span id="totalVacaciones">0</span>
-</div>
-
-<div class="card">
-<h3>PRÓXIMOS INGRESOS</h3>
-<span id="totalIngresos">0</span>
-</div>
-
-<div class="card">
-<h3>MANDOS</h3>
-<span id="totalMandos">0</span>
-</div>
-
-</div>
-
-<input
-type="text"
-id="busqueda"
-placeholder="Buscar por nombre o chapa..."
-
->
-
-<div class="table-container">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>CHAPA</th>
-<th>NOMBRE</th>
-<th>CARGO</th>
-<th>VACACIONES</th>
-<th>SALE</th>
-<th>INGRESA</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tabla"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<script>
-
-const CSV_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vTsxA_1DCqrTBHMILm7bC3DRNTs5cLyJplztjRPvUyLLvJIvwbDSGrulY2CN9dcxQILbmTs_1yp5jAP/pub?gid=895287596&single=true&output=csv";
-
-let personal=[];
-
-window.addEventListener("DOMContentLoaded",()=>{
-
-    cargarDatos();
-
-    document
-    .getElementById("busqueda")
-    .addEventListener("input",buscar);
-
-});
-
-async function cargarDatos(){
-
-    const respuesta = await fetch(CSV_URL);
-
-    const csv = await respuesta.text();
-
-    Papa.parse(csv,{
-
-        header:true,
-        skipEmptyLines:true,
-
-        complete:function(resultado){
-
-            personal = resultado.data;
-
-            actualizarResumen();
-
-            render(personal);
-
-        }
-
-    });
-
-}
-
-function actualizarResumen(){
-
-    let vacaciones = 0;
-    let ingresos = 0;
-    let mandos = 0;
-
-    personal.forEach(p=>{
-
-        const vac =
-        (p.vacaciones || "").trim();
-
-        const ingresa =
-        (p.ingresa || "").trim();
-
-        const cargo =
-        (p.CARGO || "").toUpperCase();
-
-        if(vac !== "")
-            vacaciones++;
-
-        if(ingresa !== "")
-            ingresos++;
-
-        if(
-            cargo.includes("DIRECTOR") ||
-            cargo.includes("SUB-DIRECTOR") ||
-            cargo.includes("ENCARGADO") ||
-            cargo.includes("SECRETARIO") ||
-            cargo.includes("TRANSPORTES") ||
-            cargo.includes("VIA PUBLICA")
-        ){
-            mandos++;
-        }
-
-    });
-
-    document.getElementById("totalVacaciones").textContent = vacaciones;
-    document.getElementById("totalIngresos").textContent = ingresos;
-    document.getElementById("totalMandos").textContent = mandos;
-
-}
-
 function render(lista){
 
     const tabla =
@@ -319,17 +7,22 @@ function render(lista){
 
     lista.forEach(persona=>{
 
-        const vac =
-        (persona.vacaciones || "").trim();
+        const vacCampo = Object.keys(persona).find(
+            k => k.toLowerCase().includes("vacacion")
+        );
+
+        const vac = vacCampo
+            ? String(persona[vacCampo] || "").trim()
+            : "";
 
         const sale =
-        (persona.sale || "").trim();
+        String(persona.sale || "").trim();
 
         const ingresa =
-        (persona.ingresa || "").trim();
+        String(persona.ingresa || "").trim();
 
         const cargo =
-        (persona.CARGO || "").toUpperCase();
+        String(persona.CARGO || "").toUpperCase();
 
         let claseFila="";
 
@@ -358,7 +51,7 @@ function render(lista){
 
             <td>${persona.CARGO || ""}</td>
 
-            <td>${vac}</td>
+            <td>${vac ? "VACACIONES" : ""}</td>
 
             <td class="${sale ? 'sale-cell' : ''}">
                 ${sale}
@@ -375,35 +68,3 @@ function render(lista){
     });
 
 }
-
-function buscar(){
-
-    const texto =
-    document
-    .getElementById("busqueda")
-    .value
-    .toUpperCase();
-
-    const resultado =
-    personal.filter(p =>
-
-        (p.CHAPA || "")
-        .toUpperCase()
-        .includes(texto)
-
-        ||
-
-        (p["PERSONAL PMT"] || "")
-        .toUpperCase()
-        .includes(texto)
-
-    );
-
-    render(resultado);
-
-}
-
-</script>
-
-</body>
-</html>
