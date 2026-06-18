@@ -952,3 +952,52 @@ table tbody tr:hover{
     font-weight:bold;
 
 }
+/* ==========================
+   MOVIL
+========================== */
+
+@media (max-width: 768px){
+
+    .header{
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header h1{
+        font-size: 2rem;
+    }
+
+    .header h2{
+        font-size: 1.2rem;
+    }
+
+    .header h3{
+        font-size: 1rem;
+    }
+
+    .dashboard{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .card{
+        min-height: 120px;
+    }
+
+    .card span{
+        font-size: 3rem;
+    }
+
+    .buscador-box{
+        width:95%;
+    }
+
+    .tabla-container{
+        overflow-x:auto;
+    }
+
+    table{
+        min-width:700px;
+    }
+
+}
