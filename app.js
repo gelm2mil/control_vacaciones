@@ -5,297 +5,267 @@ let personal = [];
 
 window.addEventListener("DOMContentLoaded", () => {
 
-```
-cargarDatos();
+    cargarDatos();
 
-document
-    .getElementById("busqueda")
-    .addEventListener("input", buscar);
-```
+    const buscador = document.getElementById("busqueda");
+
+    if (buscador) {
+        buscador.addEventListener("input", buscar);
+    }
 
 });
 
-function valor(persona, campo){
+function valor(persona, campo) {
 
-```
-const llave = Object.keys(persona).find(
-    k => k.trim().toUpperCase() === campo.trim().toUpperCase()
-);
+    const llave = Object.keys(persona).find(k =>
+        k.trim().toUpperCase() === campo.trim().toUpperCase()
+    );
 
-return llave
-    ? String(persona[llave] || "").trim()
-    : "";
-```
+    return llave
+        ? String(persona[llave] || "").trim()
+        : "";
 
 }
 
-async function cargarDatos(){
+async function cargarDatos() {
 
-```
-try{
+    try {
 
-    const respuesta = await fetch(CSV_URL);
+        console.log("Cargando CSV...");
 
-    const csv = await respuesta.text();
+        const respuesta = await fetch(CSV_URL);
 
-    Papa.parse(csv,{
+        if (!respuesta.ok) {
+            throw new Error("No se pudo descargar el CSV");
+        }
 
-        header:true,
-        skipEmptyLines:true,
+        const csv = await respuesta.text();
 
-        complete:function(resultado){
+        console.log("CSV descargado");
 
-            personal = resultado.data;
+        Papa.parse(csv, {
 
-            console.log("PERSONAL:", personal);
+            header: true,
+            skipEmptyLines: true,
 
-            actualizarResumen();
+            complete: function(resultado) {
 
-            render(personal);
+                personal = resultado.data;
 
+                console.log("Personal cargado:", personal.length);
+
+                actualizarResumen();
+
+                render(personal);
+
+            },
+
+            error: function(error) {
+
+                console.error("Error PapaParse:", error);
+
+            }
+
+        });
+
+    } catch (error) {
+
+        console.error("Error cargando CSV:", error);
+
+    }
+
+}
+
+function esMando(cargo) {
+
+    cargo = String(cargo || "").toUpperCase();
+
+    return (
+        cargo.includes("DIRECTOR") ||
+        cargo.includes("SUB-DIRECTOR") ||
+        cargo.includes("ENCARGADO") ||
+        cargo.includes("SECRETARIO") ||
+        cargo.includes("TRANSPORTES") ||
+        cargo.includes("VIA PUBLICA") ||
+        cargo.includes("VÍA PUBLICA")
+    );
+
+}
+
+function actualizarResumen() {
+
+    let vacaciones = 0;
+    let ingresos = 0;
+    let activos = 0;
+    let mandosActivos = 0;
+    let mandosVacaciones = 0;
+    let suspendidos = 0;
+
+    personal.forEach(persona => {
+
+        const vac = valor(persona, "vacaciones");
+        const igss = valor(persona, "IGSS");
+        const ingreso = valor(persona, "ingresa");
+        const cargo = valor(persona, "CARGO");
+
+        const mando = esMando(cargo);
+
+        if (vac !== "") {
+            vacaciones++;
+        }
+
+        if (ingreso !== "") {
+            ingresos++;
+        }
+
+        if (igss !== "") {
+            suspendidos++;
+        }
+
+        if (vac === "" && igss === "") {
+            activos++;
+        }
+
+        if (mando && vac === "" && igss === "") {
+            mandosActivos++;
+        }
+
+        if (mando && vac !== "") {
+            mandosVacaciones++;
         }
 
     });
 
-}catch(error){
+    const totalVacaciones =
+        document.getElementById("totalVacaciones");
 
-    console.error("Error CSV:", error);
+    const totalIngresos =
+        document.getElementById("totalIngresos");
 
-}
-```
+    const totalActivos =
+        document.getElementById("totalActivos");
 
-}
+    const totalMandosActivos =
+        document.getElementById("totalMandosActivos");
 
-function esMando(cargo){
+    const totalMandosVacaciones =
+        document.getElementById("totalMandosVacaciones");
 
-```
-cargo = String(cargo || "").toUpperCase();
+    const totalSuspendidos =
+        document.getElementById("totalSuspendidos");
 
-return (
+    if (totalVacaciones)
+        totalVacaciones.textContent = vacaciones;
 
-    cargo.includes("DIRECTOR") ||
+    if (totalIngresos)
+        totalIngresos.textContent = ingresos;
 
-    cargo.includes("SUB-DIRECTOR") ||
+    if (totalActivos)
+        totalActivos.textContent = activos;
 
-    cargo.includes("ENCARGADO") ||
+    if (totalMandosActivos)
+        totalMandosActivos.textContent = mandosActivos;
 
-    cargo.includes("SECRETARIO") ||
+    if (totalMandosVacaciones)
+        totalMandosVacaciones.textContent = mandosVacaciones;
 
-    cargo.includes("TRANSPORTES") ||
-
-    cargo.includes("VIA PUBLICA")
-
-);
-```
-
-}
-
-function actualizarResumen(){
-
-```
-let vacaciones = 0;
-let ingresos = 0;
-let activos = 0;
-let mandosActivos = 0;
-let mandosVacaciones = 0;
-let suspendidos = 0;
-
-personal.forEach(persona => {
-
-    const vac =
-    valor(persona,"vacaciones");
-
-    const igss =
-    valor(persona,"IGSS");
-
-    const ingreso =
-    valor(persona,"ingresa");
-
-    const cargo =
-    valor(persona,"CARGO");
-
-    const mando =
-    esMando(cargo);
-
-    if(vac !== "")
-        vacaciones++;
-
-    if(ingreso !== "")
-        ingresos++;
-
-    if(igss !== "")
-        suspendidos++;
-
-    if(vac === "" && igss === "")
-        activos++;
-
-    if(mando && vac === "" && igss === "")
-        mandosActivos++;
-
-    if(mando && vac !== "")
-        mandosVacaciones++;
-
-});
-
-document.getElementById("totalVacaciones").textContent =
-vacaciones;
-
-document.getElementById("totalIngresos").textContent =
-ingresos;
-
-document.getElementById("totalActivos").textContent =
-activos;
-
-document.getElementById("totalMandosActivos").textContent =
-mandosActivos;
-
-document.getElementById("totalMandosVacaciones").textContent =
-mandosVacaciones;
-
-const susp =
-document.getElementById("totalSuspendidos");
-
-if(susp){
-
-    susp.textContent =
-    suspendidos;
-
-}
-```
+    if (totalSuspendidos)
+        totalSuspendidos.textContent = suspendidos;
 
 }
 
-function render(lista){
+function render(lista) {
 
-```
-const tabla =
-document.getElementById("tabla");
+    const tabla = document.getElementById("tabla");
 
-tabla.innerHTML = "";
+    if (!tabla) return;
 
-lista.forEach(persona => {
+    tabla.innerHTML = "";
 
-    const chapa =
-    valor(persona,"CHAPA");
+    lista.forEach(persona => {
 
-    const nombre =
-    valor(persona,"PERSONAL PMT");
+        const chapa = valor(persona, "CHAPA");
+        const nombre = valor(persona, "PERSONAL PMT");
+        const cargo = valor(persona, "CARGO");
+        const vac = valor(persona, "vacaciones");
+        const igss = valor(persona, "IGSS");
+        const sale = valor(persona, "sale");
+        const ingresa = valor(persona, "ingresa");
 
-    const cargo =
-    valor(persona,"CARGO");
+        const mando = esMando(cargo);
 
-    const vac =
-    valor(persona,"vacaciones");
+        let claseFila = "";
 
-    const igss =
-    valor(persona,"IGSS");
+        if (igss !== "") {
 
-    const sale =
-    valor(persona,"sale");
+            claseFila = "igss-row";
 
-    const ingresa =
-    valor(persona,"ingresa");
+        } else if (vac !== "") {
 
-    const mando =
-    esMando(cargo);
+            if (mando) {
+                claseFila = "mando-vacaciones-row";
+            } else {
+                claseFila = "vacaciones-row";
+            }
 
-    let claseFila = "";
+        } else if (mando) {
 
-    if(igss !== ""){
+            claseFila = "mando-row";
 
-        claseFila = "igss-row";
+        } else {
 
-    }
-    else if(vac !== ""){
-
-        if(mando){
-
-            claseFila =
-            "mando-vacaciones-row";
-
-        }else{
-
-            claseFila =
-            "vacaciones-row";
+            claseFila = "activo-row";
 
         }
 
-    }
-    else if(mando){
+        const fila = `
+<tr class="${claseFila}">
+    <td>${chapa}</td>
+    <td>${nombre}</td>
+    <td>${cargo}</td>
+    <td>${vac}</td>
+    <td>${igss}</td>
+    <td class="${sale ? "sale-cell" : ""}">
+        ${sale}
+    </td>
+    <td class="${ingresa ? "ingresa-cell" : ""}">
+        ${ingresa}
+    </td>
+</tr>
+`;
 
-        claseFila =
-        "mando-row";
+        tabla.insertAdjacentHTML("beforeend", fila);
 
-    }
-    else{
-
-        claseFila =
-        "activo-row";
-
-    }
-
-    tabla.innerHTML += `
-
-    <tr class="${claseFila}">
-
-        <td>${chapa}</td>
-
-        <td>${nombre}</td>
-
-        <td>${cargo}</td>
-
-        <td>${vac}</td>
-
-        <td>${igss}</td>
-
-        <td class="${sale ? 'sale-cell' : ''}">
-            ${sale}
-        </td>
-
-        <td class="${ingresa ? 'ingresa-cell' : ''}">
-            ${ingresa}
-        </td>
-
-    </tr>
-
-    `;
-
-});
-```
+    });
 
 }
 
-function buscar(){
+function buscar() {
 
-```
-const texto =
-document
-.getElementById("busqueda")
-.value
-.toUpperCase();
+    const texto = document
+        .getElementById("busqueda")
+        .value
+        .toUpperCase();
 
-const resultado =
-personal.filter(persona =>
+    const resultado = personal.filter(persona => {
 
-    valor(persona,"CHAPA")
-    .toUpperCase()
-    .includes(texto)
+        const chapa =
+            valor(persona, "CHAPA").toUpperCase();
 
-    ||
+        const nombre =
+            valor(persona, "PERSONAL PMT").toUpperCase();
 
-    valor(persona,"PERSONAL PMT")
-    .toUpperCase()
-    .includes(texto)
+        const cargo =
+            valor(persona, "CARGO").toUpperCase();
 
-    ||
+        return (
+            chapa.includes(texto) ||
+            nombre.includes(texto) ||
+            cargo.includes(texto)
+        );
 
-    valor(persona,"CARGO")
-    .toUpperCase()
-    .includes(texto)
+    });
 
-);
-
-render(resultado);
-```
+    render(resultado);
 
 }
