@@ -1,74 +1,129 @@
-
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONTROL DE VACACIONES PMT</title>
+<title>CONTROL Y REGISTRO PMT</title>
 
 <link rel="stylesheet" href="styles.css">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 </head>
-
 <body>
 
-<div class="main-container">
+<div class="container">
 
-    <div class="header">
+    <!-- CABECERA -->
 
-        <div class="header-center">
-            <h1>CONTROL DE VACACIONES PMT</h1>
-            <h2>GESTIÓN DE PERSONAL</h2>
-            <h3>PMT CHIMALTENANGO</h3>
+    <header class="hero">
+
+        <img
+        src="icons/pmt.png"
+        alt="PMT"
+        class="logo-pmt">
+
+        <h1>
+            CONTROL Y REGISTRO PMT
+        </h1>
+
+        <h2>
+            GESTIÓN DE PERSONAL
+        </h2>
+
+        <h3>
+            PMT CHIMALTENANGO 2026
+        </h3>
+
+    </header>
+
+    <!-- RESUMEN -->
+
+    <section class="resumen">
+
+        <div class="card card-vacaciones">
+            <span class="titulo-card">
+                VAC.AC.
+            </span>
+
+            <span
+            id="totalVacaciones"
+            class="numero-card">
+                0
+            </span>
         </div>
+
+        <div class="card card-ingresos">
+            <span class="titulo-card">
+                F.INGR.
+            </span>
+
+            <span
+            id="totalIngresos"
+            class="numero-card">
+                0
+            </span>
+        </div>
+
+        <div class="card card-activos">
+            <span class="titulo-card">
+                PERS.AC.
+            </span>
+
+            <span
+            id="totalActivos"
+            class="numero-card">
+                0
+            </span>
+        </div>
+
+        <div class="card card-mandos">
+            <span class="titulo-card">
+                MAND.AC.
+            </span>
+
+            <span
+            id="totalMandosActivos"
+            class="numero-card">
+                0
+            </span>
+        </div>
+
+        <div class="card card-mandos-v">
+            <span class="titulo-card">
+                MAND.V.
+            </span>
+
+            <span
+            id="totalMandosVacaciones"
+            class="numero-card">
+                0
+            </span>
+        </div>
+
+    </section>
+
+    <!-- BUSCADOR -->
+
+    <div class="buscador-box">
+
+        <input
+        type="text"
+        id="busqueda"
+        placeholder="Buscar por nombre o chapa...">
 
     </div>
 
-    <div class="dashboard">
+    <!-- TABLA -->
 
-        <div class="card">
-            <h3>VACACIONES ACTIVAS</h3>
-            <span id="totalVacaciones">0</span>
-        </div>
+    <section class="tabla-card">
 
-        <div class="card">
-            <h3>PRÓXIMOS INGRESOS</h3>
-            <span id="totalIngresos">0</span>
-        </div>
-
-        <div class="card">
-            <h3>MANDOS</h3>
-            <span id="totalMandos">0</span>
-        </div>
-
-    </div>
-
-    <div class="buscador-section">
-
-        <div class="buscador-box">
-
-            <input
-                type="text"
-                id="busqueda"
-                placeholder="Buscar por nombre o chapa..."
-            >
-
-        </div>
-
-    </div>
-
-    <div class="direccion-panel">
-
-        <div class="panel-title">
+        <h2 class="titulo-tabla">
             PERSONAL PMT
-        </div>
+        </h2>
 
-        <div class="tabla-container">
+        <div class="table-container">
 
             <table>
 
@@ -80,6 +135,7 @@
                         <th>NOMBRE</th>
                         <th>CARGO</th>
                         <th>VACACIONES</th>
+                        <th>IGSS</th>
                         <th>SALE</th>
                         <th>INGRESA</th>
 
@@ -87,13 +143,15 @@
 
                 </thead>
 
-                <tbody id="tabla"></tbody>
+                <tbody id="tabla">
+
+                </tbody>
 
             </table>
 
         </div>
 
-    </div>
+    </section>
 
 </div>
 
