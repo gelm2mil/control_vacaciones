@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,119 +13,93 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 </head>
+
 <body>
 
-<div class="container">
+<div class="main-container">
 
-    <!-- CABECERA -->
+    <header class="header">
 
-    <header class="hero">
+        <div class="logo-box">
 
-        <img
-        src="icons/pmt.png"
-        alt="PMT"
-        class="logo-pmt">
+            <img
+            src="icons/pmt.png"
+            class="logo"
+            alt="PMT">
 
-        <h1>
-            CONTROL Y REGISTRO PMT
-        </h1>
+        </div>
 
-        <h2>
-            GESTIÓN DE PERSONAL
-        </h2>
+        <div class="header-center">
 
-        <h3>
-            PMT CHIMALTENANGO 2026
-        </h3>
+            <h1>
+                CONTROL Y REGISTRO PMT
+            </h1>
+
+            <h2>
+                GESTIÓN DE PERSONAL
+            </h2>
+
+            <h3>
+                PMT CHIMALTENANGO 2026
+            </h3>
+
+        </div>
+
+        <div style="width:120px;"></div>
 
     </header>
 
-    <!-- RESUMEN -->
+    <section class="dashboard">
 
-    <section class="resumen">
-
-        <div class="card card-vacaciones">
-            <span class="titulo-card">
-                VAC.AC.
-            </span>
-
-            <span
-            id="totalVacaciones"
-            class="numero-card">
-                0
-            </span>
+        <div class="card">
+            <h3>VAC.AC.</h3>
+            <span id="totalVacaciones">0</span>
         </div>
 
-        <div class="card card-ingresos">
-            <span class="titulo-card">
-                F.INGR.
-            </span>
-
-            <span
-            id="totalIngresos"
-            class="numero-card">
-                0
-            </span>
+        <div class="card">
+            <h3>F.INGR.</h3>
+            <span id="totalIngresos">0</span>
         </div>
 
-        <div class="card card-activos">
-            <span class="titulo-card">
-                PERS.AC.
-            </span>
-
-            <span
-            id="totalActivos"
-            class="numero-card">
-                0
-            </span>
+        <div class="card">
+            <h3>PERS.AC.</h3>
+            <span id="totalActivos">0</span>
         </div>
 
-        <div class="card card-mandos">
-            <span class="titulo-card">
-                MAND.AC.
-            </span>
-
-            <span
-            id="totalMandosActivos"
-            class="numero-card">
-                0
-            </span>
+        <div class="card">
+            <h3>MAND.AC.</h3>
+            <span id="totalMandosActivos">0</span>
         </div>
 
-        <div class="card card-mandos-v">
-            <span class="titulo-card">
-                MAND.V.
-            </span>
-
-            <span
-            id="totalMandosVacaciones"
-            class="numero-card">
-                0
-            </span>
+        <div class="card">
+            <h3>MAND.V.</h3>
+            <span id="totalMandosVacaciones">0</span>
         </div>
 
     </section>
 
-    <!-- BUSCADOR -->
+    <section class="buscador-section">
 
-    <div class="buscador-box">
+        <div class="buscador-box">
 
-        <input
-        type="text"
-        id="busqueda"
-        placeholder="Buscar por nombre o chapa...">
+            <input
+            type="text"
+            id="busqueda"
+            placeholder="Buscar por nombre, chapa o cargo...">
 
-    </div>
+        </div>
 
-    <!-- TABLA -->
+    </section>
 
-    <section class="tabla-card">
+    <section class="direccion-panel">
 
-        <h2 class="titulo-tabla">
+        <div class="panel-title">
+
             PERSONAL PMT
-        </h2>
 
-        <div class="table-container">
+        </div>
+
+        <div class="tabla-container">
 
             <table>
 
@@ -152,6 +128,14 @@
         </div>
 
     </section>
+
+    <footer class="footer">
+
+        <p>PMT CHIMALTENANGO 2026</p>
+
+        <p>Sistema GELM - Control de Vacaciones</p>
+
+    </footer>
 
 </div>
 
