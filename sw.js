@@ -1,31 +1,68 @@
-const CACHE = "pmt-control-v1";
+const CACHE_NAME = "pmt-control-v2";
 
 const ARCHIVOS = [
     "./",
     "./index.html",
     "./styles.css",
     "./app.js",
+    "./manifest.webmanifest",
     "./icons/pmt.png",
-    "./icons/gelm.png"
+    "./icons/icon-192.png",
+    "./icons/icon-512.png"
 ];
 
-self.addEventListener("install", e => {
+self.addEventListener("install", event => {
 
-    e.waitUntil(
+    self.skipWaiting();
 
-        caches.open(CACHE)
+    event.waitUntil(
+
+        caches.open(CACHE_NAME)
         .then(cache => cache.addAll(ARCHIVOS))
 
     );
 
 });
 
-self.addEventListener("fetch", e => {
+self.addEventListener("activate", event => {
 
-    e.respondWith(
+    event.waitUntil(
 
-        caches.match(e.request)
-        .then(resp => resp || fetch(e.request))
+        caches.keys().then(keys => {
+
+            return Promise.all(
+
+                keys.map(key => {
+
+                    if (key !== CACHE_NAME) {
+
+                        return caches.delete(key);
+
+                    }
+
+                })
+
+            );
+
+        })
+
+    );
+
+    self.clients.claim();
+
+});
+
+self.addEventListener("fetch", event => {
+
+    event.respondWith(
+
+        caches.match(event.request)
+
+        .then(response => {
+
+            return response || fetch(event.request);
+
+        })
 
     );
 
