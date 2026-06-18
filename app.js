@@ -15,6 +15,20 @@ document
 
 });
 
+function valor(persona, campo){
+
+```
+const llave = Object.keys(persona).find(
+    k => k.trim().toUpperCase() === campo.trim().toUpperCase()
+);
+
+return llave
+    ? String(persona[llave] || "").trim()
+    : "";
+```
+
+}
+
 async function cargarDatos(){
 
 ```
@@ -33,6 +47,8 @@ try{
 
             personal = resultado.data;
 
+            console.log("PERSONAL:", personal);
+
             actualizarResumen();
 
             render(personal);
@@ -43,7 +59,7 @@ try{
 
 }catch(error){
 
-    console.error(error);
+    console.error("Error CSV:", error);
 
 }
 ```
@@ -56,12 +72,19 @@ function esMando(cargo){
 cargo = String(cargo || "").toUpperCase();
 
 return (
+
     cargo.includes("DIRECTOR") ||
+
     cargo.includes("SUB-DIRECTOR") ||
+
     cargo.includes("ENCARGADO") ||
+
     cargo.includes("SECRETARIO") ||
+
     cargo.includes("TRANSPORTES") ||
+
     cargo.includes("VIA PUBLICA")
+
 );
 ```
 
@@ -75,20 +98,21 @@ let ingresos = 0;
 let activos = 0;
 let mandosActivos = 0;
 let mandosVacaciones = 0;
+let suspendidos = 0;
 
-personal.forEach(persona=>{
+personal.forEach(persona => {
 
     const vac =
-    String(persona.vacaciones || "").trim();
+    valor(persona,"vacaciones");
 
     const igss =
-    String(persona.IGSS || "").trim();
+    valor(persona,"IGSS");
 
     const ingreso =
-    String(persona.ingresa || "").trim();
+    valor(persona,"ingresa");
 
     const cargo =
-    String(persona.CARGO || "");
+    valor(persona,"CARGO");
 
     const mando =
     esMando(cargo);
@@ -98,6 +122,9 @@ personal.forEach(persona=>{
 
     if(ingreso !== "")
         ingresos++;
+
+    if(igss !== "")
+        suspendidos++;
 
     if(vac === "" && igss === "")
         activos++;
@@ -124,6 +151,16 @@ mandosActivos;
 
 document.getElementById("totalMandosVacaciones").textContent =
 mandosVacaciones;
+
+const susp =
+document.getElementById("totalSuspendidos");
+
+if(susp){
+
+    susp.textContent =
+    suspendidos;
+
+}
 ```
 
 }
@@ -136,22 +173,28 @@ document.getElementById("tabla");
 
 tabla.innerHTML = "";
 
-lista.forEach(persona=>{
+lista.forEach(persona => {
 
-    const vac =
-    String(persona.vacaciones || "").trim();
+    const chapa =
+    valor(persona,"CHAPA");
 
-    const igss =
-    String(persona.IGSS || "").trim();
-
-    const sale =
-    String(persona.sale || "").trim();
-
-    const ingresa =
-    String(persona.ingresa || "").trim();
+    const nombre =
+    valor(persona,"PERSONAL PMT");
 
     const cargo =
-    String(persona.CARGO || "");
+    valor(persona,"CARGO");
+
+    const vac =
+    valor(persona,"vacaciones");
+
+    const igss =
+    valor(persona,"IGSS");
+
+    const sale =
+    valor(persona,"sale");
+
+    const ingresa =
+    valor(persona,"ingresa");
 
     const mando =
     esMando(cargo);
@@ -162,25 +205,32 @@ lista.forEach(persona=>{
 
         claseFila = "igss-row";
 
-    }else if(vac !== ""){
+    }
+    else if(vac !== ""){
 
         if(mando){
 
-            claseFila = "mando-vacaciones-row";
+            claseFila =
+            "mando-vacaciones-row";
 
         }else{
 
-            claseFila = "vacaciones-row";
+            claseFila =
+            "vacaciones-row";
 
         }
 
-    }else if(mando){
+    }
+    else if(mando){
 
-        claseFila = "mando-row";
+        claseFila =
+        "mando-row";
 
-    }else{
+    }
+    else{
 
-        claseFila = "activo-row";
+        claseFila =
+        "activo-row";
 
     }
 
@@ -188,25 +238,21 @@ lista.forEach(persona=>{
 
     <tr class="${claseFila}">
 
-        <td>${persona.CHAPA || ""}</td>
+        <td>${chapa}</td>
 
-        <td>${persona["PERSONAL PMT"] || ""}</td>
+        <td>${nombre}</td>
 
         <td>${cargo}</td>
 
-        <td>
-            ${vac}
-        </td>
+        <td>${vac}</td>
 
-        <td>
-            ${igss}
-        </td>
+        <td>${igss}</td>
 
-        <td class="${sale ? "sale-cell" : ""}">
+        <td class="${sale ? 'sale-cell' : ''}">
             ${sale}
         </td>
 
-        <td class="${ingresa ? "ingresa-cell" : ""}">
+        <td class="${ingresa ? 'ingresa-cell' : ''}">
             ${ingresa}
         </td>
 
@@ -231,19 +277,19 @@ document
 const resultado =
 personal.filter(persona =>
 
-    String(persona.CHAPA || "")
+    valor(persona,"CHAPA")
     .toUpperCase()
     .includes(texto)
 
     ||
 
-    String(persona["PERSONAL PMT"] || "")
+    valor(persona,"PERSONAL PMT")
     .toUpperCase()
     .includes(texto)
 
     ||
 
-    String(persona.CARGO || "")
+    valor(persona,"CARGO")
     .toUpperCase()
     .includes(texto)
 
