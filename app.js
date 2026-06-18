@@ -5,193 +5,251 @@ let personal = [];
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    cargarDatos();
+```
+cargarDatos();
 
-    document
-        .getElementById("busqueda")
-        .addEventListener("input", buscar);
+document
+    .getElementById("busqueda")
+    .addEventListener("input", buscar);
+```
 
 });
 
-async function cargarDatos() {
+async function cargarDatos(){
 
-    try {
+```
+try{
 
-        const respuesta = await fetch(CSV_URL);
+    const respuesta = await fetch(CSV_URL);
 
-        const csv = await respuesta.text();
+    const csv = await respuesta.text();
 
-        Papa.parse(csv, {
+    Papa.parse(csv,{
 
-            header: true,
-            skipEmptyLines: true,
+        header:true,
+        skipEmptyLines:true,
 
-            complete: function(resultado) {
+        complete:function(resultado){
 
-                personal = resultado.data;
+            personal = resultado.data;
 
-                console.log("Datos cargados:", personal);
+            actualizarResumen();
 
-                actualizarResumen();
+            render(personal);
 
-                render(personal);
-
-            }
-
-        });
-
-    } catch(error) {
-
-        console.error("Error cargando CSV:", error);
-
-    }
-
-}
-
-function actualizarResumen() {
-
-    let vacaciones = 0;
-    let ingresos = 0;
-    let mandos = 0;
-
-    personal.forEach(persona => {
-
-        const vac = obtenerVacaciones(persona);
-
-        const ingresa = String(
-            persona.ingresa || ""
-        ).trim();
-
-        const cargo = String(
-            persona.CARGO || ""
-        ).toUpperCase();
-
-        if(vac !== "") vacaciones++;
-
-        if(ingresa !== "") ingresos++;
-
-        if(
-            cargo.includes("DIRECTOR") ||
-            cargo.includes("SUB-DIRECTOR") ||
-            cargo.includes("ENCARGADO") ||
-            cargo.includes("SECRETARIO") ||
-            cargo.includes("TRANSPORTES") ||
-            cargo.includes("VIA PUBLICA")
-        ){
-            mandos++;
         }
 
     });
 
-    document.getElementById("totalVacaciones").textContent = vacaciones;
-    document.getElementById("totalIngresos").textContent = ingresos;
-    document.getElementById("totalMandos").textContent = mandos;
+}catch(error){
+
+    console.error(error);
+
+}
+```
 
 }
 
-function obtenerVacaciones(persona){
+function esMando(cargo){
 
-    const columna = Object.keys(persona).find(campo =>
-        campo.toLowerCase().includes("vacacion")
-    );
+```
+cargo = String(cargo || "").toUpperCase();
 
-    if(!columna) return "";
+return (
+    cargo.includes("DIRECTOR") ||
+    cargo.includes("SUB-DIRECTOR") ||
+    cargo.includes("ENCARGADO") ||
+    cargo.includes("SECRETARIO") ||
+    cargo.includes("TRANSPORTES") ||
+    cargo.includes("VIA PUBLICA")
+);
+```
 
-    return String(persona[columna] || "").trim();
+}
+
+function actualizarResumen(){
+
+```
+let vacaciones = 0;
+let ingresos = 0;
+let activos = 0;
+let mandosActivos = 0;
+let mandosVacaciones = 0;
+
+personal.forEach(persona=>{
+
+    const vac =
+    String(persona.vacaciones || "").trim();
+
+    const igss =
+    String(persona.IGSS || "").trim();
+
+    const ingreso =
+    String(persona.ingresa || "").trim();
+
+    const cargo =
+    String(persona.CARGO || "");
+
+    const mando =
+    esMando(cargo);
+
+    if(vac !== "")
+        vacaciones++;
+
+    if(ingreso !== "")
+        ingresos++;
+
+    if(vac === "" && igss === "")
+        activos++;
+
+    if(mando && vac === "" && igss === "")
+        mandosActivos++;
+
+    if(mando && vac !== "")
+        mandosVacaciones++;
+
+});
+
+document.getElementById("totalVacaciones").textContent =
+vacaciones;
+
+document.getElementById("totalIngresos").textContent =
+ingresos;
+
+document.getElementById("totalActivos").textContent =
+activos;
+
+document.getElementById("totalMandosActivos").textContent =
+mandosActivos;
+
+document.getElementById("totalMandosVacaciones").textContent =
+mandosVacaciones;
+```
 
 }
 
 function render(lista){
 
-    const tabla = document.getElementById("tabla");
+```
+const tabla =
+document.getElementById("tabla");
 
-    tabla.innerHTML = "";
+tabla.innerHTML = "";
 
-    lista.forEach(persona => {
+lista.forEach(persona=>{
 
-        const vac = obtenerVacaciones(persona);
+    const vac =
+    String(persona.vacaciones || "").trim();
 
-        const sale = String(
-            persona.sale || ""
-        ).trim();
+    const igss =
+    String(persona.IGSS || "").trim();
 
-        const ingresa = String(
-            persona.ingresa || ""
-        ).trim();
+    const sale =
+    String(persona.sale || "").trim();
 
-        const cargo = String(
-            persona.CARGO || ""
-        ).toUpperCase();
+    const ingresa =
+    String(persona.ingresa || "").trim();
 
-        let claseFila = "";
+    const cargo =
+    String(persona.CARGO || "");
 
-        const esMando =
-            cargo.includes("DIRECTOR") ||
-            cargo.includes("SUB-DIRECTOR") ||
-            cargo.includes("ENCARGADO") ||
-            cargo.includes("SECRETARIO") ||
-            cargo.includes("TRANSPORTES") ||
-            cargo.includes("VIA PUBLICA");
+    const mando =
+    esMando(cargo);
 
-        if(esMando){
-            claseFila = "mando-row";
-        }
+    let claseFila = "";
 
-        if(vac !== ""){
+    if(igss !== ""){
+
+        claseFila = "igss-row";
+
+    }else if(vac !== ""){
+
+        if(mando){
+
+            claseFila = "mando-vacaciones-row";
+
+        }else{
+
             claseFila = "vacaciones-row";
+
         }
 
-        tabla.innerHTML += `
+    }else if(mando){
 
-        <tr class="${claseFila}">
+        claseFila = "mando-row";
 
-            <td>${persona.CHAPA || ""}</td>
+    }else{
 
-            <td>${persona["PERSONAL PMT"] || ""}</td>
+        claseFila = "activo-row";
 
-            <td>${persona.CARGO || ""}</td>
+    }
 
-            <td>
-                ${vac ? "VACACIONES" : ""}
-            </td>
+    tabla.innerHTML += `
 
-            <td class="${sale ? "sale-cell" : ""}">
-                ${sale}
-            </td>
+    <tr class="${claseFila}">
 
-            <td class="${ingresa ? "ingresa-cell" : ""}">
-                ${ingresa}
-            </td>
+        <td>${persona.CHAPA || ""}</td>
 
-        </tr>
+        <td>${persona["PERSONAL PMT"] || ""}</td>
 
-        `;
+        <td>${cargo}</td>
 
-    });
+        <td>
+            ${vac}
+        </td>
+
+        <td>
+            ${igss}
+        </td>
+
+        <td class="${sale ? "sale-cell" : ""}">
+            ${sale}
+        </td>
+
+        <td class="${ingresa ? "ingresa-cell" : ""}">
+            ${ingresa}
+        </td>
+
+    </tr>
+
+    `;
+
+});
+```
 
 }
 
 function buscar(){
 
-    const texto = document
-        .getElementById("busqueda")
-        .value
-        .toUpperCase();
+```
+const texto =
+document
+.getElementById("busqueda")
+.value
+.toUpperCase();
 
-    const resultado = personal.filter(persona =>
+const resultado =
+personal.filter(persona =>
 
-        String(persona.CHAPA || "")
-            .toUpperCase()
-            .includes(texto)
+    String(persona.CHAPA || "")
+    .toUpperCase()
+    .includes(texto)
 
-        ||
+    ||
 
-        String(persona["PERSONAL PMT"] || "")
-            .toUpperCase()
-            .includes(texto)
+    String(persona["PERSONAL PMT"] || "")
+    .toUpperCase()
+    .includes(texto)
 
-    );
+    ||
 
-    render(resultado);
+    String(persona.CARGO || "")
+    .toUpperCase()
+    .includes(texto)
+
+);
+
+render(resultado);
+```
 
 }
