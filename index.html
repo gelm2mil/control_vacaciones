@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -10,6 +11,17 @@
 
 <link rel="stylesheet" href="styles.css">
 
+<link rel="manifest" href="manifest.webmanifest">
+
+<meta name="theme-color" content="#00e5ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PMT Control">
+
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 </head>
@@ -18,148 +30,187 @@
 
 <div class="main-container">
 
-    <!-- CABECERA -->
+```
+<!-- CABECERA -->
 
-    <header class="header">
+<header class="header">
 
-        <div class="logo-box">
+    <div class="logo-box">
 
-            <img
-            src="icons/pmt.png"
-            class="logo"
-            alt="PMT">
+        <img
+        src="icons/pmt.png"
+        class="logo"
+        alt="PMT">
 
-        </div>
+    </div>
 
-        <div class="header-center">
+    <div class="header-center">
 
-            <h1>
-                CONTROL Y REGISTRO PMT
-            </h1>
+        <h1>
+            CONTROL Y REGISTRO PMT
+        </h1>
 
-            <h2>
-                GESTIÓN DE PERSONAL
-            </h2>
+        <h2>
+            GESTIÓN DE PERSONAL
+        </h2>
 
-            <h3>
-                PMT CHIMALTENANGO 2026
-            </h3>
+        <h3>
+            PMT CHIMALTENANGO 2026
+        </h3>
 
-        </div>
+    </div>
 
-        <div class="logo-box">
+    <div class="logo-box">
 
-            <img
-            src="icons/icon-512.png"
-            class="logo"
-            alt="GELM">
+        <img
+        src="icons/icon-512.png"
+        class="logo"
+        alt="GELM">
 
-        </div>
+    </div>
 
-    </header>
+</header>
 
-    <!-- DASHBOARD -->
+<!-- DASHBOARD -->
 
-    <section class="dashboard">
+<section class="dashboard">
 
-        <div class="card">
-            <h3>VAC.AC.</h3>
-            <span id="totalVacaciones">0</span>
-        </div>
+    <div class="card">
+        <h3>VAC.AC.</h3>
+        <span id="totalVacaciones">0</span>
+    </div>
 
-        <div class="card">
-            <h3>F.INGR.</h3>
-            <span id="totalIngresos">0</span>
-        </div>
+    <div class="card">
+        <h3>F.INGR.</h3>
+        <span id="totalIngresos">0</span>
+    </div>
 
-        <div class="card">
-            <h3>PERS.AC.</h3>
-            <span id="totalActivos">0</span>
-        </div>
+    <div class="card">
+        <h3>PERS.AC.</h3>
+        <span id="totalActivos">0</span>
+    </div>
 
-        <div class="card">
-            <h3>MAND.AC.</h3>
-            <span id="totalMandosActivos">0</span>
-        </div>
+    <div class="card">
+        <h3>MAND.AC.</h3>
+        <span id="totalMandosActivos">0</span>
+    </div>
 
-        <div class="card">
-            <h3>MAND.V.</h3>
-            <span id="totalMandosVacaciones">0</span>
-        </div>
+    <div class="card">
+        <h3>MAND.V.</h3>
+        <span id="totalMandosVacaciones">0</span>
+    </div>
 
-        <div class="card">
-            <h3>SUSP.</h3>
-            <span id="totalSuspendidos">0</span>
-        </div>
+    <div class="card">
+        <h3>SUSP.</h3>
+        <span id="totalSuspendidos">0</span>
+    </div>
 
-    </section>
+    <div class="card">
+        <h3>TOTAL</h3>
+        <span id="totalPersonal">0</span>
+    </div>
 
-    <!-- BUSCADOR -->
+</section>
 
-    <section class="buscador-section">
+<!-- BUSCADOR -->
 
-        <div class="buscador-box">
+<section class="buscador-section">
 
-            <input
-            type="text"
-            id="busqueda"
-            placeholder="Buscar por nombre, chapa o cargo...">
+    <div class="buscador-box">
 
-        </div>
+        <input
+        type="text"
+        id="busqueda"
+        placeholder="Buscar por nombre, chapa o cargo...">
 
-    </section>
+    </div>
 
-    <!-- TABLA PERSONAL -->
+</section>
 
-    <section class="direccion-panel">
+<!-- TABLA PERSONAL -->
 
-        <div class="panel-title">
-            PERSONAL PMT
-        </div>
+<section class="direccion-panel">
 
-        <div class="tabla-container">
+    <div class="panel-title">
+        PERSONAL PMT
+    </div>
 
-            <table>
+    <div class="tabla-container">
 
-                <thead>
+        <table>
 
-                    <tr>
+            <thead>
 
-                        <th>CHAPA</th>
-                        <th>NOMBRE</th>
-                        <th>CARGO</th>
-                        <th>VACACIONES</th>
-                        <th>IGSS</th>
-                        <th>SALE</th>
-                        <th>INGRESA</th>
+                <tr>
 
-                    </tr>
+                    <th>CHAPA</th>
+                    <th>NOMBRE</th>
+                    <th>CARGO</th>
+                    <th>VACACIONES</th>
+                    <th>IGSS</th>
+                    <th>SALE</th>
+                    <th>INGRESA</th>
 
-                </thead>
+                </tr>
 
-                <tbody id="tabla">
+            </thead>
 
-                </tbody>
+            <tbody id="tabla">
 
-            </table>
+            </tbody>
 
-        </div>
+        </table>
 
-    </section>
+    </div>
 
-    <!-- FOOTER -->
+</section>
 
-    <footer class="footer">
+<!-- FOOTER -->
 
-        <p>PMT CHIMALTENANGO 2026</p>
+<footer class="footer">
 
-        <p>Sistema GELM - Control y Registro PMT</p>
+    <p>PMT CHIMALTENANGO 2026</p>
 
-    </footer>
+    <p>Sistema GELM - Control y Registro PMT</p>
+
+</footer>
+```
 
 </div>
 
 <script src="app.js"></script>
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+        .register("./sw.js")
+
+        .then(() => {
+
+            console.log(
+                "Service Worker registrado"
+            );
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Error Service Worker:",
+                error
+            );
+
+        });
+
+    });
+
+}
+
+</script>
 
 </body>
 </html>
