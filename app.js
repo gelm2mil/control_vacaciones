@@ -1,271 +1,479 @@
+// ==========================
+// CONFIGURACION CSV
+// ==========================
+
 const CSV_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsxA_1DCqrTBHMILm7bC3DRNTs5cLyJplztjRPvUyLLvJIvwbDSGrulY2CN9dcxQILbmTs_1yp5jAP/pub?gid=895287596&single=true&output=csv";
 
 let personal = [];
 
+// ==========================
+// INICIO
+// ==========================
+
 window.addEventListener("DOMContentLoaded", () => {
 
-    cargarDatos();
+```
+actualizarFechaHora();
 
-    const buscador = document.getElementById("busqueda");
+setInterval(
+    actualizarFechaHora,
+    1000
+);
 
-    if (buscador) {
-        buscador.addEventListener("input", buscar);
-    }
+cargarDatos();
+
+const buscador =
+document.getElementById("busqueda");
+
+if (buscador) {
+
+    buscador.addEventListener(
+        "input",
+        buscar
+    );
+
+}
+
+actualizarEstadoConexion();
+```
 
 });
 
-function valor(persona, campo) {
+window.addEventListener(
+"online",
+actualizarEstadoConexion
+);
 
-    const llave = Object.keys(persona).find(k =>
-        k.trim().toUpperCase() === campo.trim().toUpperCase()
-    );
+window.addEventListener(
+"offline",
+actualizarEstadoConexion
+);
 
-    return llave
-        ? String(persona[llave] || "").trim()
-        : "";
+// ==========================
+// ESTADO CONEXION
+// ==========================
+
+function actualizarEstadoConexion(){
+
+```
+const estado =
+document.getElementById("estadoSistema");
+
+if(!estado) return;
+
+if(navigator.onLine){
+
+    estado.textContent =
+    "🟢 ONLINE";
+
+}else{
+
+    estado.textContent =
+    "🔴 OFFLINE";
 
 }
+```
+
+}
+
+// ==========================
+// FECHA Y HORA
+// ==========================
+
+function actualizarFechaHora(){
+
+```
+const fecha =
+document.getElementById("fechaActual");
+
+if(!fecha) return;
+
+const ahora =
+new Date();
+
+fecha.textContent =
+ahora.toLocaleString(
+    "es-GT"
+);
+```
+
+}
+
+// ==========================
+// BUSCAR CAMPOS
+// ==========================
+
+function valor(persona, campo) {
+
+```
+const llave =
+Object.keys(persona).find(
+
+    k =>
+
+    k.trim()
+    .toUpperCase()
+
+    ===
+
+    campo.trim()
+    .toUpperCase()
+
+);
+
+return llave
+    ? String(
+        persona[llave] || ""
+    ).trim()
+    : "";
+```
+
+}
+
+// ==========================
+// CARGAR CSV
+// ==========================
 
 async function cargarDatos() {
 
-    try {
+```
+try {
 
-        console.log("Cargando CSV...");
+    const respuesta =
+    await fetch(CSV_URL);
 
-        const respuesta = await fetch(CSV_URL);
+    if (!respuesta.ok) {
 
-        if (!respuesta.ok) {
-            throw new Error("No se pudo descargar el CSV");
-        }
-
-        const csv = await respuesta.text();
-
-        console.log("CSV descargado");
-
-        Papa.parse(csv, {
-
-            header: true,
-            skipEmptyLines: true,
-
-            complete: function(resultado) {
-
-                personal = resultado.data;
-
-                console.log("Personal cargado:", personal.length);
-
-                actualizarResumen();
-
-                render(personal);
-
-            },
-
-            error: function(error) {
-
-                console.error("Error PapaParse:", error);
-
-            }
-
-        });
-
-    } catch (error) {
-
-        console.error("Error cargando CSV:", error);
+        throw new Error(
+            "No se pudo descargar CSV"
+        );
 
     }
 
+    const csv =
+    await respuesta.text();
+
+    Papa.parse(csv, {
+
+        header: true,
+
+        skipEmptyLines: true,
+
+        complete: function(resultado) {
+
+            personal =
+            resultado.data;
+
+            actualizarResumen();
+
+            render(personal);
+
+            actualizarFechaActualizacion();
+
+        }
+
+    });
+
+} catch (error) {
+
+    console.error(error);
+
 }
+```
+
+}
+
+// ==========================
+// ULTIMA ACTUALIZACION
+// ==========================
+
+function actualizarFechaActualizacion(){
+
+```
+const campo =
+document.getElementById(
+    "ultimaActualizacion"
+);
+
+if(!campo) return;
+
+campo.textContent =
+"Actualizado: " +
+
+new Date()
+.toLocaleString(
+    "es-GT"
+);
+```
+
+}
+
+// ==========================
+// IDENTIFICAR MANDOS
+// ==========================
 
 function esMando(cargo) {
 
-    cargo = String(cargo || "").toUpperCase();
+```
+cargo =
+String(cargo || "")
+.toUpperCase();
 
-    return (
-        cargo.includes("DIRECTOR") ||
-        cargo.includes("SUB-DIRECTOR") ||
-        cargo.includes("ENCARGADO") ||
-        cargo.includes("SECRETARIO") ||
-        cargo.includes("TRANSPORTES") ||
-        cargo.includes("VIA PUBLICA") ||
-        cargo.includes("VÍA PUBLICA")
-    );
+return (
+
+    cargo.includes("DIRECTOR") ||
+
+    cargo.includes("SUB-DIRECTOR") ||
+
+    cargo.includes("ENCARGADO") ||
+
+    cargo.includes("SECRETARIO") ||
+
+    cargo.includes("TRANSPORTES") ||
+
+    cargo.includes("VIA PUBLICA") ||
+
+    cargo.includes("VÍA PUBLICA")
+
+);
+```
 
 }
+
+// ==========================
+// RESUMEN
+// ==========================
 
 function actualizarResumen() {
 
-    let vacaciones = 0;
-    let ingresos = 0;
-    let activos = 0;
-    let mandosActivos = 0;
-    let mandosVacaciones = 0;
-    let suspendidos = 0;
+```
+let vacaciones = 0;
+let ingresos = 0;
+let activos = 0;
+let mandosActivos = 0;
+let mandosVacaciones = 0;
+let suspendidos = 0;
 
-    personal.forEach(persona => {
+const totalPersonal =
+personal.length;
 
-        const vac = valor(persona, "vacaciones");
-        const igss = valor(persona, "IGSS");
-        const ingreso = valor(persona, "ingresa");
-        const cargo = valor(persona, "CARGO");
+personal.forEach(persona => {
 
-        const mando = esMando(cargo);
+    const vac =
+    valor(persona,"vacaciones");
 
-        if (vac !== "") {
-            vacaciones++;
-        }
+    const igss =
+    valor(persona,"IGSS");
 
-        if (ingreso !== "") {
-            ingresos++;
-        }
+    const ingreso =
+    valor(persona,"ingresa");
 
-        if (igss !== "") {
-            suspendidos++;
-        }
+    const cargo =
+    valor(persona,"CARGO");
 
-        if (vac === "" && igss === "") {
-            activos++;
-        }
+    const mando =
+    esMando(cargo);
 
-        if (mando && vac === "" && igss === "") {
-            mandosActivos++;
-        }
+    if(vac !== "")
+        vacaciones++;
 
-        if (mando && vac !== "") {
-            mandosVacaciones++;
-        }
+    if(ingreso !== "")
+        ingresos++;
 
-    });
+    if(igss !== "")
+        suspendidos++;
 
-    const totalVacaciones =
-        document.getElementById("totalVacaciones");
+    if(vac === "" && igss === "")
+        activos++;
 
-    const totalIngresos =
-        document.getElementById("totalIngresos");
+    if(mando && vac === "" && igss === "")
+        mandosActivos++;
 
-    const totalActivos =
-        document.getElementById("totalActivos");
+    if(mando && vac !== "")
+        mandosVacaciones++;
 
-    const totalMandosActivos =
-        document.getElementById("totalMandosActivos");
+});
 
-    const totalMandosVacaciones =
-        document.getElementById("totalMandosVacaciones");
+document.getElementById(
+    "totalVacaciones"
+).textContent =
+vacaciones;
 
-    const totalSuspendidos =
-        document.getElementById("totalSuspendidos");
+document.getElementById(
+    "totalIngresos"
+).textContent =
+ingresos;
 
-    if (totalVacaciones)
-        totalVacaciones.textContent = vacaciones;
+document.getElementById(
+    "totalActivos"
+).textContent =
+activos;
 
-    if (totalIngresos)
-        totalIngresos.textContent = ingresos;
+document.getElementById(
+    "totalMandosActivos"
+).textContent =
+mandosActivos;
 
-    if (totalActivos)
-        totalActivos.textContent = activos;
+document.getElementById(
+    "totalMandosVacaciones"
+).textContent =
+mandosVacaciones;
 
-    if (totalMandosActivos)
-        totalMandosActivos.textContent = mandosActivos;
+document.getElementById(
+    "totalSuspendidos"
+).textContent =
+suspendidos;
 
-    if (totalMandosVacaciones)
-        totalMandosVacaciones.textContent = mandosVacaciones;
+const total =
+document.getElementById(
+    "totalPersonal"
+);
 
-    if (totalSuspendidos)
-        totalSuspendidos.textContent = suspendidos;
+if(total){
+
+    total.textContent =
+    totalPersonal;
 
 }
+```
+
+}
+
+// ==========================
+// TABLA
+// ==========================
 
 function render(lista) {
 
-    const tabla = document.getElementById("tabla");
+```
+const tabla =
+document.getElementById(
+    "tabla"
+);
 
-    if (!tabla) return;
+if (!tabla) return;
 
-    tabla.innerHTML = "";
+tabla.innerHTML = "";
 
-    lista.forEach(persona => {
+lista.forEach(persona => {
 
-        const chapa = valor(persona, "CHAPA");
-        const nombre = valor(persona, "PERSONAL PMT");
-        const cargo = valor(persona, "CARGO");
-        const vac = valor(persona, "vacaciones");
-        const igss = valor(persona, "IGSS");
-        const sale = valor(persona, "sale");
-        const ingresa = valor(persona, "ingresa");
+    const chapa =
+    valor(persona,"CHAPA");
 
-        const mando = esMando(cargo);
+    const nombre =
+    valor(persona,"PERSONAL PMT");
 
-        let claseFila = "";
+    const cargo =
+    valor(persona,"CARGO");
 
-        if (igss !== "") {
+    const vac =
+    valor(persona,"vacaciones");
 
-            claseFila = "igss-row";
+    const igss =
+    valor(persona,"IGSS");
 
-        } else if (vac !== "") {
+    const sale =
+    valor(persona,"sale");
 
-            if (mando) {
-                claseFila = "mando-vacaciones-row";
-            } else {
-                claseFila = "vacaciones-row";
-            }
+    const ingresa =
+    valor(persona,"ingresa");
 
-        } else if (mando) {
+    const mando =
+    esMando(cargo);
 
-            claseFila = "mando-row";
+    let claseFila = "";
 
-        } else {
+    if(igss !== ""){
 
-            claseFila = "activo-row";
+        claseFila =
+        "igss-row";
 
-        }
+    }else if(vac !== ""){
 
-        const fila = `
-<tr class="${claseFila}">
-    <td>${chapa}</td>
-    <td>${nombre}</td>
-    <td>${cargo}</td>
-    <td>${vac}</td>
-    <td>${igss}</td>
-    <td class="${sale ? "sale-cell" : ""}">
-        ${sale}
-    </td>
-    <td class="${ingresa ? "ingresa-cell" : ""}">
-        ${ingresa}
-    </td>
-</tr>
-`;
+        claseFila =
+        mando
+        ? "mando-vacaciones-row"
+        : "vacaciones-row";
 
-        tabla.insertAdjacentHTML("beforeend", fila);
+    }else if(mando){
 
-    });
+        claseFila =
+        "mando-row";
+
+    }else{
+
+        claseFila =
+        "activo-row";
+
+    }
+
+    tabla.insertAdjacentHTML(
+
+        "beforeend",
+
+        `<tr class="${claseFila}">
+            <td>${chapa}</td>
+            <td>${nombre}</td>
+            <td>${cargo}</td>
+            <td>${vac}</td>
+            <td>${igss}</td>
+            <td class="${sale ? "sale-cell" : ""}">
+                ${sale}
+            </td>
+            <td class="${ingresa ? "ingresa-cell" : ""}">
+                ${ingresa}
+            </td>
+        </tr>`
+
+    );
+
+});
+```
 
 }
 
+// ==========================
+// BUSCADOR
+// ==========================
+
 function buscar() {
 
-    const texto = document
-        .getElementById("busqueda")
-        .value
-        .toUpperCase();
+```
+const texto =
 
-    const resultado = personal.filter(persona => {
+document
+.getElementById("busqueda")
+.value
+.toUpperCase();
 
-        const chapa =
-            valor(persona, "CHAPA").toUpperCase();
+const resultado =
 
-        const nombre =
-            valor(persona, "PERSONAL PMT").toUpperCase();
+personal.filter(persona => {
 
-        const cargo =
-            valor(persona, "CARGO").toUpperCase();
+    return (
 
-        return (
-            chapa.includes(texto) ||
-            nombre.includes(texto) ||
-            cargo.includes(texto)
-        );
+        valor(persona,"CHAPA")
+        .toUpperCase()
+        .includes(texto)
 
-    });
+        ||
 
-    render(resultado);
+        valor(persona,"PERSONAL PMT")
+        .toUpperCase()
+        .includes(texto)
+
+        ||
+
+        valor(persona,"CARGO")
+        .toUpperCase()
+        .includes(texto)
+
+    );
+
+});
+
+render(resultado);
+```
 
 }
