@@ -871,3 +871,84 @@ table tbody tr:hover{
     }
 
 }
+/* ======================================
+   ESTADOS DE FILAS
+====================================== */
+
+.activo-row{
+
+    background:rgba(0,255,80,.08);
+
+}
+
+.activo-row:hover{
+
+    background:rgba(0,255,80,.18);
+
+}
+
+.vacaciones-row{
+
+    background:rgba(0,200,255,.10);
+
+}
+
+.vacaciones-row:hover{
+
+    background:rgba(0,200,255,.20);
+
+}
+
+.mando-row{
+
+    background:rgba(255,210,0,.12);
+
+}
+
+.mando-row:hover{
+
+    background:rgba(255,210,0,.22);
+
+}
+
+.mando-vacaciones-row{
+
+    background:rgba(255,140,0,.18);
+
+}
+
+.mando-vacaciones-row:hover{
+
+    background:rgba(255,140,0,.28);
+
+}
+
+.igss-row{
+
+    background:rgba(255,0,0,.15);
+
+}
+
+.igss-row:hover{
+
+    background:rgba(255,0,0,.25);
+
+}
+
+/* CELDAS */
+
+.sale-cell{
+
+    color:#ffd000;
+
+    font-weight:bold;
+
+}
+
+.ingresa-cell{
+
+    color:#00ff80;
+
+    font-weight:bold;
+
+}
